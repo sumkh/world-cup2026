@@ -27,7 +27,6 @@ function db() {
     ]);
 
     // ── Prediction game participants ─────────────────────────────────────────
-    // 32 pre-assigned slots (UserID "01"–"32").
     $pdo->exec("CREATE TABLE IF NOT EXISTS participants (
       id         SERIAL        PRIMARY KEY,
       user_id    VARCHAR(2)    NOT NULL UNIQUE,
@@ -49,8 +48,7 @@ function db() {
       ON CONFLICT (user_id) DO NOTHING");
 
     // ── World Cup team cache ─────────────────────────────────────────────────
-    // Our sequential IDs (1-48) are the internal pick IDs.
-    // as_id is the API-SPORTS team ID — NULL until cron.php populates it.
+    // as_id = football-data.org team ID (pre-populated from real API data).
     $pdo->exec("CREATE TABLE IF NOT EXISTS wc_teams (
       id    SERIAL        PRIMARY KEY,
       as_id INT           UNIQUE,
@@ -58,25 +56,62 @@ function db() {
       logo  TEXT
     )");
 
-    // Seed the 48 FIFA World Cup 2026 teams (alphabetical order = IDs 1-48).
-    // as_id is left NULL here; cron.php fills it in via name-matching once
-    // the user has API-SPORTS access for the 2026 season.
-    $pdo->exec("INSERT INTO wc_teams (name) VALUES
-      ('Albania'),('Algeria'),('Argentina'),('Australia'),('Austria'),
-      ('Belgium'),('Bolivia'),('Brazil'),('Cameroon'),('Canada'),
-      ('Colombia'),('Costa Rica'),('Croatia'),('Denmark'),('Ecuador'),
-      ('Egypt'),('England'),('France'),('Germany'),('Ghana'),
-      ('Honduras'),('Iran'),('Iraq'),('Ivory Coast'),('Jamaica'),
-      ('Japan'),('Jordan'),('Mexico'),('Morocco'),('Netherlands'),
-      ('New Zealand'),('Nigeria'),('Panama'),('Portugal'),('Romania'),
-      ('Saudi Arabia'),('Scotland'),('Senegal'),('Serbia'),('South Africa'),
-      ('South Korea'),('Spain'),('Switzerland'),('Turkey'),
-      ('United States'),('Uruguay'),('Uzbekistan'),('Venezuela')
-      ON CONFLICT (name) DO NOTHING");
+    // All 48 FIFA World Cup 2026 teams, verified from football-data.org
+    // (competition 2000, season 2026).  as_id is the football-data.org team ID.
+    // ON CONFLICT ... DO UPDATE ensures as_id is set even if the row existed
+    // without it (e.g., from a previous placeholder seed).
+    $pdo->exec("INSERT INTO wc_teams (name, as_id) VALUES
+      ('Algeria',           778),
+      ('Argentina',         762),
+      ('Australia',         779),
+      ('Austria',           816),
+      ('Belgium',           805),
+      ('Bosnia-Herzegovina',1060),
+      ('Brazil',            764),
+      ('Canada',            828),
+      ('Cape Verde Islands',1930),
+      ('Czechia',           798),
+      ('Colombia',          818),
+      ('Congo DR',          1934),
+      ('Croatia',           799),
+      ('Curaçao',           9460),
+      ('Ecuador',           791),
+      ('Egypt',             825),
+      ('England',           770),
+      ('France',            773),
+      ('Germany',           759),
+      ('Ghana',             763),
+      ('Haiti',             836),
+      ('Iran',              840),
+      ('Iraq',              8062),
+      ('Ivory Coast',       1935),
+      ('Japan',             766),
+      ('Jordan',            8049),
+      ('Mexico',            769),
+      ('Morocco',           815),
+      ('Netherlands',       8601),
+      ('New Zealand',       783),
+      ('Norway',            8872),
+      ('Panama',            1836),
+      ('Paraguay',          761),
+      ('Portugal',          765),
+      ('Qatar',             8030),
+      ('Saudi Arabia',      801),
+      ('Scotland',          8873),
+      ('Senegal',           804),
+      ('South Africa',      774),
+      ('South Korea',       772),
+      ('Spain',             760),
+      ('Sweden',            792),
+      ('Switzerland',       788),
+      ('Tunisia',           802),
+      ('Turkey',            803),
+      ('United States',     771),
+      ('Uruguay',           758),
+      ('Uzbekistan',        8070)
+      ON CONFLICT (name) DO UPDATE SET as_id = EXCLUDED.as_id");
 
     // ── World Cup fixture/results cache ──────────────────────────────────────
-    // home_id / away_id reference wc_teams.id (our internal IDs, not as_id).
-    // Populated and refreshed by cron.php.
     $pdo->exec("CREATE TABLE IF NOT EXISTS wc_fixtures (
       id         INT          PRIMARY KEY,
       home_id    INT          NOT NULL,

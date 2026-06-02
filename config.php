@@ -20,6 +20,7 @@ defined('DB_USER') || define('DB_USER', getenv('DB_USER') ?: '');
 defined('DB_PASS') || define('DB_PASS', getenv('DB_PASS') ?: '');
 
 defined('API_KEY')        || define('API_KEY',        getenv('API_KEY')        ?: 'ec434bd351885afe9375a8ae3fd43003');
+defined('FD_API_KEY')     || define('FD_API_KEY',     getenv('FD_API_KEY')     ?: '');  // football-data.org key (used by cron.php)
 defined('ADMIN_PASSWORD') || define('ADMIN_PASSWORD', getenv('ADMIN_PASSWORD') ?: '');
 
 defined('LEAGUE_ID') || define('LEAGUE_ID', 1);       // FIFA World Cup

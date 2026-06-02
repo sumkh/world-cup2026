@@ -21,10 +21,13 @@ services:
         fromDatabase:
           name: world-cup2026-db
           property: connectionString
-      # API-SPORTS key — intentionally client-side; restrict to your domain
-      # in the API-SPORTS dashboard.  Already hardcoded as fallback in config.php.
+      # API-SPORTS key — used by widgets on index.html (client-side).
       - key: API_KEY
         value: ec434bd351885afe9375a8ae3fd43003
+      # football-data.org key — used server-side by cron.php to fetch scores.
+      # Free plan covers World Cup 2026.
+      - key: FD_API_KEY
+        sync: false
       # Set this in the Render dashboard — Environment → ADMIN_PASSWORD
       - key: ADMIN_PASSWORD
         sync: false

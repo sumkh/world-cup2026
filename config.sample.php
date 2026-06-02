@@ -17,10 +17,14 @@ define('DB_NAME', 'worldcup2026');
 define('DB_USER', 'your_db_user');
 define('DB_PASS', 'your_db_password');
 
-/* ---- API-SPORTS key (visible client-side by design; restrict to your domain).
+/* ---- API-SPORTS key — used by the widgets on index.html (client-side, domain-restricted).
         Docs: https://api-sports.io/documentation/widgets/v3#section/Before-You-Begin/Predefined-themes
         Blog: https://www.api-football.com/news/post/fifa-world-cup-2026-using-api-sports-widgets ---- */
 define('API_KEY', 'ec434bd351885afe9375a8ae3fd43003');
+
+/* ---- football-data.org key — used server-side by cron.php to fetch scores.
+        Free plan works for World Cup 2026.  Get a key at https://www.football-data.org ---- */
+define('FD_API_KEY', 'your_football_data_org_key');
 
 /* ---- Admin password for admin.php ---- */
 define('ADMIN_PASSWORD', 'choose-a-strong-password');

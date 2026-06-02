@@ -12,6 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Call cron.php
+        # Calls the score-sync endpoint on Render.
+        # Requires ADMIN_PASSWORD to be added as a GitHub Actions secret:
+        #   GitHub repo → Settings → Secrets and variables → Actions → New secret
+        #   Name: ADMIN_PASSWORD   Value: (same password as your Render env var)
         run: |
           curl --fail --silent --show-error \
             "https://world-cup2026.onrender.com/cron.php?key=${{ secrets.ADMIN_PASSWORD }}"
