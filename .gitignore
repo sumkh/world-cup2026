@@ -1,5 +1,5 @@
-# Real config holds DB + admin passwords — never commit it
-config.php
+# Local dev overrides — never commit it (config.php itself is committed and reads env vars)
+config.local.php
 
 # OS / editor noise
 .DS_Store

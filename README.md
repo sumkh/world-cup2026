@@ -7,24 +7,43 @@ prediction game with a shared leaderboard.
 ## Stack
 
 - Static front page (`index.html`) using API-SPORTS **Widgets v3**
-- Prediction game on **PHP 7.4+ / MySQL**
+- Prediction game on **PHP 8.2 / MySQL**
 - Match results are read **in the browser** from the API-SPORTS REST API,
   so the host never needs to make outbound calls (works on hosts that
   block server-side HTTP, e.g. some free tiers).
+- Deployable to **Render** via Docker (see [Deployment](#deployment)).
+
+## API-SPORTS Resources
+
+- **Widgets v3 documentation:** https://api-sports.io/documentation/widgets/v3#section/Before-You-Begin/Predefined-themes
+- **World Cup 2026 blog post (API-Football):** https://www.api-football.com/news/post/fifa-world-cup-2026-using-api-sports-widgets
+
+The API key is exposed client-side by design (same pattern as the widgets) — domain restriction in the API-SPORTS dashboard is what protects your quota.
 
 ## Files
 
 | File | Purpose |
 |------|---------|
 | `index.html` | Public hub: schedule + standings widgets |
-| `register.php` | Register (invite PIN → nickname + personal PIN + 3 picks), log in, edit picks |
+| `register.php` | Register (UserID → nickname + 6-digit PIN + 3 picks), log in, edit picks |
 | `leaderboard.php` | Shared leaderboard; computes scores live in the browser |
-| `admin.php` | Issue invite PINs, view participants (password-gated) |
+| `admin.php` | View all 32 participant slots and their picks (password-gated) |
 | `api.php` | Same-origin JSON API (register / login / save picks / leaderboard feed) |
-| `db.php` | PDO connection + auto-creates the table on first run |
+| `db.php` | PDO connection + auto-creates the table and seeds 32 UserID slots on first run |
 | `common.js` | Browser helpers: load teams/fixtures, scoring logic |
 | `styles.css` | Shared theme |
-| `config.sample.php` | Copy to `config.php` and fill in (config.php is git-ignored) |
+| `config.php` | Reads from environment variables (production) with `config.local.php` override for local dev |
+| `config.sample.php` | Copy to `config.local.php` and fill in for local development |
+| `Dockerfile` | PHP 8.2 + Apache image for Render (or any Docker host) |
+| `render.yaml` | Render service definition |
+
+## Registration Flow
+
+32 participant slots (UserID `01`–`32`) are pre-seeded in the database on first run.
+
+1. **Register:** participant enters their assigned UserID (e.g. `07`), chooses a nickname and 6-digit personal PIN, then picks 3 teams.
+2. **Log in:** participant enters UserID + personal PIN to return and edit picks.
+3. **Picks lock** at the first kickoff (`PICK_LOCK` in config) and remain hidden on the leaderboard until then.
 
 ## Scoring
 
@@ -37,21 +56,35 @@ Each participant picks **3 teams**. Across **every match** those teams play:
 A participant's total is the sum across their three teams. The leaderboard
 recomputes from the full fixture list each load, so it is always consistent.
 
-Picks are **editable until the first kickoff** (`PICK_LOCK` in config), then
-locked. Picks stay hidden on the leaderboard until kickoff.
+## Setup (Local / Shared Hosting)
 
-## Setup
+1. Create a MySQL database on your host.
+2. Copy `config.sample.php` → `config.local.php` and fill in the DB details, API-SPORTS key, and admin password.
+3. Ensure the host runs **PHP 8.2+**.
+4. Upload all files to the web root. The database table and 32 UserID slots are created automatically on first use.
+5. In the **API-SPORTS dashboard**, add your site's domain to the allowed domains for the API key.
+6. Open `admin.php`, log in, and distribute UserIDs `01`–`32` to participants. They register at `register.php`.
 
-1. Create a MySQL database on your host. Copy `config.sample.php` to
-   `config.php` and fill in the DB details, your API-SPORTS key, and an
-   admin password.
-2. Ensure the host runs **PHP 7.4+**.
-3. Upload all files to the web root (e.g. `htdocs` / `public_html`). The
-   database table is created automatically on first use.
-4. In the **API-SPORTS dashboard**, add your site's domain to the allowed
-   domains for the API key (the browser reads results, like the widgets do).
-5. Open `admin.php`, log in, generate invite PINs, and give one to each
-   participant. They register at `register.php`.
+## Deployment
+
+### Render (Recommended)
+
+The repo includes a `Dockerfile` (PHP 8.2 + Apache) and `render.yaml`.
+
+1. Push this repo to GitHub (private repo recommended).
+2. In [Render](https://render.com), create a new **Web Service** connected to the GitHub repo. Render will detect `render.yaml` automatically.
+3. Set the following **Environment Variables** in the Render dashboard:
+
+   | Variable | Value |
+   |----------|-------|
+   | `DB_HOST` | Your MySQL host (e.g. from PlanetScale, Railway, or any MySQL provider) |
+   | `DB_NAME` | Database name |
+   | `DB_USER` | Database user |
+   | `DB_PASS` | Database password |
+   | `ADMIN_PASSWORD` | A strong password for `admin.php` |
+   | `API_KEY` | Your API-SPORTS key (already set as a default in `config.php`) |
+
+4. Render does not provide MySQL natively. Use an external MySQL service such as [PlanetScale](https://planetscale.com) (free tier) or [Railway](https://railway.app).
 
 ## Notes
 

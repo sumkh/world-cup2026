@@ -35,16 +35,17 @@
 
     <div class="section">
       <div class="card" style="max-width:520px">
+
         <!-- REGISTER -->
         <div id="view-register">
           <h2 style="font-family:'Anton',sans-serif;font-weight:400;font-size:26px;text-transform:uppercase">Register</h2>
-          <p class="note">Use the invite PIN you were given. You'll set your own nickname and a personal PIN to protect your picks.</p>
-          <label>Invite PIN</label>
-          <input id="r_invite" autocomplete="off" placeholder="e.g. 3f9a2c11" />
+          <p class="note">Enter the User ID you were assigned (01–32), then choose a nickname and a 6-digit personal PIN to protect your picks.</p>
+          <label>User ID (01–32)</label>
+          <input id="r_uid" inputmode="numeric" maxlength="2" autocomplete="off" placeholder="e.g. 07" style="max-width:120px" />
           <label>Nickname</label>
           <input id="r_nick" maxlength="40" autocomplete="off" placeholder="Shown on the leaderboard" />
-          <label>Choose a personal PIN (4–8 digits)</label>
-          <input id="r_pin" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="Used to log back in" />
+          <label>Choose a 6-digit personal PIN</label>
+          <input id="r_pin" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="Used to log back in" />
           <label>Team 1</label><select id="r_t1" class="team"></select>
           <label>Team 2</label><select id="r_t2" class="team"></select>
           <label>Team 3</label><select id="r_t3" class="team"></select>
@@ -56,13 +57,13 @@
         <!-- LOGIN -->
         <div id="view-login" style="display:none">
           <h2 style="font-family:'Anton',sans-serif;font-weight:400;font-size:26px;text-transform:uppercase">Log in</h2>
-          <p class="note">Edit your picks any time before kickoff.</p>
-          <label>Nickname</label>
-          <input id="l_nick" autocomplete="off" />
-          <label>Personal PIN</label>
-          <input id="l_pin" inputmode="numeric" maxlength="8" autocomplete="off" />
+          <p class="note">Enter your User ID and 6-digit personal PIN to edit your picks.</p>
+          <label>User ID (01–32)</label>
+          <input id="l_uid" inputmode="numeric" maxlength="2" autocomplete="off" placeholder="e.g. 07" style="max-width:120px" />
+          <label>6-digit personal PIN</label>
+          <input id="l_pin" inputmode="numeric" maxlength="6" autocomplete="off" />
           <div style="margin-top:20px"><button class="btn" id="btn-login">Log in</button></div>
-          <div class="linkrow">Have an invite PIN? <a id="to-register">Register instead</a></div>
+          <div class="linkrow">Have a User ID but not registered yet? <a id="to-register">Register instead</a></div>
           <div class="msg" id="l_msg"></div>
         </div>
 
@@ -79,6 +80,7 @@
           <div class="linkrow"><a href="leaderboard.php">View leaderboard →</a> &nbsp;·&nbsp; <a id="btn-logout">Log out</a></div>
           <div class="msg" id="e_msg"></div>
         </div>
+
       </div>
     </div>
   </main>
@@ -106,6 +108,7 @@
       if (new Set(v).size !== 3) return { err: 'Please choose three different teams.' };
       return { picks: v };
     }
+    function padUID(v){ return v.length === 1 ? '0' + v : v; }
 
     if (window.PICK_LOCKED) {
       $('lockpill').innerHTML = '<span class="pill lock">● Picks locked — tournament has started</span>';
@@ -113,7 +116,6 @@
       $('lockpill').innerHTML = '<span class="pill">Picks open until first kickoff</span>';
     }
 
-    // load team list for the dropdowns
     (async () => {
       try {
         TEAMS = await loadTeams();
@@ -122,7 +124,6 @@
         flash($('r_msg'), 'Could not load the team list from API-SPORTS: ' + e.message +
           ' — check that your domain is allowed for this key.', false);
       }
-      // already logged in?
       const me = await api('me');
       if (me.auth) enterEdit(me);
     })();
@@ -143,17 +144,20 @@
     $('btn-register').onclick = async () => {
       const r = readPicks(['r_t1','r_t2','r_t3']); if (r.err) return flash($('r_msg'), r.err, false);
       const res = await api('claim', {
-        invite_pin: $('r_invite').value.trim(),
-        nickname:   $('r_nick').value.trim(),
-        pin:        $('r_pin').value.trim(),
-        picks:      r.picks,
+        user_id:  padUID($('r_uid').value.trim()),
+        nickname: $('r_nick').value.trim(),
+        pin:      $('r_pin').value.trim(),
+        picks:    r.picks,
       });
       if (res.error) return flash($('r_msg'), res.error, false);
       enterEdit({ nickname: res.nickname, picks: res.picks, locked: false });
     };
 
     $('btn-login').onclick = async () => {
-      const res = await api('login', { nickname: $('l_nick').value.trim(), pin: $('l_pin').value.trim() });
+      const res = await api('login', {
+        user_id: padUID($('l_uid').value.trim()),
+        pin:     $('l_pin').value.trim(),
+      });
       if (res.error) return flash($('l_msg'), res.error, false);
       const me = await api('me'); enterEdit(me);
     };

@@ -1,0 +1,29 @@
+# Render service definition — https://render.com/docs/blueprint-spec
+# Deploys the World Cup 2026 PHP app as a Docker web service.
+# Set the environment variables below in the Render dashboard
+# (Environment → Add Environment Variable) before deploying.
+
+services:
+  - type: web
+    name: world-cup2026
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      # MySQL connection — use an external provider (PlanetScale, Railway, etc.)
+      # because Render's native database is PostgreSQL.
+      - key: DB_HOST
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASS
+        sync: false
+      # API-SPORTS key — intentionally client-side; restrict to your domain
+      # in the API-SPORTS dashboard.
+      - key: API_KEY
+        value: ec434bd351885afe9375a8ae3fd43003
+      # Admin password for admin.php
+      - key: ADMIN_PASSWORD
+        sync: false

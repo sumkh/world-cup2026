@@ -21,8 +21,15 @@ function clean_picks($raw) {
     if ($x <= 0) return null;
     $t[] = $x;
   }
-  if (count(array_unique($t)) !== NUM_PICKS) return null; // must be distinct
+  if (count(array_unique($t)) !== NUM_PICKS) return null;
   return $t;
+}
+
+function valid_user_id($uid) {
+  // Must be exactly two digits, "01"–"32"
+  if (!preg_match('/^\d{2}$/', $uid)) return false;
+  $n = (int)$uid;
+  return $n >= 1 && $n <= 32;
 }
 
 try {
@@ -37,22 +44,23 @@ switch ($action) {
 
   case 'claim': {
     if (locked()) out(['error' => 'Registration is closed — the tournament has started.'], 403);
-    $b = body();
-    $invite = trim($b['invite_pin'] ?? '');
+    $b      = body();
+    $uid    = trim($b['user_id']  ?? '');
     $nick   = trim($b['nickname'] ?? '');
-    $pin    = trim($b['pin'] ?? '');
+    $pin    = trim($b['pin']      ?? '');
     $picks  = clean_picks($b['picks'] ?? null);
 
-    if ($invite === '' || $nick === '' || $pin === '') out(['error' => 'All fields are required.'], 400);
+    if ($uid === '' || $nick === '' || $pin === '') out(['error' => 'All fields are required.'], 400);
+    if (!valid_user_id($uid))                       out(['error' => 'User ID must be 01–32.'], 400);
     if (!preg_match('/^[A-Za-z0-9_ ]{2,40}$/', $nick)) out(['error' => 'Nickname: 2–40 letters, numbers, spaces or underscores.'], 400);
-    if (!preg_match('/^\d{4,8}$/', $pin))               out(['error' => 'PIN must be 4–8 digits.'], 400);
-    if (!$picks)                                        out(['error' => 'Pick exactly 3 different teams.'], 400);
+    if (!preg_match('/^\d{6}$/', $pin))             out(['error' => 'Personal PIN must be exactly 6 digits.'], 400);
+    if (!$picks)                                    out(['error' => 'Pick exactly 3 different teams.'], 400);
 
-    $st = $pdo->prepare('SELECT id, claimed FROM participants WHERE invite_pin = ? LIMIT 1');
-    $st->execute([$invite]);
+    $st = $pdo->prepare('SELECT id, claimed FROM participants WHERE user_id = ? LIMIT 1');
+    $st->execute([$uid]);
     $row = $st->fetch();
-    if (!$row)            out(['error' => 'Invalid invite PIN.'], 403);
-    if ($row['claimed'])  out(['error' => 'This invite PIN has already been used.'], 403);
+    if (!$row)           out(['error' => 'Invalid User ID.'], 403);
+    if ($row['claimed']) out(['error' => 'This User ID has already been registered.'], 403);
 
     $st = $pdo->prepare('SELECT id FROM participants WHERE nickname = ? LIMIT 1');
     $st->execute([$nick]);
@@ -66,13 +74,14 @@ switch ($action) {
   }
 
   case 'login': {
-    $b = body();
-    $nick = trim($b['nickname'] ?? '');
-    $pin  = trim($b['pin'] ?? '');
-    $st = $pdo->prepare('SELECT * FROM participants WHERE nickname = ? AND claimed = 1 LIMIT 1');
-    $st->execute([$nick]);
+    $b   = body();
+    $uid = trim($b['user_id'] ?? '');
+    $pin = trim($b['pin']     ?? '');
+    if (!valid_user_id($uid)) out(['error' => 'User ID must be 01–32.'], 400);
+    $st = $pdo->prepare('SELECT * FROM participants WHERE user_id = ? AND claimed = 1 LIMIT 1');
+    $st->execute([$uid]);
     $row = $st->fetch();
-    if (!$row || !password_verify($pin, $row['pin_hash'])) out(['error' => 'Wrong nickname or PIN.'], 403);
+    if (!$row || !password_verify($pin, $row['pin_hash'])) out(['error' => 'Wrong User ID or PIN.'], 403);
     $_SESSION['pid'] = (int)$row['id'];
     out(['ok' => true, 'nickname' => $row['nickname'], 'picks' => [(int)$row['team1'], (int)$row['team2'], (int)$row['team3']]]);
   }
@@ -103,8 +112,7 @@ switch ($action) {
   }
 
   case 'participants': {
-    // Leaderboard feed. Picks are hidden until kickoff, then revealed.
-    // (No PINs are ever sent to the browser.)
+    // Leaderboard feed. Picks are hidden until kickoff.
     $reveal = locked();
     $st = $pdo->query('SELECT nickname, team1, team2, team3 FROM participants WHERE claimed = 1 ORDER BY created_at ASC');
     $list = [];
