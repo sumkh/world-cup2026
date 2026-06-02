@@ -39,9 +39,9 @@
         <!-- REGISTER -->
         <div id="view-register">
           <h2 style="font-family:'Anton',sans-serif;font-weight:400;font-size:26px;text-transform:uppercase">Register</h2>
-          <p class="note">Enter the User ID you were assigned (01–32), then choose a nickname and a 6-digit personal PIN to protect your picks.</p>
-          <label>User ID (01–32)</label>
-          <input id="r_uid" inputmode="numeric" maxlength="2" autocomplete="off" placeholder="e.g. 07" style="max-width:120px" />
+          <p class="note">Enter the access code you were given, then choose a nickname and a 6-digit personal PIN to protect your picks.</p>
+          <label>Access Code</label>
+          <input id="r_uid" inputmode="numeric" maxlength="2" autocomplete="off" placeholder="" style="max-width:120px" />
           <label>Nickname</label>
           <input id="r_nick" maxlength="40" autocomplete="off" placeholder="Shown on the leaderboard" />
           <label>Choose a 6-digit personal PIN</label>
@@ -57,13 +57,13 @@
         <!-- LOGIN -->
         <div id="view-login" style="display:none">
           <h2 style="font-family:'Anton',sans-serif;font-weight:400;font-size:26px;text-transform:uppercase">Log in</h2>
-          <p class="note">Enter your User ID and 6-digit personal PIN to edit your picks.</p>
-          <label>User ID (01–32)</label>
-          <input id="l_uid" inputmode="numeric" maxlength="2" autocomplete="off" placeholder="e.g. 07" style="max-width:120px" />
+          <p class="note">Enter your access code and 6-digit personal PIN to edit your picks.</p>
+          <label>Access Code</label>
+          <input id="l_uid" inputmode="numeric" maxlength="2" autocomplete="off" placeholder="" style="max-width:120px" />
           <label>6-digit personal PIN</label>
           <input id="l_pin" inputmode="numeric" maxlength="6" autocomplete="off" />
           <div style="margin-top:20px"><button class="btn" id="btn-login">Log in</button></div>
-          <div class="linkrow">Have a User ID but not registered yet? <a id="to-register">Register instead</a></div>
+          <div class="linkrow">Have an access code but not registered yet? <a id="to-register">Register instead</a></div>
           <div class="msg" id="l_msg"></div>
         </div>
 
