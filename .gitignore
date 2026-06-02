@@ -1,0 +1,8 @@
+# Real config holds DB + admin passwords — never commit it
+config.php
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.log
+*.swp

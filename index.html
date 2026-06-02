@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<!--
+  ============================================================================
+  FIFA WORLD CUP 2026 — powered by API-SPORTS Widgets (v3)
+  ============================================================================
+  SETUP (3 steps):
+    1. Your API key is already set in the <api-sports-widget data-type="config">
+       block below. To change it later, edit the data-key attribute.
+    2. Host this file on your domain (e.g. via Netlify, GitHub Pages, your own server).
+    3. In your API-SPORTS dashboard, restrict your key to that domain. The key is
+       visible in page source by default, so domain restriction stops anyone else
+       from using your quota.
+
+  TWEAKS:
+    - data-refresh="60"  -> seconds between auto-refreshes. Lower = more live, but
+      uses more of your request quota. 15 is the default; 60 is gentler.
+    - data-theme="dark"  -> options: white | grey | dark | blue
+    - League 1 / Season 2026 = the FIFA World Cup 2026. Change to reuse for other comps.
+  ============================================================================
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FIFA World Cup 2026 — Schedule &amp; Standings</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --ink:        #080b16;
+      --ink-2:      #0e1324;
+      --surface:    #131a30;
+      --surface-2:  #1a2240;
+      --line:       rgba(255,255,255,.08);
+      --text:       #eef1fb;
+      --muted:      #8a93b2;
+      --coral:      #ff5436;
+      --teal:       #1fe3aa;
+      --gold:       #ffce3a;
+      --shadow:     0 24px 60px -20px rgba(0,0,0,.7);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Manrope', system-ui, sans-serif;
+      background: var(--ink);
+      color: var(--text);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* grain + atmospheric mesh */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(60% 50% at 12% -5%, rgba(255,84,54,.18), transparent 60%),
+        radial-gradient(55% 45% at 95% 8%, rgba(31,227,170,.14), transparent 60%),
+        radial-gradient(45% 40% at 50% 110%, rgba(255,206,58,.10), transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrap { position: relative; z-index: 1; max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+    /* ---------- header ---------- */
+    header {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(14px);
+      background: rgba(8,11,22,.72);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 68px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand .mark {
+      font-family: 'Anton', sans-serif;
+      font-size: 22px; letter-spacing: .5px;
+      color: var(--text);
+    }
+    .brand .mark span { color: var(--coral); }
+    .brand .badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px; font-weight: 700;
+      color: var(--ink); background: var(--gold);
+      padding: 3px 8px; border-radius: 6px;
+    }
+    .nav-links { display: flex; gap: 26px; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none; font-weight: 700;
+      font-size: 14px; letter-spacing: .3px; transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    /* ---------- hero ---------- */
+    .hero { padding: 88px 0 64px; }
+    .eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--teal); margin-bottom: 18px;
+      opacity: 0; animation: rise .7s .05s forwards;
+    }
+    .hero h1 {
+      font-family: 'Anton', sans-serif;
+      font-weight: 400; line-height: .92; letter-spacing: -1px;
+      font-size: clamp(52px, 11vw, 132px);
+      text-transform: uppercase;
+      opacity: 0; animation: rise .7s .15s forwards;
+    }
+    .hero h1 .out {
+      -webkit-text-stroke: 2px var(--coral); color: transparent;
+    }
+    .hero .sub {
+      margin-top: 22px; max-width: 540px;
+      color: var(--muted); font-size: 18px;
+      opacity: 0; animation: rise .7s .28s forwards;
+    }
+    .hosts {
+      margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;
+      opacity: 0; animation: rise .7s .38s forwards;
+    }
+    .hosts span {
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700;
+      letter-spacing: 1px; color: var(--text);
+      border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px;
+    }
+
+    /* countdown */
+    .countdown {
+      margin-top: 40px; display: flex; gap: 14px; flex-wrap: wrap;
+      opacity: 0; animation: rise .7s .5s forwards;
+    }
+    .cd-cell {
+      background: var(--surface); border: 1px solid var(--line);
+      border-radius: 14px; padding: 16px 20px; min-width: 92px; text-align: center;
+      box-shadow: var(--shadow);
+    }
+    .cd-num {
+      font-family: 'Anton', sans-serif; font-size: 40px; line-height: 1;
+      color: var(--text); font-variant-numeric: tabular-nums;
+    }
+    .cd-lbl {
+      font-family: 'JetBrains Mono', monospace; font-size: 11px;
+      letter-spacing: 2px; text-transform: uppercase; color: var(--muted);
+      margin-top: 8px;
+    }
+    .cd-live {
+      font-family: 'Anton', sans-serif; font-size: 28px; color: var(--teal);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .cd-live::before {
+      content: ''; width: 14px; height: 14px; border-radius: 50%;
+      background: var(--teal); box-shadow: 0 0 0 0 var(--teal);
+      animation: pulse 1.6s infinite;
+    }
+
+    /* ---------- sections ---------- */
+    section.block { padding: 48px 0; }
+    .section-head {
+      display: flex; align-items: baseline; gap: 16px; margin-bottom: 24px;
+    }
+    .section-head h2 {
+      font-family: 'Anton', sans-serif; font-weight: 400;
+      font-size: clamp(30px, 5vw, 48px); text-transform: uppercase; letter-spacing: -.5px;
+    }
+    .section-head .rule { flex: 1; height: 1px; background: var(--line); }
+    .section-head .tag {
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700;
+      color: var(--ink); padding: 4px 10px; border-radius: 6px;
+    }
+    .tag.coral { background: var(--coral); }
+    .tag.teal  { background: var(--teal); }
+
+    /* widget shell */
+    .widget-card {
+      background: linear-gradient(180deg, var(--ink-2), var(--ink));
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      min-height: 120px;
+    }
+    api-sports-widget { display: block; }
+
+    /* ---------- footer ---------- */
+    footer {
+      border-top: 1px solid var(--line); margin-top: 40px;
+      padding: 36px 0 60px;
+    }
+    .foot {
+      display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+      color: var(--muted); font-size: 13px;
+    }
+    .foot a { color: var(--teal); text-decoration: none; }
+    .foot a:hover { text-decoration: underline; }
+
+    @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+    @keyframes pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(31,227,170,.6); }
+      70%  { box-shadow: 0 0 0 12px rgba(31,227,170,0); }
+      100% { box-shadow: 0 0 0 0 rgba(31,227,170,0); }
+    }
+
+    @media (max-width: 640px) {
+      .nav-links { gap: 16px; }
+      .hero { padding: 56px 0 40px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="wrap nav">
+      <div class="brand">
+        <div class="mark">WORLD<span>CUP</span></div>
+        <div class="badge">2026</div>
+      </div>
+      <nav class="nav-links">
+        <a href="#schedule">Schedule</a>
+        <a href="#standings">Standings</a>
+        <a href="register.php">Play</a>
+        <a href="leaderboard.php">Leaderboard</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <div class="wrap hero">
+      <div class="eyebrow">USA · Canada · Mexico — 48 Teams</div>
+      <h1>The <span class="out">World</span><br />Is Coming</h1>
+      <p class="sub">
+        Live schedule, results and group standings for the FIFA World Cup 2026 —
+        the first 48-team edition, played across 16 cities in three nations.
+        Tap any fixture for the full match breakdown.
+      </p>
+      <div class="hosts">
+        <span>🇺🇸 UNITED STATES</span>
+        <span>🇨🇦 CANADA</span>
+        <span>🇲🇽 MEXICO</span>
+      </div>
+
+      <div class="countdown" id="countdown" aria-label="Time to kickoff"></div>
+    </div>
+
+    <!-- SCHEDULE -->
+    <section class="block wrap" id="schedule">
+      <div class="section-head">
+        <span class="tag coral">01</span>
+        <h2>Schedule</h2>
+        <div class="rule"></div>
+      </div>
+      <div class="widget-card">
+        <!-- Schedule / fixtures widget. Clicking a game opens its details in a modal
+             (configured via data-target-game on the config block below). -->
+        <api-sports-widget
+          data-type="games"
+          data-league="1"
+          data-season="2026">
+        </api-sports-widget>
+      </div>
+    </section>
+
+    <!-- STANDINGS -->
+    <section class="block wrap" id="standings">
+      <div class="section-head">
+        <span class="tag teal">02</span>
+        <h2>Standings</h2>
+        <div class="rule"></div>
+      </div>
+      <div class="widget-card">
+        <!-- Group standings. Knockout fixtures appear in the Schedule widget above. -->
+        <api-sports-widget
+          data-type="standings"
+          data-league="1"
+          data-season="2026">
+        </api-sports-widget>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap foot">
+      <div>Data &amp; widgets by <a href="https://api-sports.io/" target="_blank" rel="noopener">API-SPORTS</a>. Logos and trademarks belong to their respective rights holders.</div>
+      <div>FIFA World Cup 2026 · League 1 · Season 2026</div>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       GLOBAL CONFIG — holds your API key + shared widget behavior.
+       Renders nothing visible; it just configures the widgets above.
+       Your API key is set below — edit data-key to change it.
+       ============================================================ -->
+  <api-sports-widget
+    data-type="config"
+    data-key="ec434bd351885afe9375a8ae3fd43003"
+    data-sport="football"
+    data-lang="en"
+    data-theme="dark"
+    data-show-errors="true"
+    data-show-logos="true"
+    data-refresh="60"
+    data-target-game="modal">
+  </api-sports-widget>
+
+  <!-- API-SPORTS Widgets v3 loader -->
+  <script type="module" src="https://widgets.api-sports.io/3.1.0/widgets.js"></script>
+
+  <!-- Kickoff countdown (opening match: June 11, 2026) -->
+  <script>
+    (function () {
+      var target = new Date('2026-06-11T00:00:00').getTime();
+      var el = document.getElementById('countdown');
+      function pad(n){ return n < 10 ? '0' + n : '' + n; }
+      function tick() {
+        var diff = target - Date.now();
+        if (diff <= 0) {
+          el.innerHTML = '<div class="cd-live">The tournament is underway</div>';
+          clearInterval(timer);
+          return;
+        }
+        var d = Math.floor(diff / 86400000);
+        var h = Math.floor(diff % 86400000 / 3600000);
+        var m = Math.floor(diff % 3600000 / 60000);
+        var s = Math.floor(diff % 60000 / 1000);
+        var cells = [[d,'Days'],[pad(h),'Hours'],[pad(m),'Mins'],[pad(s),'Secs']];
+        el.innerHTML = cells.map(function (c) {
+          return '<div class="cd-cell"><div class="cd-num">' + c[0] +
+                 '</div><div class="cd-lbl">' + c[1] + '</div></div>';
+        }).join('');
+      }
+      tick();
+      var timer = setInterval(tick, 1000);
+    })();
+  </script>
+</body>
+</html>
