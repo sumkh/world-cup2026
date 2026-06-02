@@ -120,6 +120,12 @@ function db() {
       away_goals INT,
       status     VARCHAR(10)  NOT NULL DEFAULT 'NS'
     )");
+
+    // ── App-level key/value store (used for rate-limiting cron runs) ─────────
+    $pdo->exec("CREATE TABLE IF NOT EXISTS wc_meta (
+      key   VARCHAR(50) PRIMARY KEY,
+      value TEXT        NOT NULL
+    )");
   }
   return $pdo;
 }

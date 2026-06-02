@@ -34,6 +34,7 @@
     <div class="section">
       <div class="toolbar">
         <div id="status"><span class="updated">Loading…</span></div>
+        <button class="btn ghost" id="syncBtn" style="width:auto">↻ Sync Scores</button>
         <button class="btn ghost" id="refresh" style="width:auto">Refresh</button>
       </div>
       <div class="card" style="padding:14px 10px">
@@ -59,8 +60,7 @@
       try {
         [people, fixtures] = await Promise.all([ api('participants'), loadFixtures(force) ]);
       } catch (e) {
-        $('board').innerHTML = '<div class="empty">Couldn\'t load results from API-SPORTS: ' + esc(e.message) +
-          '<br>Check that your domain is allowed for this key in the API-SPORTS dashboard.</div>';
+        $('board').innerHTML = '<div class="empty">Couldn\'t load scores: ' + esc(e.message) + '</div>';
         $('status').innerHTML = '<span class="updated">Update failed</span>';
         return;
       }
@@ -112,8 +112,33 @@
     }
 
     $('refresh').onclick = () => render(true);
+
+    $('syncBtn').onclick = async () => {
+      const btn = $('syncBtn');
+      btn.disabled = true;
+      $('status').innerHTML = '<span class="updated"><span class="spin"></span> Syncing…</span>';
+      try {
+        const r = await fetch('cron.php', { method: 'GET' });
+        const j = await r.json();
+        if (j.skipped) {
+          $('status').innerHTML = '<span class="updated">Scores already up to date — try again shortly</span>';
+          btn.disabled = false;
+        } else if (j.error) {
+          $('status').innerHTML = '<span class="updated">Sync failed: ' + esc(j.error) + '</span>';
+          btn.disabled = false;
+        } else {
+          // Sync succeeded — reload the board from fresh DB data.
+          await render(true);
+          btn.disabled = false;
+        }
+      } catch (e) {
+        $('status').innerHTML = '<span class="updated">Sync error — ' + esc(e.message) + '</span>';
+        btn.disabled = false;
+      }
+    };
+
     render();
-    setInterval(render, 180000); // auto-refresh every 3 min (keeps API usage low)
+    setInterval(render, 180000); // auto-refresh every 3 min
   </script>
 </body>
 </html>

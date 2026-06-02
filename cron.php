@@ -9,10 +9,12 @@
    Triggered by GitHub Actions (.github/workflows/scores-sync.yml)
    or manually via the "Sync Scores" button in admin.php.
 
-   Auth (two ways):
-     - Admin web session: already logged into admin.php — no key needed.
-     - External callers (GitHub Actions, curl): pass ADMIN_PASSWORD as
-       ?key= query param or the X-Cron-Key HTTP header.
+   Open to all visitors (no auth required) — rate-limited to one call
+   per 60 seconds to stay well within football-data.org's free-plan
+   limit of 10 requests/minute.
+
+   External automated callers (GitHub Actions, curl) can bypass the
+   rate limit by passing ADMIN_PASSWORD as ?key= or X-Cron-Key header.
    ============================================================ */
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/db.php';
@@ -20,14 +22,20 @@ require_once __DIR__ . '/db.php';
 session_start();
 header('Content-Type: application/json; charset=utf-8');
 
-// ── Auth ─────────────────────────────────────────────────────────────────────
-$session_ok = !empty($_SESSION['admin']);
+// ── Rate limit (public callers) / bypass (admin) ─────────────────────────────
 $provided   = $_SERVER['HTTP_X_CRON_KEY'] ?? ($_GET['key'] ?? '');
-$key_ok     = ADMIN_PASSWORD !== '' && hash_equals(ADMIN_PASSWORD, (string)$provided);
-if (!$session_ok && !$key_ok) {
-  http_response_code(403);
-  echo json_encode(['error' => 'Forbidden — log into admin.php or pass ?key=ADMIN_PASSWORD']);
-  exit;
+$admin_call = !empty($_SESSION['admin'])
+           || (ADMIN_PASSWORD !== '' && hash_equals(ADMIN_PASSWORD, (string)$provided));
+
+if (!$admin_call) {
+  $pdo  = db();
+  $row  = $pdo->query("SELECT value FROM wc_meta WHERE key = 'last_sync'")->fetch();
+  $last = $row ? (int)$row['value'] : 0;
+  $wait = 60 - (time() - $last);
+  if ($wait > 0) {
+    echo json_encode(['skipped' => true, 'next_in' => $wait]);
+    exit;
+  }
 }
 
 // ── Single API call: all 104 WC 2026 fixtures ────────────────────────────────
@@ -104,5 +112,9 @@ foreach ($matches as $m) {
   $upsert->execute([$m['id'], $map[$fd_home], $map[$fd_away], $hg, $ag, $status]);
   $stats['fixtures_upserted']++;
 }
+
+// Stamp last-sync time so the rate-limit works for the next caller.
+$pdo->exec("INSERT INTO wc_meta (key, value) VALUES ('last_sync', '" . time() . "')
+            ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value");
 
 echo json_encode($stats);
