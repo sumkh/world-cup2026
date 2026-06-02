@@ -142,7 +142,7 @@ $claimed = count(array_filter($rows, fn($r) => $r['claimed']));
           btn.disabled = true;
           st.textContent = 'Syncing…';
           try {
-            const r = await fetch('cron.php?key=<?= htmlspecialchars(ADMIN_PASSWORD, ENT_QUOTES) ?>', { method: 'GET' });
+            const r = await fetch('cron.php', { method: 'GET' });
             const j = await r.json();
             if (j.error) { st.textContent = '✗ ' + j.error; }
             else { st.textContent = `✓ ${j.fixtures_upserted} fixtures, ${j.teams_mapped} teams mapped`; }

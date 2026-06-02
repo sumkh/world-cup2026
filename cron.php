@@ -9,19 +9,24 @@
    Triggered by GitHub Actions (.github/workflows/scores-sync.yml)
    or manually via the "Sync Scores" button in admin.php.
 
-   Protection: pass ADMIN_PASSWORD as ?key= query param or
-   the X-Cron-Key HTTP header.
+   Auth (two ways):
+     - Admin web session: already logged into admin.php — no key needed.
+     - External callers (GitHub Actions, curl): pass ADMIN_PASSWORD as
+       ?key= query param or the X-Cron-Key HTTP header.
    ============================================================ */
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/db.php';
 
+session_start();
 header('Content-Type: application/json; charset=utf-8');
 
 // ── Auth ─────────────────────────────────────────────────────────────────────
-$provided = $_SERVER['HTTP_X_CRON_KEY'] ?? ($_GET['key'] ?? '');
-if (ADMIN_PASSWORD === '' || !hash_equals(ADMIN_PASSWORD, (string)$provided)) {
+$session_ok = !empty($_SESSION['admin']);
+$provided   = $_SERVER['HTTP_X_CRON_KEY'] ?? ($_GET['key'] ?? '');
+$key_ok     = ADMIN_PASSWORD !== '' && hash_equals(ADMIN_PASSWORD, (string)$provided);
+if (!$session_ok && !$key_ok) {
   http_response_code(403);
-  echo json_encode(['error' => 'Forbidden — pass ?key=ADMIN_PASSWORD']);
+  echo json_encode(['error' => 'Forbidden — log into admin.php or pass ?key=ADMIN_PASSWORD']);
   exit;
 }
 
