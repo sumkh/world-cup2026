@@ -56,35 +56,33 @@ Each participant picks **3 teams**. Across **every match** those teams play:
 A participant's total is the sum across their three teams. The leaderboard
 recomputes from the full fixture list each load, so it is always consistent.
 
-## Setup (Local / Shared Hosting)
+## Setup (Local Dev)
 
-1. Create a MySQL database on your host.
+1. Create a local PostgreSQL database.
 2. Copy `config.sample.php` → `config.local.php` and fill in the DB details, API-SPORTS key, and admin password.
-3. Ensure the host runs **PHP 8.2+**.
-4. Upload all files to the web root. The database table and 32 UserID slots are created automatically on first use.
+3. Ensure the host runs **PHP 8.2+** with the `pdo_pgsql` extension.
+4. The table schema and 32 UserID slots are created automatically on first request.
 5. In the **API-SPORTS dashboard**, add your site's domain to the allowed domains for the API key.
 6. Open `admin.php`, log in, and distribute UserIDs `01`–`32` to participants. They register at `register.php`.
 
 ## Deployment
 
-### Render (Recommended)
+### Render
 
-The repo includes a `Dockerfile` (PHP 8.2 + Apache) and `render.yaml`.
+The repo includes a `Dockerfile` (PHP 8.2 + Apache) and `render.yaml` that provisions a **free Render PostgreSQL** database automatically.
 
-1. Push this repo to GitHub (private repo recommended).
-2. In [Render](https://render.com), create a new **Web Service** connected to the GitHub repo. Render will detect `render.yaml` automatically.
-3. Set the following **Environment Variables** in the Render dashboard:
+1. Push this repo to a GitHub repo (private recommended).
+2. In [Render](https://render.com), connect the repo — Render detects `render.yaml` and creates both the web service and the database.
+3. Set **only these two** environment variables in the Render dashboard (Environment group or service Environment):
 
-   | Variable | Value |
-   |----------|-------|
-   | `DB_HOST` | Your MySQL host (e.g. from PlanetScale, Railway, or any MySQL provider) |
-   | `DB_NAME` | Database name |
-   | `DB_USER` | Database user |
-   | `DB_PASS` | Database password |
-   | `ADMIN_PASSWORD` | A strong password for `admin.php` |
-   | `API_KEY` | Your API-SPORTS key (already set as a default in `config.php`) |
+   | Variable | What to enter |
+   |---|---|
+   | `ADMIN_PASSWORD` | Any strong password — used to log into `admin.php` |
+   | `API_KEY` | `ec434bd351885afe9375a8ae3fd43003` (already the default in code; override here if you rotate the key) |
 
-4. Render does not provide MySQL natively. Use an external MySQL service such as [PlanetScale](https://planetscale.com) (free tier) or [Railway](https://railway.app).
+   `DATABASE_URL` is **wired automatically** by Render from the linked PostgreSQL database — you do not fill it in manually.
+
+4. Deploy. On first request `db.php` creates the schema and seeds the 32 UserID slots.
 
 ## Notes
 

@@ -1,19 +1,24 @@
 <?php
 /* ============================================================
    config.php — committed to the repo.
-   Production (Render): values come from environment variables.
+   Production (Render): DATABASE_URL is injected automatically
+   by Render when a PostgreSQL database is linked to the service.
+   Individual DB_* constants are only needed for local dev.
    Local dev: create config.local.php (git-ignored) with your
-   own define() calls; those will take precedence over env vars.
+   own define() calls; those take precedence.
    ============================================================ */
 
 if (file_exists(__DIR__ . '/config.local.php')) {
     require_once __DIR__ . '/config.local.php';
 }
 
-defined('DB_HOST')        || define('DB_HOST',        getenv('DB_HOST')        ?: '');
-defined('DB_NAME')        || define('DB_NAME',        getenv('DB_NAME')        ?: '');
-defined('DB_USER')        || define('DB_USER',        getenv('DB_USER')        ?: '');
-defined('DB_PASS')        || define('DB_PASS',        getenv('DB_PASS')        ?: '');
+// DB connection is handled via DATABASE_URL in db.php.
+// These fallback constants are only used when DATABASE_URL is absent (local dev).
+defined('DB_HOST') || define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+defined('DB_NAME') || define('DB_NAME', getenv('DB_NAME') ?: '');
+defined('DB_USER') || define('DB_USER', getenv('DB_USER') ?: '');
+defined('DB_PASS') || define('DB_PASS', getenv('DB_PASS') ?: '');
+
 defined('API_KEY')        || define('API_KEY',        getenv('API_KEY')        ?: 'ec434bd351885afe9375a8ae3fd43003');
 defined('ADMIN_PASSWORD') || define('ADMIN_PASSWORD', getenv('ADMIN_PASSWORD') ?: '');
 

@@ -19,7 +19,7 @@ $rows = [];
 if ($is_admin) {
   $rows = db()->query(
     'SELECT user_id, claimed, nickname, team1, team2, team3, created_at
-     FROM participants ORDER BY CAST(user_id AS UNSIGNED) ASC'
+     FROM participants ORDER BY CAST(user_id AS INTEGER) ASC'
   )->fetchAll();
 }
 $total   = count($rows);

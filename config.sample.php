@@ -4,20 +4,23 @@
    Copy this file to  config.local.php  and fill in real values.
    config.local.php is git-ignored so your secrets stay local.
 
-   On Render (production), set environment variables in the
-   Render dashboard instead — config.php reads them automatically.
+   On Render (production) DO NOT touch this file — Render injects
+   DATABASE_URL automatically and you set the other vars in the
+   Render dashboard under Environment.
    ============================================================ */
 
-/* ---- MySQL (from your host's "MySQL Databases" panel) ---- */
-define('DB_HOST', 'sqlXXX.example-host.com');
-define('DB_NAME', 'your_database_name');
+/* ---- PostgreSQL (local dev only) ---- */
+/* If you set DATABASE_URL as an env var, db.php will use that
+   instead and the constants below are ignored. */
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'worldcup2026');
 define('DB_USER', 'your_db_user');
 define('DB_PASS', 'your_db_password');
 
 /* ---- API-SPORTS key (visible client-side by design; restrict to your domain).
         Docs: https://api-sports.io/documentation/widgets/v3#section/Before-You-Begin/Predefined-themes
         Blog: https://www.api-football.com/news/post/fifa-world-cup-2026-using-api-sports-widgets ---- */
-define('API_KEY', 'YOUR_API_SPORTS_KEY');
+define('API_KEY', 'ec434bd351885afe9375a8ae3fd43003');
 
 /* ---- Admin password for admin.php ---- */
 define('ADMIN_PASSWORD', 'choose-a-strong-password');
