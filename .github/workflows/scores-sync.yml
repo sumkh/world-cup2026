@@ -1,0 +1,17 @@
+name: Sync World Cup Scores
+
+on:
+  schedule:
+    # Every 15 minutes during the tournament (Jun 11 – Jul 19, 2026).
+    # GitHub Actions cron runs in UTC.  Reduce frequency after group stage.
+    - cron: '*/15 * * * *'
+  workflow_dispatch:   # also allows a manual "Run workflow" button on GitHub
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call cron.php
+        run: |
+          curl --fail --silent --show-error \
+            "https://world-cup2026.onrender.com/cron.php?key=${{ secrets.ADMIN_PASSWORD }}"

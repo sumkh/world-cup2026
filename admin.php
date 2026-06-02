@@ -69,11 +69,13 @@ $claimed = count(array_filter($rows, fn($r) => $r['claimed']));
       </div>
     <?php else: ?>
 
-      <!-- Summary pills -->
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px">
+      <!-- Summary pills + manual sync button -->
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:24px">
         <span class="pill live">● <?= $claimed ?> registered</span>
         <span class="pill"><?= $total - $claimed ?> open slots</span>
         <span class="pill"><?= $total ?> total</span>
+        <button class="btn ghost" id="syncBtn" style="width:auto;margin-left:auto">↻ Sync Scores</button>
+        <span class="note" id="syncStatus"></span>
       </div>
 
       <!-- Participants table -->
@@ -133,6 +135,22 @@ $claimed = count(array_filter($rows, fn($r) => $r['claimed']));
             document.getElementById('teamStatus').textContent = 'Could not load team names';
           }
         })();
+
+        document.getElementById('syncBtn').onclick = async () => {
+          const btn = document.getElementById('syncBtn');
+          const st  = document.getElementById('syncStatus');
+          btn.disabled = true;
+          st.textContent = 'Syncing…';
+          try {
+            const r = await fetch('cron.php?key=<?= htmlspecialchars(ADMIN_PASSWORD, ENT_QUOTES) ?>', { method: 'GET' });
+            const j = await r.json();
+            if (j.error) { st.textContent = '✗ ' + j.error; }
+            else { st.textContent = `✓ ${j.fixtures_upserted} fixtures, ${j.teams_mapped} teams mapped`; }
+          } catch (e) {
+            st.textContent = '✗ ' + e.message;
+          }
+          btn.disabled = false;
+        };
       </script>
 
     <?php endif; ?>

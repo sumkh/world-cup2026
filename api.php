@@ -125,6 +125,44 @@ switch ($action) {
     out(['locked' => $reveal, 'participants' => $list]);
   }
 
+  case 'teams': {
+    // Return hardcoded+cron-updated team list for dropdowns.
+    $st = $pdo->query('SELECT id, name, logo FROM wc_teams ORDER BY id ASC');
+    $teams = [];
+    foreach ($st as $r) {
+      $teams[] = ['id' => (int)$r['id'], 'name' => $r['name'], 'logo' => $r['logo']];
+    }
+    out(['teams' => $teams]);
+  }
+
+  case 'fixtures': {
+    // Return cached fixtures in the same shape computeTeamPoints() expects,
+    // but using our internal wc_teams IDs so picks match correctly.
+    $st = $pdo->query('
+      SELECT f.id, f.home_goals, f.away_goals, f.status,
+             ht.id AS h_id, ht.name AS h_name, ht.logo AS h_logo,
+             awt.id AS a_id, awt.name AS a_name, awt.logo AS a_logo
+      FROM wc_fixtures f
+      JOIN wc_teams ht  ON ht.id  = f.home_id
+      JOIN wc_teams awt ON awt.id = f.away_id
+    ');
+    $fixtures = [];
+    foreach ($st as $r) {
+      $hg = $r['home_goals'] !== null ? (int)$r['home_goals'] : null;
+      $ag = $r['away_goals'] !== null ? (int)$r['away_goals'] : null;
+      $fixtures[] = [
+        'teams'   => [
+          'home' => ['id' => (int)$r['h_id'], 'name' => $r['h_name'], 'logo' => $r['h_logo']],
+          'away' => ['id' => (int)$r['a_id'], 'name' => $r['a_name'], 'logo' => $r['a_logo']],
+        ],
+        'fixture' => ['status' => ['short' => $r['status']]],
+        'score'   => ['fulltime' => ['home' => $hg, 'away' => $ag]],
+        'goals'   => ['home' => $hg, 'away' => $ag],
+      ];
+    }
+    out(['fixtures' => $fixtures]);
+  }
+
   default:
     out(['error' => 'Unknown action.'], 400);
 }
