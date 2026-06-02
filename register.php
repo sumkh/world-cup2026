@@ -121,8 +121,7 @@
         TEAMS = await loadTeams();
         document.querySelectorAll('select.team').forEach(s => fillSelect(s));
       } catch (e) {
-        flash($('r_msg'), 'Could not load the team list from API-SPORTS: ' + e.message +
-          ' — check that your domain is allowed for this key.', false);
+        flash($('r_msg'), 'Could not load the team list: ' + e.message, false);
       }
       const me = await api('me');
       if (me.auth) enterEdit(me);
