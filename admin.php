@@ -69,13 +69,16 @@ $claimed = count(array_filter($rows, fn($r) => $r['claimed']));
       </div>
     <?php else: ?>
 
-      <!-- Summary pills + manual sync button -->
+      <!-- Summary pills + action buttons -->
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:24px">
         <span class="pill live">● <?= $claimed ?> registered</span>
         <span class="pill"><?= $total - $claimed ?> open slots</span>
         <span class="pill"><?= $total ?> total</span>
-        <button class="btn ghost" id="syncBtn" style="width:auto;margin-left:auto">↻ Sync Scores</button>
-        <span class="note" id="syncStatus"></span>
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+          <button class="btn ghost" id="syncBtn" style="width:auto">↻ Sync Scores</button>
+          <a class="btn ghost" href="export.php" style="width:auto;text-decoration:none">⬇ Export CSV</a>
+        </div>
+        <span class="note" id="syncStatus" style="width:100%"></span>
       </div>
 
       <!-- Participants table -->
