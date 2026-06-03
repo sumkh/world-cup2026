@@ -89,10 +89,20 @@ try { $VIZ = viz_settings(); } catch (Throwable $e) { /* DB down — show leader
       return { eliminated, byTeam, championId, runnerId, thirdId };
     }
 
+    /* Engaging, participant-focused descriptions — shown whether the visual is
+       live or still waiting for kickoff. */
+    const VIZ_DESC = {
+      heatmap: 'See where the crowd went. Teams at the top are the popular, safe bets — if you backed someone far down this list, you\'re the contrarian who\'ll rocket up the table if they deliver.',
+      alive:   'Your lifelines at a glance — green teams are still playing and can keep banking points for you; struck-through teams are knocked out and frozen. The more green you see, the more upside you have left. (Tracks knockout exits; group-stage eliminations aren\'t shown.)',
+      bracket: 'Follow each picked team\'s journey, round by round. Every green W banked you 3 points, a gold D 1 point, and a red L nothing — a fast way to spot which of your teams is actually carrying your score.',
+      whatif:  'Play out the ending. Crown any team champion and watch the table rebound with the +20 bonus — see exactly who you need to lift the trophy for you to climb (or hold on to) the top spots.',
+      digest:  'The story so far in one glance — who\'s leading, by how much, how many teams are still standing, and the latest results. Hit copy to drop the update straight into your group chat and stir up some banter.',
+    };
+
     const revealed = () => LAST.people && LAST.people.locked;
     const vizCard = (title, inner, sub) =>
       `<div class="card viz-card"><h2 class="viz-h">${esc(title)}</h2>${sub ? `<p class="note">${sub}</p>` : ''}${inner}</div>`;
-    const notYet = title => vizCard(title, '<div class="empty">Available once picks lock at kickoff.</div>');
+    const notYet = (title, sub) => vizCard(title, '<div class="empty">Available once picks lock at kickoff.</div>', sub);
 
     /* ── Per-player detail (expandable leaderboard rows) ── */
     function detailHtml(r) {
@@ -118,7 +128,7 @@ try { $VIZ = viz_settings(); } catch (Throwable $e) { /* DB down — show leader
 
     /* ── Visualisation cards ── */
     function vizHeatmap() {
-      if (!revealed()) return notYet('Pick Popularity');
+      if (!revealed()) return notYet('Pick Popularity', VIZ_DESC.heatmap);
       const tally = {};
       (LAST.people.participants || []).forEach(p => (p.picks || []).forEach(id => tally[id] = (tally[id] || 0) + 1));
       const ids = Object.keys(tally).sort((a, b) => tally[b] - tally[a]);
@@ -130,11 +140,11 @@ try { $VIZ = viz_settings(); } catch (Throwable $e) { /* DB down — show leader
         return `<div class="bar-row"><span class="bar-lbl">${logo}${esc(t.name || ('#'+id))}</span>`
              + `<span class="bar-track"><span class="bar-fill" style="width:${pct}%"></span></span><span class="bar-num">${n}</span></div>`;
       }).join('');
-      return vizCard('Pick Popularity', inner, 'See where the crowd went. Teams at the top are the popular, safe bets — if you backed someone far down this list, you\'re the contrarian who\'ll rocket up the table if they deliver.');
+      return vizCard('Pick Popularity', inner, VIZ_DESC.heatmap);
     }
 
     function vizAlive() {
-      if (!revealed()) return notYet('Teams Still Alive');
+      if (!revealed()) return notYet('Teams Still Alive', VIZ_DESC.alive);
       const el = LAST.derived.eliminated;
       const inner = (LAST.people.participants || []).map(p => {
         const chips = (p.picks || []).map(id => {
@@ -144,7 +154,7 @@ try { $VIZ = viz_settings(); } catch (Throwable $e) { /* DB down — show leader
         const aliveN = (p.picks || []).filter(id => !el.has(id)).length;
         return `<div class="alive-row"><span class="who">${esc(p.nickname)}</span><span class="chips">${chips}</span><span class="bar-num">${aliveN}/3</span></div>`;
       }).join('');
-      return vizCard('Teams Still Alive', inner, 'Your lifelines at a glance — green teams are still playing and can keep banking points for you; struck-through teams are knocked out and frozen. The more green you see, the more upside you have left. (Tracks knockout exits; group-stage eliminations aren\'t shown.)');
+      return vizCard('Teams Still Alive', inner, VIZ_DESC.alive);
     }
 
     function matchChip(f, id) {
@@ -159,7 +169,7 @@ try { $VIZ = viz_settings(); } catch (Throwable $e) { /* DB down — show leader
     }
 
     function vizBracket() {
-      if (!revealed()) return notYet('Team Paths');
+      if (!revealed()) return notYet('Team Paths', VIZ_DESC.bracket);
       const picked = new Set();
       (LAST.people.participants || []).forEach(p => (p.picks || []).forEach(id => picked.add(id)));
       if (!picked.size) return vizCard('Team Paths', '<div class="empty">No picks yet.</div>');
@@ -172,11 +182,11 @@ try { $VIZ = viz_settings(); } catch (Throwable $e) { /* DB down — show leader
         return `<div class="path-row"><span class="path-team">${logo}${esc(t.name || ('#'+id))}</span>`
              + `<span class="path-chips">${fxs.map(f => matchChip(f, id)).join('')}</span></div>`;
       }).join('');
-      return vizCard('Team Paths', `<div class="table-scroll">${inner}</div>`, "Follow each picked team's journey, round by round. Every green W banked you 3 points, a gold D 1 point, and a red L nothing — a fast way to spot which of your teams is actually carrying your score.");
+      return vizCard('Team Paths', `<div class="table-scroll">${inner}</div>`, VIZ_DESC.bracket);
     }
 
     function vizWhatif() {
-      if (!revealed()) return notYet('Projected Finish');
+      if (!revealed()) return notYet('Projected Finish', VIZ_DESC.whatif);
       const el = LAST.derived.eliminated;
       const ids = Object.keys(LAST.names).filter(id => !el.has(+id))
         .sort((a, b) => (LAST.names[a].name || '').localeCompare(LAST.names[b].name || ''));
@@ -185,7 +195,7 @@ try { $VIZ = viz_settings(); } catch (Throwable $e) { /* DB down — show leader
       return vizCard('Projected Finish',
         `<label style="margin-top:0">If this team wins the cup…</label>`
         + `<select id="whatifSel" style="max-width:280px">${opts}</select><div id="whatifOut" style="margin-top:14px"></div>`,
-        'Play out the ending. Crown any team champion and watch the table rebound with the +20 bonus — see exactly who you need to lift the trophy for you to climb (or hold on to) the top spots.');
+        VIZ_DESC.whatif);
     }
     function wireWhatif() {
       const sel = $('whatifSel'); if (!sel) return;
@@ -224,7 +234,7 @@ try { $VIZ = viz_settings(); } catch (Throwable $e) { /* DB down — show leader
       return vizCard('Match-day Digest',
         `<pre class="digest" id="digestText">${esc(txt)}</pre>`
         + `<button class="btn ghost" id="digestCopy" style="width:auto;margin-top:10px">Copy for group chat</button>`,
-        'The story so far in one glance — who\'s leading, by how much, how many teams are still standing, and the latest results. Hit copy to drop the update straight into your group chat and stir up some banter.');
+        VIZ_DESC.digest);
     }
     function wireDigest() {
       const b = $('digestCopy'); if (!b) return;
