@@ -150,6 +150,54 @@ existing `api.php` fixtures + participants feeds — no extra storage required.
 > periodic snapshots of each player's total, unlike the above which derive
 > everything from the current state.
 
+## Admin Guide
+
+Everything the organiser does happens on `admin.php` (log in with `ADMIN_PASSWORD`).
+
+1. **Distribute Access Codes.** Give each participant one code from `01`–`32`.
+   The codes are deliberately *not* shown in the public UI — the register page
+   just asks for an "Access Code", so outsiders can't guess the format.
+2. **Watch registrations.** The participants table shows each slot's status
+   (open / registered), nickname, and the three team picks.
+3. **Sync scores.** Click **↻ Sync Scores** any time to pull the latest results
+   (one football-data.org call). Participants can also sync from the leaderboard;
+   it's rate-limited to one external call per 60 seconds.
+4. **Toggle visualisations.** In **Leaderboard Visualisations**, tick the visuals
+   you want and **Save**. All default OFF — enable only what you want so players
+   aren't overwhelmed. Changes appear on the public leaderboard on its next load.
+5. **Export data.** Click **⬇ Export CSV** for a timestamped file of every slot,
+   its picks, and current totals (including bonuses).
+6. **Reset for testing.** The red **Danger Zone** clears all registrations *and*
+   the cached scores. Guardrails: you must be logged in, type `RESET` to enable
+   the button, and confirm a final dialog. Use it only before the real launch.
+
+Automated syncing (optional) runs every 15 minutes via
+`.github/workflows/scores-sync.yml` once you add an `ADMIN_PASSWORD` GitHub
+Actions secret — see [Deployment](#automated-score-sync-optional).
+
+## Behaviour Notes
+
+- **Visuals activate at kickoff.** Most visualisations need players' picks, which
+  stay hidden until `PICK_LOCK` (first kickoff). Before then those cards show
+  *"Available once picks lock at kickoff."* The match-day digest works earlier.
+- **Eliminations = knockout losses only.** "Teams still alive" and the per-player
+  *out / alive* labels mark a team eliminated when it **loses a knockout match**
+  (Round of 32 onward). Group-stage non-qualification is *not* detected, because
+  the app doesn't store group tables — a team simply stops earning once knocked
+  out. This is called out in the card's subtitle.
+- **Bonuses appear only when earned.** Champion +20 / Runner-up +10 / Third +5
+  are added the moment the Final and third-place play-off finish, and use the
+  true result (incl. extra time / penalties). Match points always use the 90′
+  score, so a penalty shootout is a draw (1 point each) for the match itself.
+- **No extra storage or API cost.** Every visualisation is derived in the browser
+  from the existing `api.php` fixtures + participants feeds. Syncing writes only
+  to the local DB cache; page reads never hit an external API.
+- **Schema auto-migrates.** New columns (e.g. `wc_fixtures.utc_date`) are added
+  via `ALTER TABLE ... IF NOT EXISTS` on the next page load; values populate on
+  the next **Sync Scores**.
+- **Free-tier spin-down.** On Render's free plan the service sleeps after ~15 min
+  idle; the first request afterwards takes ~30–60s to wake.
+
 ## Setup (Local Dev)
 
 1. Create a local PostgreSQL database.
@@ -158,6 +206,22 @@ existing `api.php` fixtures + participants feeds — no extra storage required.
 4. The schema, 32 slots, and 48 teams are created automatically on first request.
 5. In the **API-SPORTS dashboard**, add your site's domain to the allowed domains for the widgets key.
 6. Open `admin.php`, log in, and distribute Access Codes `01`–`32` to participants. They register at `register.php`.
+
+### Validating changes without a PHP install
+
+No local PHP needed — lint via the Docker image and check the JS with Node:
+
+```bash
+# PHP syntax check (uses the same PHP version as production)
+docker run --rm -v "$PWD":/app php:8.2-cli bash -c 'for f in /app/*.php; do php -l "$f"; done'
+
+# JS syntax check
+node --check common.js
+```
+
+On Windows these run cleanly inside **WSL** (the repo is reachable from WSL only
+if it lives on a drive WSL mounts, e.g. `C:`; Google-Drive-mounted paths are not
+visible to WSL — copy the files to a local path first).
 
 ## Deployment
 
