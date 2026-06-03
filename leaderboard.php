@@ -1,4 +1,8 @@
-<?php require_once __DIR__ . '/config.php'; ?>
+<?php
+require_once __DIR__ . '/db.php';
+$VIZ = ['heatmap' => false, 'alive' => false, 'bracket' => false, 'detail' => false, 'whatif' => false, 'digest' => false];
+try { $VIZ = viz_settings(); } catch (Throwable $e) { /* DB down — show leaderboard only */ }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,6 +14,7 @@
     window.APISPORTS_KEY = <?= json_encode(API_KEY) ?>;
     window.WC_LEAGUE     = <?= json_encode(LEAGUE_ID) ?>;
     window.WC_SEASON     = <?= json_encode(SEASON) ?>;
+    window.VIZ           = <?= json_encode($VIZ) ?>;
   </script>
 </head>
 <body>
@@ -41,6 +46,9 @@
         <div class="table-scroll"><div id="board"><div class="empty"><span class="spin"></span></div></div></div>
       </div>
       <p class="note" id="lockline"></p>
+
+      <!-- Admin-toggled visualisations render here -->
+      <div id="viz"></div>
     </div>
   </main>
 
@@ -54,6 +62,189 @@
     const $ = id => document.getElementById(id);
     const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
+    /* Shared state from the last render, used by the visualisations. */
+    let LAST = {};
+    const V = window.VIZ || {};
+
+    const STAGE_RANK  = {GROUP_STAGE:0,LAST_32:1,ROUND_OF_32:1,LAST_16:2,QUARTER_FINALS:3,QUARTER_FINAL:3,SEMI_FINALS:4,SEMI_FINAL:4,THIRD_PLACE:5,FINAL:6};
+    const STAGE_LABEL = {GROUP_STAGE:'Grp',LAST_32:'R32',ROUND_OF_32:'R32',LAST_16:'R16',QUARTER_FINALS:'QF',QUARTER_FINAL:'QF',SEMI_FINALS:'SF',SEMI_FINAL:'SF',THIRD_PLACE:'3rd',FINAL:'Fin'};
+    const stageRank = f => (STAGE_RANK[f.fixture.stage] ?? 9);
+
+    /* Derive eliminations + per-team fixtures + final positions from the feed. */
+    function deriveTournament(fixtures) {
+      const eliminated = new Set(), byTeam = {};
+      let championId = null, runnerId = null, thirdId = null;
+      for (const f of fixtures) {
+        const h = f.teams.home.id, a = f.teams.away.id;
+        (byTeam[h] = byTeam[h] || []).push(f);
+        (byTeam[a] = byTeam[a] || []).push(f);
+        const fin = FINISHED.has(f.fixture.status.short);
+        const stage = f.fixture.stage, w = f.fixture.winner;
+        if (fin && stage && stage !== 'GROUP_STAGE' && (w === 'H' || w === 'A')) {
+          eliminated.add(w === 'H' ? a : h);                 // knockout loser is out
+          if (stage === 'FINAL')       { championId = w === 'H' ? h : a; runnerId = w === 'H' ? a : h; }
+          if (stage === 'THIRD_PLACE') { thirdId    = w === 'H' ? h : a; }
+        }
+      }
+      return { eliminated, byTeam, championId, runnerId, thirdId };
+    }
+
+    const revealed = () => LAST.people && LAST.people.locked;
+    const vizCard = (title, inner, sub) =>
+      `<div class="card viz-card"><h2 class="viz-h">${esc(title)}</h2>${sub ? `<p class="note">${sub}</p>` : ''}${inner}</div>`;
+    const notYet = title => vizCard(title, '<div class="empty">Available once picks lock at kickoff.</div>');
+
+    /* ── Per-player detail (expandable leaderboard rows) ── */
+    function detailHtml(r) {
+      const { points, bonus, names, derived } = LAST;
+      const lines = r.picks.map(id => {
+        const t = names[id] || {}, pts = points[id] || 0, bon = bonus[id] || 0;
+        let note;
+        if (bon)                          note = `<span style="color:var(--gold)">★ +${bon} bonus</span>`;
+        else if (derived.eliminated.has(id)) note = '<span style="color:var(--coral)">out</span>';
+        else                              note = '<span style="color:var(--teal)">alive · up to +20 if champion</span>';
+        return `<div class="detail-line"><span>${esc(t.name || ('#'+id))}</span><span>${pts} pts · ${note}</span></div>`;
+      }).join('');
+      return `<div class="detail-box">${lines}</div>`;
+    }
+    function wireDetail() {
+      document.querySelectorAll('tr.viz-click').forEach(tr => {
+        tr.onclick = () => {
+          const d = document.querySelector(`tr.detail-row[data-detail="${tr.dataset.idx}"]`);
+          if (d) d.style.display = d.style.display === 'none' ? 'table-row' : 'none';
+        };
+      });
+    }
+
+    /* ── Visualisation cards ── */
+    function vizHeatmap() {
+      if (!revealed()) return notYet('Pick Popularity');
+      const tally = {};
+      (LAST.people.participants || []).forEach(p => (p.picks || []).forEach(id => tally[id] = (tally[id] || 0) + 1));
+      const ids = Object.keys(tally).sort((a, b) => tally[b] - tally[a]);
+      if (!ids.length) return vizCard('Pick Popularity', '<div class="empty">No picks yet.</div>');
+      const max = tally[ids[0]];
+      const inner = ids.map(id => {
+        const t = LAST.names[id] || {}, n = tally[id], pct = Math.round(n / max * 100);
+        const logo = t.logo ? `<img src="${esc(t.logo)}" alt="">` : '';
+        return `<div class="bar-row"><span class="bar-lbl">${logo}${esc(t.name || ('#'+id))}</span>`
+             + `<span class="bar-track"><span class="bar-fill" style="width:${pct}%"></span></span><span class="bar-num">${n}</span></div>`;
+      }).join('');
+      return vizCard('Pick Popularity', inner, 'How many players backed each team.');
+    }
+
+    function vizAlive() {
+      if (!revealed()) return notYet('Teams Still Alive');
+      const el = LAST.derived.eliminated;
+      const inner = (LAST.people.participants || []).map(p => {
+        const chips = (p.picks || []).map(id => {
+          const t = LAST.names[id] || {}, out = el.has(id);
+          return `<span class="chip ${out ? 'out' : 'alive'}">${esc(t.name || ('#'+id))}</span>`;
+        }).join('');
+        const aliveN = (p.picks || []).filter(id => !el.has(id)).length;
+        return `<div class="alive-row"><span class="who">${esc(p.nickname)}</span><span class="chips">${chips}</span><span class="bar-num">${aliveN}/3</span></div>`;
+      }).join('');
+      return vizCard('Teams Still Alive', inner, 'Green = still in. Knockout eliminations only (group exits not shown).');
+    }
+
+    function matchChip(f, id) {
+      const isHome = f.teams.home.id === id, opp = isHome ? f.teams.away : f.teams.home;
+      const lbl = STAGE_LABEL[f.fixture.stage] || '';
+      if (!FINISHED.has(f.fixture.status.short)) return `<span class="mchip pend" title="vs ${esc(opp.name)}">${lbl}·–</span>`;
+      const gh = f.score.fulltime.home, ga = f.score.fulltime.away;
+      const my = isHome ? gh : ga, ot = isHome ? ga : gh;
+      let res = 'D', cls = 'd';
+      if (my > ot) { res = 'W'; cls = 'w'; } else if (my < ot) { res = 'L'; cls = 'l'; }
+      return `<span class="mchip ${cls}" title="vs ${esc(opp.name)} ${gh}-${ga}">${lbl}·${res}</span>`;
+    }
+
+    function vizBracket() {
+      if (!revealed()) return notYet('Team Paths');
+      const picked = new Set();
+      (LAST.people.participants || []).forEach(p => (p.picks || []).forEach(id => picked.add(id)));
+      if (!picked.size) return vizCard('Team Paths', '<div class="empty">No picks yet.</div>');
+      const ids = [...picked].sort((a, b) => (LAST.points[b] || 0) - (LAST.points[a] || 0));
+      const inner = ids.map(id => {
+        const t = LAST.names[id] || {};
+        const fxs = (LAST.derived.byTeam[id] || []).slice().sort((x, y) =>
+          stageRank(x) - stageRank(y) || (new Date(x.fixture.date || 0) - new Date(y.fixture.date || 0)));
+        const logo = t.logo ? `<img src="${esc(t.logo)}" alt="">` : '';
+        return `<div class="path-row"><span class="path-team">${logo}${esc(t.name || ('#'+id))}</span>`
+             + `<span class="path-chips">${fxs.map(f => matchChip(f, id)).join('')}</span></div>`;
+      }).join('');
+      return vizCard('Team Paths', `<div class="table-scroll">${inner}</div>`, "Each picked team's run through the tournament.");
+    }
+
+    function vizWhatif() {
+      if (!revealed()) return notYet('Projected Finish');
+      const el = LAST.derived.eliminated;
+      const ids = Object.keys(LAST.names).filter(id => !el.has(+id))
+        .sort((a, b) => (LAST.names[a].name || '').localeCompare(LAST.names[b].name || ''));
+      if (!ids.length) return vizCard('Projected Finish', '<div class="empty">No teams left to project.</div>');
+      const opts = ids.map(id => `<option value="${id}">${esc(LAST.names[id].name)}</option>`).join('');
+      return vizCard('Projected Finish',
+        `<label style="margin-top:0">If this team wins the cup…</label>`
+        + `<select id="whatifSel" style="max-width:280px">${opts}</select><div id="whatifOut" style="margin-top:14px"></div>`,
+        'How the standings would reorder with the +20 champion bonus applied.');
+    }
+    function wireWhatif() {
+      const sel = $('whatifSel'); if (!sel) return;
+      const run = () => {
+        const champ = parseInt(sel.value, 10);
+        const rows = (LAST.people.participants || []).filter(p => p.picks).map(p => {
+          let total = p.picks.reduce((s, id) => s + (LAST.points[id] || 0), 0);
+          const boosted = p.picks.includes(champ);
+          if (boosted) total += Math.max(0, 20 - (LAST.bonus[champ] || 0)); // don't double-count if already champion
+          return { nick: p.nickname, total, boosted };
+        });
+        rows.sort((a, b) => b.total - a.total || a.nick.localeCompare(b.nick));
+        $('whatifOut').innerHTML = rows.map((r, i) =>
+          `<div class="proj-row${r.boosted ? ' boosted' : ''}"><span>${i + 1}. ${esc(r.nick)}</span><span>${r.total}${r.boosted ? ' ▲' : ''}</span></div>`).join('');
+      };
+      sel.onchange = run; run();
+    }
+
+    function vizDigest() {
+      const finished = LAST.fixtures.filter(f => FINISHED.has(f.fixture.status.short));
+      let leader = null, gap = null;
+      if (revealed()) {
+        const rows = (LAST.people.participants || []).filter(p => p.picks)
+          .map(p => ({ nick: p.nickname, total: p.picks.reduce((s, id) => s + (LAST.points[id] || 0), 0) }))
+          .sort((a, b) => b.total - a.total);
+        if (rows.length) { leader = rows[0]; if (rows[1]) gap = rows[0].total - rows[1].total; }
+      }
+      const aliveCount = Object.keys(LAST.names).filter(id => !LAST.derived.eliminated.has(+id)).length;
+      const recent = finished.slice().sort((a, b) => new Date(b.fixture.date || 0) - new Date(a.fixture.date || 0)).slice(0, 5)
+        .map(f => `${f.teams.home.name} ${f.score.fulltime.home}–${f.score.fulltime.away} ${f.teams.away.name}`);
+      let txt = '🏆 World Cup 2026 pool update\n';
+      txt += `Matches scored: ${finished.length} / 104\n`;
+      if (leader) txt += `Leader: ${leader.nick} (${leader.total} pts${gap != null ? `, +${gap} ahead` : ''})\n`;
+      txt += `Teams still alive: ${aliveCount}\n`;
+      if (recent.length) txt += 'Recent results:\n' + recent.map(r => '• ' + r).join('\n');
+      return vizCard('Match-day Digest',
+        `<pre class="digest" id="digestText">${esc(txt)}</pre>`
+        + `<button class="btn ghost" id="digestCopy" style="width:auto;margin-top:10px">Copy for group chat</button>`,
+        'A shareable snapshot of the current standings.');
+    }
+    function wireDigest() {
+      const b = $('digestCopy'); if (!b) return;
+      b.onclick = async () => {
+        try { await navigator.clipboard.writeText($('digestText').textContent); b.textContent = 'Copied!'; }
+        catch (e) { b.textContent = 'Copy failed'; }
+        setTimeout(() => b.textContent = 'Copy for group chat', 1500);
+      };
+    }
+
+    function renderViz() {
+      const host = $('viz'); if (!host || !LAST.fixtures) return;
+      host.innerHTML = '';
+      if (V.heatmap) host.insertAdjacentHTML('beforeend', vizHeatmap());
+      if (V.alive)   host.insertAdjacentHTML('beforeend', vizAlive());
+      if (V.bracket) host.insertAdjacentHTML('beforeend', vizBracket());
+      if (V.whatif)  { host.insertAdjacentHTML('beforeend', vizWhatif()); wireWhatif(); }
+      if (V.digest)  { host.insertAdjacentHTML('beforeend', vizDigest()); wireDigest(); }
+    }
+
     async function render(force) {
       $('status').innerHTML = '<span class="updated"><span class="spin"></span> Updating…</span>';
       let people, fixtures;
@@ -66,6 +257,7 @@
       }
 
       const { points, bonus, names } = computeTeamPoints(fixtures);
+      const derived = deriveTournament(fixtures);
       const locked = people.locked;
       const rows = (people.participants || []).map(p => {
         const picks = p.picks || [];
@@ -78,10 +270,12 @@
       let lastPts = null, lastRank = 0;
       rows.forEach((r, i) => { r.rank = (r.total === lastPts) ? lastRank : (lastRank = i + 1); lastPts = r.total; });
 
+      LAST = { people, fixtures, points, bonus, names, locked, derived };
+
       if (!rows.length) {
         $('board').innerHTML = '<div class="empty">No participants yet. Be the first to <a href="register.php" style="color:var(--teal)">join</a>.</div>';
       } else {
-        const body = rows.map(r => {
+        const body = rows.map((r, i) => {
           const cls = r.rank === 1 ? 'top1' : r.rank === 2 ? 'top2' : r.rank === 3 ? 'top3' : '';
           let picksHtml;
           if (r.hidden) {
@@ -96,14 +290,18 @@
               return `<span>${logo}${esc(t.name || ('#' + id))} · ${pts}${bonusTag}</span>`;
             }).join('');
           }
-          return `<tr class="${cls}">
+          const clickable = (V.detail && !r.hidden) ? ' viz-click' : '';
+          let html = `<tr class="${cls}${clickable}" data-idx="${i}">
             <td class="rank">${r.rank}</td>
-            <td><div class="who">${esc(r.nick)}</div><div class="picks">${picksHtml}</div></td>
+            <td><div class="who">${esc(r.nick)}${clickable ? ' <span class="caret">▾</span>' : ''}</div><div class="picks">${picksHtml}</div></td>
             <td class="pts">${r.total}<small>PTS</small></td>
           </tr>`;
+          if (clickable) html += `<tr class="detail-row" data-detail="${i}" style="display:none"><td></td><td colspan="2">${detailHtml(r)}</td></tr>`;
+          return html;
         }).join('');
         $('board').innerHTML =
           `<table class="lb"><thead><tr><th>#</th><th>Participant</th><th style="text-align:right">Points</th></tr></thead><tbody>${body}</tbody></table>`;
+        if (V.detail) wireDetail();
       }
 
       const now = new Date();
@@ -111,6 +309,8 @@
       $('lockline').textContent = locked
         ? 'Picks are locked. Scores update from live results.'
         : 'The tournament hasn\'t started — everyone sits on 0 and picks stay hidden until kickoff.';
+
+      renderViz();
     }
 
     $('refresh').onclick = () => render(true);

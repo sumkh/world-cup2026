@@ -124,28 +124,31 @@ standings aren't settled until the last whistle.
 to download every player, their picks, and final totals. Before the next
 season, the **Danger Zone** reset wipes registrations and cached scores.
 
-## Ideas: Additional Visualisations
+## Leaderboard Visualisations
 
-Beyond the ranked leaderboard, candidates worth considering (not yet built):
+Beyond the ranked leaderboard, the app includes optional visualisations that
+the **admin toggles on/off** in `admin.php` (so participants aren't
+overwhelmed — all default to OFF). Each renders below the leaderboard:
 
-- **Points-over-time race chart** — a line per player across matchdays, so you
-  can see lead changes and momentum (the data already supports this once you
-  snapshot totals per sync).
-- **Pick popularity / heat map** — how many of the 32 players backed each team;
-  highlights consensus picks vs. contrarian bets.
-- **"Teams still alive" board** — per player, show which of their three picks
-  are still in the tournament vs. eliminated, with a small bracket position.
-- **Bracket / path view** — each picked team's run through the rounds, making
-  the knockout drama (and where points came from) visible at a glance.
-- **Per-player detail card** — tap a row to expand a breakdown of points by
-  match and the pending bonus potential if their team goes all the way.
-- **Projected-finish / "what-if"** — show how the standings would change if a
-  given team won the cup, turning the run-in into a live tension meter.
-- **Match-day digest** — a shareable summary image/text after each round for
-  the group chat ("Biggest mover: Maya +9").
+- **Pick popularity heat map** — how many players backed each team; consensus
+  vs. contrarian bets.
+- **Teams still alive** — per player, which of their three picks remain vs. are
+  knocked out (green = still in).
+- **Bracket / path view** — each picked team's run through the rounds as W/D/L
+  chips, showing where points came from.
+- **Per-player detail** — tap a leaderboard row to expand a per-pick breakdown
+  with points and pending bonus potential.
+- **Projected finish (what-if)** — pick a team and see how the standings would
+  reorder if it won the cup (+20 champion bonus applied).
+- **Match-day digest** — a shareable text snapshot (leader, gap, teams alive,
+  recent results) with a copy-to-clipboard button for the group chat.
 
-Most of these reuse the existing `api.php` fixtures + participants feeds; the
-race chart is the only one that benefits from storing periodic snapshots.
+Most need picks, so they activate once picks lock at kickoff. They reuse the
+existing `api.php` fixtures + participants feeds — no extra storage required.
+
+> A **points-over-time race chart** was considered but not built: it needs
+> periodic snapshots of each player's total, unlike the above which derive
+> everything from the current state.
 
 ## Setup (Local Dev)
 

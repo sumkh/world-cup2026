@@ -125,11 +125,13 @@ function db() {
       away_goals INT,
       status     VARCHAR(10)  NOT NULL DEFAULT 'NS',
       stage      VARCHAR(20),
-      winner     CHAR(1)
+      winner     CHAR(1),
+      utc_date   TIMESTAMPTZ
     )");
     // Add the columns to pre-existing tables (no-op if they already exist).
     $pdo->exec("ALTER TABLE wc_fixtures ADD COLUMN IF NOT EXISTS stage VARCHAR(20)");
     $pdo->exec("ALTER TABLE wc_fixtures ADD COLUMN IF NOT EXISTS winner CHAR(1)");
+    $pdo->exec("ALTER TABLE wc_fixtures ADD COLUMN IF NOT EXISTS utc_date TIMESTAMPTZ");
 
     // ── App-level key/value store (used for rate-limiting cron runs) ─────────
     $pdo->exec("CREATE TABLE IF NOT EXISTS wc_meta (
@@ -138,4 +140,28 @@ function db() {
     )");
   }
   return $pdo;
+}
+
+/* The visualisation toggles the admin controls. Keys live in wc_meta as
+   'viz_<name>' = '1' | '0'.  All default to OFF so the admin opts in. */
+function viz_keys() {
+  return [
+    'heatmap' => 'Pick popularity heat map',
+    'alive'   => 'Teams still alive',
+    'bracket' => 'Bracket / path view',
+    'detail'  => 'Per-player detail (expandable rows)',
+    'whatif'  => 'Projected finish (what-if)',
+    'digest'  => 'Match-day digest',
+  ];
+}
+
+function viz_settings() {
+  $out = [];
+  foreach (array_keys(viz_keys()) as $k) $out[$k] = false;
+  $st = db()->query("SELECT key, value FROM wc_meta WHERE key LIKE 'viz\\_%'");
+  foreach ($st as $r) {
+    $k = substr($r['key'], 4);
+    if (array_key_exists($k, $out)) $out[$k] = ($r['value'] === '1');
+  }
+  return $out;
 }

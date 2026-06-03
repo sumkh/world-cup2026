@@ -15,6 +15,19 @@ if (isset($_GET['logout'])) { unset($_SESSION['admin']); header('Location: admin
 
 $is_admin = !empty($_SESSION['admin']);
 
+// ── Save visualisation toggles ──
+$viz_saved = false;
+if ($is_admin && isset($_POST['save_viz'])) {
+  $pdo = db();
+  $up = $pdo->prepare("INSERT INTO wc_meta (key, value) VALUES (?, ?)
+                       ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value");
+  foreach (array_keys(viz_keys()) as $k) {
+    $up->execute(['viz_' . $k, isset($_POST['viz'][$k]) ? '1' : '0']);
+  }
+  $viz_saved = true;
+}
+$viz = $is_admin ? viz_settings() : [];
+
 // ── Danger zone: clear all registrations + cached scores (testing reset) ──
 $reset_done = false;
 if ($is_admin && isset($_POST['reset'])) {
@@ -139,6 +152,24 @@ $claimed = count(array_filter($rows, fn($r) => $r['claimed']));
           </tbody>
         </table>
         </div>
+      </div>
+
+      <!-- Visualisation toggles -->
+      <div class="card" style="margin-top:22px">
+        <h2 style="font-family:'Anton',sans-serif;font-weight:400;font-size:22px;text-transform:uppercase">Leaderboard Visualisations</h2>
+        <p class="note">Choose which extra visuals appear on the public leaderboard. Turn on only what you want so participants aren't overwhelmed.</p>
+        <?php if ($viz_saved): ?><div class="msg show ok">Saved — the leaderboard will reflect your choices.</div><?php endif; ?>
+        <form method="post" style="margin-top:14px">
+          <div style="display:grid;gap:10px">
+          <?php foreach (viz_keys() as $k => $label): ?>
+            <label style="display:flex;align-items:center;gap:10px;margin:0;cursor:pointer;font-weight:600">
+              <input type="checkbox" name="viz[<?= $k ?>]" value="1" style="width:auto;margin:0"<?= !empty($viz[$k]) ? ' checked' : '' ?> />
+              <?= htmlspecialchars($label) ?>
+            </label>
+          <?php endforeach; ?>
+          </div>
+          <div style="margin-top:18px"><button class="btn" name="save_viz" value="1" style="width:auto">Save visualisations</button></div>
+        </form>
       </div>
 
       <!-- Danger zone: reset everything for re-testing -->
