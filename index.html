@@ -47,12 +47,14 @@
 
     html { scroll-behavior: smooth; }
 
+    html { max-width: 100%; overflow-x: hidden; }
     body {
       font-family: 'Manrope', system-ui, sans-serif;
       background: var(--ink);
       color: var(--text);
       line-height: 1.55;
       -webkit-font-smoothing: antialiased;
+      max-width: 100%;
       overflow-x: hidden;
     }
 
@@ -195,8 +197,10 @@
       padding: 16px;
       box-shadow: var(--shadow);
       min-height: 120px;
+      overflow-x: auto;            /* keep wide widget content inside the card */
+      -webkit-overflow-scrolling: touch;
     }
-    api-sports-widget { display: block; }
+    api-sports-widget { display: block; max-width: 100%; }
 
     /* ---------- footer ---------- */
     footer {
@@ -218,8 +222,18 @@
     }
 
     @media (max-width: 640px) {
-      .nav-links { gap: 16px; }
-      .hero { padding: 56px 0 40px; }
+      .wrap { padding: 0 16px; }
+      .nav { height: 58px; }
+      .nav-links { gap: 14px; }
+      .nav-links a { font-size: 13px; }
+      .hero { padding: 48px 0 36px; }
+      .hero .sub { font-size: 16px; }
+      /* let the four countdown cells shrink to fit a phone width */
+      .countdown { gap: 8px; margin-top: 28px; }
+      .cd-cell { min-width: 0; flex: 1; padding: 12px 8px; }
+      .cd-num { font-size: 30px; }
+      .cd-lbl { font-size: 10px; letter-spacing: 1px; }
+      section.block { padding: 32px 0; }
     }
   </style>
 </head>

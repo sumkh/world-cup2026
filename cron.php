@@ -87,13 +87,20 @@ $status_map = [
   'CANCELLED' => 'CANC',
 ];
 
+// football-data.org score.winner → our single-char code.
+// Reflects the true result incl. extra time / penalties — used only for
+// the end-of-tournament champion/runner-up/third bonuses.
+$winner_map = ['HOME_TEAM' => 'H', 'AWAY_TEAM' => 'A', 'DRAW' => 'D'];
+
 $upsert = $pdo->prepare('
-  INSERT INTO wc_fixtures (id, home_id, away_id, home_goals, away_goals, status)
-  VALUES (?, ?, ?, ?, ?, ?)
+  INSERT INTO wc_fixtures (id, home_id, away_id, home_goals, away_goals, status, stage, winner)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   ON CONFLICT (id) DO UPDATE SET
     home_goals = EXCLUDED.home_goals,
     away_goals = EXCLUDED.away_goals,
-    status     = EXCLUDED.status
+    status     = EXCLUDED.status,
+    stage      = EXCLUDED.stage,
+    winner     = EXCLUDED.winner
 ');
 
 foreach ($matches as $m) {
@@ -102,14 +109,16 @@ foreach ($matches as $m) {
   if (!isset($map[$fd_home], $map[$fd_away])) continue;
 
   $status = $status_map[$m['status']] ?? 'NS';
+  $stage  = $m['stage'] ?? null;
+  $winner = $winner_map[$m['score']['winner'] ?? ''] ?? null;
 
   // score.fullTime is the 90-minute result.
   // For matches that go to extra time or penalties, fullTime still holds
-  // the regulation score — which is exactly what our scoring rules need.
+  // the regulation score — which is exactly what our match-point rules need.
   $hg = $m['score']['fullTime']['home'] ?? null;
   $ag = $m['score']['fullTime']['away'] ?? null;
 
-  $upsert->execute([$m['id'], $map[$fd_home], $map[$fd_away], $hg, $ag, $status]);
+  $upsert->execute([$m['id'], $map[$fd_home], $map[$fd_away], $hg, $ag, $status, $stage, $winner]);
   $stats['fixtures_upserted']++;
 }
 

@@ -112,14 +112,24 @@ function db() {
       ON CONFLICT (name) DO UPDATE SET as_id = EXCLUDED.as_id");
 
     // ── World Cup fixture/results cache ──────────────────────────────────────
+    // stage  = GROUP_STAGE / LAST_16 / QUARTER_FINALS / SEMI_FINALS /
+    //          THIRD_PLACE / FINAL (used for end-of-tournament bonuses).
+    // winner = 'H' / 'A' / 'D' (true result incl. extra time & penalties;
+    //          used only for the champion/runner-up/third bonuses, NOT for
+    //          regular match points which stay on the 90' goals above).
     $pdo->exec("CREATE TABLE IF NOT EXISTS wc_fixtures (
       id         INT          PRIMARY KEY,
       home_id    INT          NOT NULL,
       away_id    INT          NOT NULL,
       home_goals INT,
       away_goals INT,
-      status     VARCHAR(10)  NOT NULL DEFAULT 'NS'
+      status     VARCHAR(10)  NOT NULL DEFAULT 'NS',
+      stage      VARCHAR(20),
+      winner     CHAR(1)
     )");
+    // Add the columns to pre-existing tables (no-op if they already exist).
+    $pdo->exec("ALTER TABLE wc_fixtures ADD COLUMN IF NOT EXISTS stage VARCHAR(20)");
+    $pdo->exec("ALTER TABLE wc_fixtures ADD COLUMN IF NOT EXISTS winner CHAR(1)");
 
     // ── App-level key/value store (used for rate-limiting cron runs) ─────────
     $pdo->exec("CREATE TABLE IF NOT EXISTS wc_meta (

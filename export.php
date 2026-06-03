@@ -12,7 +12,7 @@ $pdo = db();
 
 // Compute each team's current points from the fixture cache, then sum per participant.
 $rows = $pdo->query("
-    WITH team_pts AS (
+    WITH match_pts AS (
         SELECT
             t.id,
             COALESCE(SUM(
@@ -27,6 +27,30 @@ $rows = $pdo->query("
         FROM wc_teams t
         LEFT JOIN wc_fixtures f ON f.home_id = t.id OR f.away_id = t.id
         GROUP BY t.id
+    ),
+    bonus_pts AS (
+        -- +20 champion / +10 runner-up (FINAL), +5 third place (THIRD_PLACE).
+        -- Uses the true winner (incl. ET/penalties); only counts finished games.
+        SELECT
+            t.id,
+            COALESCE(SUM(
+                CASE
+                    WHEN f.stage = 'FINAL' AND f.status = 'FT'
+                         AND ((f.winner = 'H' AND f.home_id = t.id) OR (f.winner = 'A' AND f.away_id = t.id)) THEN 20
+                    WHEN f.stage = 'FINAL' AND f.status = 'FT'
+                         AND ((f.winner = 'H' AND f.away_id = t.id) OR (f.winner = 'A' AND f.home_id = t.id)) THEN 10
+                    WHEN f.stage = 'THIRD_PLACE' AND f.status = 'FT'
+                         AND ((f.winner = 'H' AND f.home_id = t.id) OR (f.winner = 'A' AND f.away_id = t.id)) THEN 5
+                    ELSE 0
+                END
+            ), 0) AS pts
+        FROM wc_teams t
+        LEFT JOIN wc_fixtures f ON f.home_id = t.id OR f.away_id = t.id
+        GROUP BY t.id
+    ),
+    team_pts AS (
+        SELECT m.id, m.pts + b.pts AS pts
+        FROM match_pts m JOIN bonus_pts b ON b.id = m.id
     )
     SELECT
         p.user_id,

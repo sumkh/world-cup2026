@@ -15,6 +15,24 @@ if (isset($_GET['logout'])) { unset($_SESSION['admin']); header('Location: admin
 
 $is_admin = !empty($_SESSION['admin']);
 
+// ── Danger zone: clear all registrations + cached scores (testing reset) ──
+$reset_done = false;
+if ($is_admin && isset($_POST['reset'])) {
+  if (($_POST['confirm'] ?? '') === 'RESET') {
+    $pdo = db();
+    // Wipe registrations back to empty slots (keeps user_id 01–32).
+    $pdo->exec("UPDATE participants
+                SET claimed = 0, nickname = NULL, pin_hash = NULL,
+                    team1 = NULL, team2 = NULL, team3 = NULL");
+    // Clear the cached fixture scores so the next sync re-pulls fresh.
+    $pdo->exec("DELETE FROM wc_fixtures");
+    $pdo->exec("DELETE FROM wc_meta WHERE key = 'last_sync'");
+    $reset_done = true;
+  } else {
+    $reset_error = 'Type RESET exactly to confirm.';
+  }
+}
+
 $rows = [];
 if ($is_admin) {
   $rows = db()->query(
@@ -87,6 +105,7 @@ $claimed = count(array_filter($rows, fn($r) => $r['claimed']));
           <h2 style="font-family:'Anton',sans-serif;font-weight:400;font-size:22px;text-transform:uppercase">All Participants</h2>
           <span class="note" id="teamStatus">Loading team names…</span>
         </div>
+        <div class="table-scroll">
         <table class="lb" id="adminTable">
           <thead>
             <tr>
@@ -119,6 +138,24 @@ $claimed = count(array_filter($rows, fn($r) => $r['claimed']));
           <?php endforeach; ?>
           </tbody>
         </table>
+        </div>
+      </div>
+
+      <!-- Danger zone: reset everything for re-testing -->
+      <div class="card" style="margin-top:22px;border-color:rgba(255,84,54,.45)">
+        <h2 style="font-family:'Anton',sans-serif;font-weight:400;font-size:22px;text-transform:uppercase;color:var(--coral)">Danger Zone</h2>
+        <p class="note">Clears <strong>all registrations</strong> (nicknames, PINs, picks) and the cached match scores, resetting slots 01–32 to empty. Use only for testing before launch. This cannot be undone.</p>
+        <?php if ($reset_done): ?>
+          <div class="msg show ok">Done — all registrations and cached scores were cleared.</div>
+        <?php endif; ?>
+        <form method="post" onsubmit="return confirm('This permanently clears ALL registrations and scores. Continue?');" style="margin-top:14px">
+          <label>Type <strong>RESET</strong> to enable the button</label>
+          <input type="text" name="confirm" id="confirmInput" autocomplete="off" placeholder="RESET" style="max-width:220px" />
+          <?php if (!empty($reset_error)): ?><div class="msg show err"><?= htmlspecialchars($reset_error) ?></div><?php endif; ?>
+          <div style="margin-top:16px">
+            <button class="btn coral" name="reset" value="1" id="resetBtn" style="width:auto" disabled>Clear everything</button>
+          </div>
+        </form>
       </div>
 
       <!-- Resolve team IDs → names once the API responds -->
@@ -147,13 +184,23 @@ $claimed = count(array_filter($rows, fn($r) => $r['claimed']));
           try {
             const r = await fetch('cron.php', { method: 'GET' });
             const j = await r.json();
-            if (j.error) { st.textContent = '✗ ' + j.error; }
-            else { st.textContent = `✓ ${j.fixtures_upserted} fixtures, ${j.teams_mapped} teams mapped`; }
+            if (j.error)        { st.textContent = '✗ ' + j.error; }
+            else if (j.skipped) { st.textContent = `Already up to date — try again in ${j.next_in}s`; }
+            else                { st.textContent = `✓ ${j.fixtures_upserted} of ${j.total} fixtures synced`; }
           } catch (e) {
             st.textContent = '✗ ' + e.message;
           }
           btn.disabled = false;
         };
+
+        // Reset button stays disabled until the admin types RESET exactly.
+        const confirmInput = document.getElementById('confirmInput');
+        const resetBtn     = document.getElementById('resetBtn');
+        if (confirmInput && resetBtn) {
+          confirmInput.addEventListener('input', () => {
+            resetBtn.disabled = confirmInput.value !== 'RESET';
+          });
+        }
       </script>
 
     <?php endif; ?>

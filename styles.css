@@ -115,3 +115,27 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:30px 0 56px}
 .foot a:hover{text-decoration:underline}
 .codeblock{font-family:'JetBrains Mono',monospace;font-size:12px;background:#05070f;border:1px solid var(--line);
   border-radius:10px;padding:10px 12px;color:var(--teal);word-break:break-all;margin-top:8px}
+
+/* wide tables (e.g. the 6-column admin table) scroll inside their card
+   instead of breaking the page margins on small screens */
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* ---------- responsive ---------- */
+@media(max-width:640px){
+  html,body{max-width:100%;overflow-x:hidden}
+  .wrap{padding:0 16px}
+  .nav{height:58px}
+  .nav-links{gap:14px}
+  .nav-links a{font-size:13px}
+  .page-head{padding:34px 0 20px}
+  .page-head p{font-size:15px}
+  .card{padding:18px}
+  .section{padding:12px 0 44px}
+  .toolbar{gap:8px}
+  .toolbar .btn{flex:1}
+  .lb th,.lb td{padding:10px 8px}
+  .lb .rank{font-size:20px;width:34px}
+  .lb .who{font-size:15px}
+  .lb .pts{font-size:24px}
+  .lb .picks span{font-size:11px}
+}

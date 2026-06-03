@@ -39,20 +39,31 @@ async function loadFixtures(force) {
 /* A match counts once its regular time is decided. */
 const FINISHED = new Set(['FT', 'AET', 'PEN']);
 
+/* End-of-tournament bonus points (added to a team's total once the
+   relevant knockout match is finished). */
+const BONUS = { CHAMPION: 20, RUNNER_UP: 10, THIRD: 5 };
+
 /*
-  Returns { points:{teamId:pts}, names:{teamId:{name,logo}} }.
-  teamId here is our internal wc_teams.id, which matches the
-  values stored in participants.team1/2/3.
-  Uses score.fulltime (90'), so a penalty shootout = draw for both.
+  Returns { points:{teamId:pts}, bonus:{teamId:pts}, names:{teamId:{name,logo}} }.
+  - points = match points + any earned bonus (the grand total per team).
+  - bonus  = just the bonus portion, so the UI can label it separately.
+  teamId is our internal wc_teams.id, matching participants.team1/2/3.
+  Match points use score.fulltime (90'): a penalty shootout = draw for both.
+  Bonuses use fixture.winner (true result incl. ET/penalties) on the
+  FINAL and THIRD_PLACE matches.
 */
 function computeTeamPoints(fixtures) {
-  const points = {}, names = {};
+  const points = {}, bonus = {}, names = {};
+  const add = (id, n) => { points[id] = (points[id] || 0) + n; };
+  const addBonus = (id, n) => { bonus[id] = (bonus[id] || 0) + n; add(id, n); };
+
   for (const f of fixtures) {
     const h = f.teams.home, a = f.teams.away;
     names[h.id] = { name: h.name, logo: h.logo };
     names[a.id] = { name: a.name, logo: a.logo };
     if (!FINISHED.has(f.fixture.status.short)) continue;
 
+    // ── Match points (90-minute result) ──
     let fh = f.score && f.score.fulltime ? f.score.fulltime.home : null;
     let fa = f.score && f.score.fulltime ? f.score.fulltime.away : null;
     if (fh === null || fa === null) { fh = f.goals.home; fa = f.goals.away; }
@@ -60,11 +71,22 @@ function computeTeamPoints(fixtures) {
 
     points[h.id] = points[h.id] || 0;
     points[a.id] = points[a.id] || 0;
-    if      (fh > fa) { points[h.id] += 3; }
-    else if (fh < fa) { points[a.id] += 3; }
-    else              { points[h.id] += 1; points[a.id] += 1; }
+    if      (fh > fa) { add(h.id, 3); }
+    else if (fh < fa) { add(a.id, 3); }
+    else              { add(h.id, 1); add(a.id, 1); }
+
+    // ── End-of-tournament bonuses ──
+    const stage = f.fixture.stage, w = f.fixture.winner;
+    if (stage === 'FINAL' && (w === 'H' || w === 'A')) {
+      const champ = w === 'H' ? h.id : a.id;
+      const runner = w === 'H' ? a.id : h.id;
+      addBonus(champ, BONUS.CHAMPION);
+      addBonus(runner, BONUS.RUNNER_UP);
+    } else if (stage === 'THIRD_PLACE' && (w === 'H' || w === 'A')) {
+      addBonus(w === 'H' ? h.id : a.id, BONUS.THIRD);
+    }
   }
-  return { points, names };
+  return { points, bonus, names };
 }
 
 /* Same-origin call to api.php */

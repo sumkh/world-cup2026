@@ -28,7 +28,7 @@
     <div class="page-head">
       <div class="eyebrow">Standings of Champions</div>
       <h1>Leader<span class="out">board</span></h1>
-      <p>3 points for each win, 1 for a draw, scored on the 90-minute result and summed across all three of your teams' matches.</p>
+      <p>3 points for each win, 1 for a draw, scored on the 90-minute result and summed across all three of your teams' matches — every round, all 104 games. End-of-tournament bonuses: Champion +20, Runner-up +10, Third place +5.</p>
     </div>
 
     <div class="section">
@@ -38,7 +38,7 @@
         <button class="btn ghost" id="refresh" style="width:auto">Refresh</button>
       </div>
       <div class="card" style="padding:14px 10px">
-        <div id="board"><div class="empty"><span class="spin"></span></div></div>
+        <div class="table-scroll"><div id="board"><div class="empty"><span class="spin"></span></div></div></div>
       </div>
       <p class="note" id="lockline"></p>
     </div>
@@ -65,7 +65,7 @@
         return;
       }
 
-      const { points, names } = computeTeamPoints(fixtures);
+      const { points, bonus, names } = computeTeamPoints(fixtures);
       const locked = people.locked;
       const rows = (people.participants || []).map(p => {
         const picks = p.picks || [];
@@ -90,8 +90,10 @@
             picksHtml = r.picks.map(id => {
               const t = names[id] || {};
               const pts = points[id] || 0;
+              const bon = bonus[id] || 0;
               const logo = t.logo ? `<img src="${esc(t.logo)}" alt="">` : '';
-              return `<span>${logo}${esc(t.name || ('#' + id))} · ${pts}</span>`;
+              const bonusTag = bon ? ` <span style="color:var(--gold)">★+${bon}</span>` : '';
+              return `<span>${logo}${esc(t.name || ('#' + id))} · ${pts}${bonusTag}</span>`;
             }).join('');
           }
           return `<tr class="${cls}">
