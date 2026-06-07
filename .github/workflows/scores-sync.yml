@@ -1,21 +1,43 @@
 name: Sync World Cup Scores
 
+# Auto-syncs match results every 15 minutes — but ONLY during the
+# World Cup 2026 window (11 Jun – 19 Jul 2026).
+#
+# How the start/stop works (GitHub cron has no start/end date):
+#  - the schedule only fires in June & July (cron months 6,7), and
+#  - the "Tournament window" step below skips the sync unless today's
+#    UTC date is within 2026-06-11 .. 2026-07-19.
+# So it effectively starts when the Cup begins, runs through the games,
+# and goes dormant (no-op) once it ends — including future years.
+#
+# Manual runs are always allowed via the "Run workflow" button.
+#
+# Requires an ADMIN_PASSWORD repo secret (same value as the Render env var):
+#   GitHub repo → Settings → Secrets and variables → Actions → New secret
+
 on:
   schedule:
-    # Every 15 minutes during the tournament (Jun 11 – Jul 19, 2026).
-    # GitHub Actions cron runs in UTC.  Reduce frequency after group stage.
-    - cron: '*/15 * * * *'
-  workflow_dispatch:   # also allows a manual "Run workflow" button on GitHub
+    - cron: '*/15 * * 6,7 *'   # every 15 min, June & July only (UTC)
+  workflow_dispatch:
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      - name: Tournament window check
+        id: window
+        run: |
+          today=$(date -u +%F)
+          if [[ "$today" > "2026-06-10" && "$today" < "2026-07-20" ]]; then
+            echo "active=true" >> "$GITHUB_OUTPUT"
+            echo "Within World Cup window ($today) — syncing."
+          else
+            echo "active=false" >> "$GITHUB_OUTPUT"
+            echo "Outside World Cup window ($today) — skipping."
+          fi
+
       - name: Call cron.php
-        # Calls the score-sync endpoint on Render.
-        # Requires ADMIN_PASSWORD to be added as a GitHub Actions secret:
-        #   GitHub repo → Settings → Secrets and variables → Actions → New secret
-        #   Name: ADMIN_PASSWORD   Value: (same password as your Render env var)
+        if: steps.window.outputs.active == 'true'
         run: |
           curl --fail --silent --show-error \
             "https://world-cup2026.onrender.com/cron.php?key=${{ secrets.ADMIN_PASSWORD }}"
