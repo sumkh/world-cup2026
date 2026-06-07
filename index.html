@@ -234,6 +234,32 @@
       font-variant-numeric: tabular-nums; }
     .m-score.live { color: var(--coral); }
 
+    /* ---------- standings (group tables) ---------- */
+    #standings-board { display: grid; gap: 16px; }
+    @media (min-width: 740px) { #standings-board { grid-template-columns: 1fr 1fr; } }
+    .grp-card {
+      background: linear-gradient(180deg, var(--ink-2), var(--ink));
+      border: 1px solid var(--line); border-radius: 16px; padding: 14px 14px 6px;
+      box-shadow: var(--shadow); overflow-x: auto;
+    }
+    .grp-title {
+      font-family: 'Anton', sans-serif; font-size: 18px; text-transform: uppercase;
+      letter-spacing: .5px; margin-bottom: 8px;
+    }
+    .grp-table { width: 100%; border-collapse: collapse; }
+    .grp-table th {
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .5px;
+      color: var(--muted); font-weight: 700; text-align: center; padding: 6px 6px; border-bottom: 1px solid var(--line);
+    }
+    .grp-table th:nth-child(2) { text-align: left; }
+    .grp-table td { font-size: 13px; text-align: center; padding: 8px 6px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+    .grp-table tr:last-child td { border-bottom: none; }
+    .grp-table .g-pos { color: var(--muted); width: 20px; }
+    .grp-table .g-team { text-align: left; font-weight: 700; white-space: nowrap; }
+    .grp-table .g-pts { font-weight: 800; color: var(--text); }
+    .grp-table tr.qual .g-pos { color: var(--teal); }
+    .grp-table tr.qual .g-team { color: var(--teal); }
+
     /* ---------- teams & players ---------- */
     .team-picker { display: flex; flex-direction: column; gap: 8px; max-width: 360px; }
     #teamPick {
@@ -356,10 +382,10 @@
       <div class="widget-card">
         <div id="schedule-board"><div style="padding:28px 8px;text-align:center;color:var(--muted)">Loading fixtures…</div></div>
       </div>
-      <p class="note" style="margin-top:12px">Times shown in your local timezone. Results &amp; schedule via <a href="https://www.football-data.org" target="_blank" rel="noopener" style="color:var(--teal)">football-data.org</a>.</p>
+      <p class="note" style="margin-top:12px">Kickoff times in <strong>Singapore time (SGT, UTC+8)</strong>. Results &amp; schedule via <a href="https://www.football-data.org" target="_blank" rel="noopener" style="color:var(--teal)">football-data.org</a>.</p>
     </section>
 
-    <!-- STANDINGS -->
+    <!-- STANDINGS (native — group tables computed from our synced fixtures) -->
     <section class="block wrap" id="standings">
       <div class="section-head">
         <span class="tag teal">02</span>
@@ -367,19 +393,11 @@
         <div class="rule"></div>
       </div>
       <p class="sub" style="margin:0 0 18px;max-width:640px">
-        Group tables for all 12 groups. <strong>Tap any team</strong> to open its
-        profile below — venue, season statistics and full squad.
+        Group tables for all 12 groups — the top two of each advance. Updated from
+        results as they come in.
       </p>
-      <div class="widget-card">
-        <!-- Group standings. Clicking a team opens the Team widget in #team-detail
-             (configured via data-target-team on the config block below). -->
-        <api-sports-widget
-          data-type="standings"
-          data-league="1"
-          data-season="2026"
-          data-target-team="#team-detail">
-        </api-sports-widget>
-      </div>
+      <div id="standings-board"><div style="padding:28px 8px;text-align:center;color:var(--muted)">Loading standings…</div></div>
+      <p class="note" style="margin-top:12px">Standings via <a href="https://www.football-data.org" target="_blank" rel="noopener" style="color:var(--teal)">football-data.org</a>.</p>
     </section>
 
     <!-- TEAMS & PLAYERS -->
@@ -455,8 +473,9 @@
       var STAGE = { LAST_32: 'Round of 32', ROUND_OF_32: 'Round of 32', LAST_16: 'Round of 16', QUARTER_FINALS: 'Quarter-final', QUARTER_FINAL: 'Quarter-final', SEMI_FINALS: 'Semi-final', SEMI_FINAL: 'Semi-final', THIRD_PLACE: 'Third place', FINAL: 'Final' };
       var filter = 'upcoming', ALL = [];
 
-      function dayKey(iso) { var d = new Date(iso); return d.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' }); }
-      function timeStr(iso) { return new Date(iso).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }); }
+      var TZ = 'Asia/Singapore';
+      function dayKey(iso) { return new Date(iso).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', timeZone: TZ }); }
+      function timeStr(iso) { return new Date(iso).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: TZ }); }
 
       function matchHtml(f) {
         var s = f.fixture.status.short, h = f.teams.home, a = f.teams.away;
@@ -509,6 +528,55 @@
         ALL = fixtures;
         if (!ALL.length) { board.innerHTML = '<div style="padding:24px 8px;text-align:center;color:var(--muted)">Fixtures will appear after the first sync.</div>'; return; }
         render();
+      });
+    })();
+  </script>
+
+  <!-- Native standings: group tables computed from the synced fixtures -->
+  <script>
+    (function () {
+      var board = document.getElementById('standings-board');
+      if (!board) return;
+      var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); };
+      var FIN = { FT: 1, AET: 1, PEN: 1 };
+      var row = function (name) { return { name: name, p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, pts: 0 }; };
+
+      window.WC_FX.then(function (fixtures) {
+        var groups = {};
+        fixtures.forEach(function (f) {
+          var g = f.fixture.group;
+          if (!g || g.indexOf('GROUP_') !== 0) return;            // group stage only
+          var letter = g.replace('GROUP_', '');
+          var G = groups[letter] || (groups[letter] = {});
+          var h = f.teams.home.name, a = f.teams.away.name;
+          var TH = G[h] || (G[h] = row(h)), TA = G[a] || (G[a] = row(a));
+          if (!FIN[f.fixture.status.short]) return;
+          var hg = f.score.fulltime.home, ag = f.score.fulltime.away;
+          if (hg == null || ag == null) return;
+          TH.p++; TA.p++; TH.gf += hg; TH.ga += ag; TA.gf += ag; TA.ga += hg;
+          if (hg > ag)      { TH.w++; TA.l++; TH.pts += 3; }
+          else if (hg < ag) { TA.w++; TH.l++; TA.pts += 3; }
+          else              { TH.d++; TA.d++; TH.pts += 1; TA.pts += 1; }
+        });
+
+        var letters = Object.keys(groups).sort();
+        if (!letters.length) { board.innerHTML = '<div style="padding:24px 8px;text-align:center;color:var(--muted)">Group standings will appear after the first sync.</div>'; return; }
+
+        board.innerHTML = letters.map(function (L) {
+          var rows = Object.keys(groups[L]).map(function (k) { return groups[L][k]; });
+          rows.sort(function (x, y) {
+            return y.pts - x.pts || (y.gf - y.ga) - (x.gf - x.ga) || y.gf - x.gf || x.name.localeCompare(y.name);
+          });
+          var body = rows.map(function (t, i) {
+            var gd = t.gf - t.ga, cls = i < 2 ? ' class="qual"' : '';
+            return '<tr' + cls + '><td class="g-pos">' + (i + 1) + '</td><td class="g-team">' + esc(t.name) + '</td>'
+              + '<td>' + t.p + '</td><td>' + t.w + '</td><td>' + t.d + '</td><td>' + t.l + '</td>'
+              + '<td>' + (gd > 0 ? '+' + gd : gd) + '</td><td class="g-pts">' + t.pts + '</td></tr>';
+          }).join('');
+          return '<div class="grp-card"><div class="grp-title">Group ' + esc(L) + '</div>'
+            + '<table class="grp-table"><thead><tr><th></th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th></tr></thead>'
+            + '<tbody>' + body + '</tbody></table></div>';
+        }).join('');
       });
     })();
   </script>

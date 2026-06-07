@@ -126,12 +126,14 @@ function db() {
       status     VARCHAR(10)  NOT NULL DEFAULT 'NS',
       stage      VARCHAR(20),
       winner     CHAR(1),
-      utc_date   TIMESTAMPTZ
+      utc_date   TIMESTAMPTZ,
+      grp        VARCHAR(20)
     )");
     // Add the columns to pre-existing tables (no-op if they already exist).
     $pdo->exec("ALTER TABLE wc_fixtures ADD COLUMN IF NOT EXISTS stage VARCHAR(20)");
     $pdo->exec("ALTER TABLE wc_fixtures ADD COLUMN IF NOT EXISTS winner CHAR(1)");
     $pdo->exec("ALTER TABLE wc_fixtures ADD COLUMN IF NOT EXISTS utc_date TIMESTAMPTZ");
+    $pdo->exec("ALTER TABLE wc_fixtures ADD COLUMN IF NOT EXISTS grp VARCHAR(20)");
 
     // ── App-level key/value store (used for rate-limiting cron runs) ─────────
     $pdo->exec("CREATE TABLE IF NOT EXISTS wc_meta (

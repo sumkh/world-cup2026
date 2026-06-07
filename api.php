@@ -139,7 +139,7 @@ switch ($action) {
     // Return cached fixtures in the same shape computeTeamPoints() expects,
     // but using our internal wc_teams IDs so picks match correctly.
     $st = $pdo->query('
-      SELECT f.id, f.home_goals, f.away_goals, f.status, f.stage, f.winner, f.utc_date,
+      SELECT f.id, f.home_goals, f.away_goals, f.status, f.stage, f.winner, f.utc_date, f.grp,
              ht.id AS h_id, ht.name AS h_name, ht.logo AS h_logo,
              awt.id AS a_id, awt.name AS a_name, awt.logo AS a_logo
       FROM wc_fixtures f
@@ -156,7 +156,7 @@ switch ($action) {
           'away' => ['id' => (int)$r['a_id'], 'name' => $r['a_name'], 'logo' => $r['a_logo']],
         ],
         'fixture' => ['status' => ['short' => $r['status']], 'stage' => $r['stage'],
-                      'winner' => $r['winner'], 'date' => $r['utc_date']],
+                      'winner' => $r['winner'], 'date' => $r['utc_date'], 'group' => $r['grp']],
         'score'   => ['fulltime' => ['home' => $hg, 'away' => $ag]],
         'goals'   => ['home' => $hg, 'away' => $ag],
       ];
