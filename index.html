@@ -217,6 +217,7 @@
       text-transform: uppercase; color: var(--teal); margin: 18px 0 8px; padding: 0 6px;
     }
     .sched-date:first-child { margin-top: 4px; }
+    .sched-date.is-today { color: var(--gold); }
     .m-stage { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 1px;
       text-transform: uppercase; color: var(--gold); margin: 8px 0 2px; padding: 0 6px; }
     .match {
@@ -375,9 +376,9 @@
         <div class="rule"></div>
       </div>
       <div class="sched-tabs" id="schedTabs">
-        <button data-f="upcoming" class="active">Upcoming</button>
+        <button data-f="all" class="active">All</button>
+        <button data-f="upcoming">Upcoming</button>
         <button data-f="results">Results</button>
-        <button data-f="all">All</button>
       </div>
       <div class="widget-card">
         <div id="schedule-board"><div style="padding:28px 8px;text-align:center;color:var(--muted)">Loading fixtures…</div></div>
@@ -471,7 +472,7 @@
       var FIN = { FT: 1, AET: 1, PEN: 1 };
       var LIVE = { LIVE: 1, HT: 1 };
       var STAGE = { LAST_32: 'Round of 32', ROUND_OF_32: 'Round of 32', LAST_16: 'Round of 16', QUARTER_FINALS: 'Quarter-final', QUARTER_FINAL: 'Quarter-final', SEMI_FINALS: 'Semi-final', SEMI_FINAL: 'Semi-final', THIRD_PLACE: 'Third place', FINAL: 'Final' };
-      var filter = 'upcoming', ALL = [];
+      var filter = 'all', ALL = [];
 
       var TZ = 'Asia/Singapore';
       function dayKey(iso) { return new Date(iso).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', timeZone: TZ }); }
@@ -506,11 +507,15 @@
           var dx = new Date(x.fixture.date || 0) - new Date(y.fixture.date || 0);
           return filter === 'results' ? -dx : dx;
         });
-        var html = '', curDay = null;
+        var html = '', curDay = null, todayKey = dayKey(new Date().toISOString());
         list.forEach(function (f) {
           var day = f.fixture.date ? dayKey(f.fixture.date) : 'Date TBD';
           var stage = STAGE[f.fixture.stage];
-          if (day !== curDay) { curDay = day; html += '<div class="sched-date">' + esc(day) + '</div>'; }
+          if (day !== curDay) {
+            curDay = day;
+            var isToday = day === todayKey;
+            html += '<div class="sched-date' + (isToday ? ' is-today' : '') + '">' + esc(day) + (isToday ? ' · Today' : '') + '</div>';
+          }
           html += stage ? '<div class="m-stage">' + esc(stage) + '</div>' : '';
           html += matchHtml(f);
         });
