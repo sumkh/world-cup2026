@@ -219,6 +219,11 @@
       font-family: 'Anton', sans-serif; font-size: 30px; text-transform: uppercase; letter-spacing: -.5px;
     }
     .team-meta .team-sub { color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+    .out-badge {
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+      color: #fff; background: var(--coral); border-radius: 6px; padding: 3px 8px;
+      vertical-align: middle; text-transform: uppercase; letter-spacing: .5px;
+    }
     .squad-group { margin-top: 20px; }
     .squad-group h4 {
       font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 2px;
@@ -408,8 +413,31 @@
       if (!sel || !panel) return;
       var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); };
 
-      sel.innerHTML = '<option value="">— Choose a team —</option>' +
-        teams.map(function (t, i) { return '<option value="' + i + '">' + esc(t.name) + '</option>'; }).join('');
+      // Eliminated teams (filled once the fixtures feed loads). Keyed by squads.js name.
+      var eliminated = {};
+      // squads.js display name -> the name used in the fixtures feed (wc_teams)
+      var ALIAS = { "DR Congo": "Congo DR", "Bosnia & Herzegovina": "Bosnia-Herzegovina", "Cape Verde": "Cape Verde Islands" };
+      var isOut = function (name) { return !!eliminated[ALIAS[name] || name]; };
+
+      function buildOptions() {
+        sel.innerHTML = '<option value="">— Choose a team —</option>' +
+          teams.map(function (t, i) {
+            return '<option value="' + i + '">' + esc(t.name) + (isOut(t.name) ? ' — OUT' : '') + '</option>';
+          }).join('');
+      }
+      buildOptions();
+
+      // Pull cached results and flag knockout-eliminated teams (no-op pre-tournament).
+      fetch('api.php?action=fixtures').then(function (r) { return r.json(); }).then(function (d) {
+        var FIN = { FT: 1, AET: 1, PEN: 1 };
+        (d.fixtures || []).forEach(function (f) {
+          if (!FIN[f.fixture.status.short]) return;
+          var st = f.fixture.stage, w = f.fixture.winner;
+          if (!st || st === 'GROUP_STAGE' || (w !== 'H' && w !== 'A')) return;
+          eliminated[(w === 'H' ? f.teams.away : f.teams.home).name] = true;
+        });
+        var cur = sel.value; buildOptions(); sel.value = cur;
+      }).catch(function () {});
 
       function group(title, list) {
         if (!list || !list.length) return '';
@@ -422,10 +450,11 @@
         var t = teams[parseInt(sel.value, 10)];
         if (!t) { panel.innerHTML = '<div style="padding:28px 8px;text-align:center;color:var(--muted)">Choose a team above to see its squad.</div>'; return; }
         var count = t.gk.length + t.df.length + t.mf.length + t.fw.length;
+        var outBadge = isOut(t.name) ? ' <span class="out-badge">Eliminated</span>' : '';
         panel.innerHTML =
           '<div class="team-head">' +
             '<img class="team-img" src="img/teams/' + t.slug + '.webp" alt="' + esc(t.name) + ' squad" loading="lazy" />' +
-            '<div class="team-meta"><div class="team-name">' + esc(t.name) + '</div>' +
+            '<div class="team-meta"><div class="team-name">' + esc(t.name) + outBadge + '</div>' +
             '<div class="team-sub">' + count + ' players</div></div>' +
           '</div>' +
           group('Goalkeepers', t.gk) + group('Defenders', t.df) +

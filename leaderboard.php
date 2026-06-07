@@ -295,9 +295,11 @@ try { $VIZ = viz_settings(); } catch (Throwable $e) { /* DB down — show leader
               const t = names[id] || {};
               const pts = points[id] || 0;
               const bon = bonus[id] || 0;
+              const out = derived.eliminated.has(id);
               const logo = t.logo ? `<img src="${esc(t.logo)}" alt="">` : '';
               const bonusTag = bon ? ` <span style="color:var(--gold)">★+${bon}</span>` : '';
-              return `<span>${logo}${esc(t.name || ('#' + id))} · ${pts}${bonusTag}</span>`;
+              const outTag = out ? ' <span style="color:var(--coral);font-weight:700">OUT</span>' : '';
+              return `<span${out ? ' style="opacity:.55"' : ''}>${logo}${esc(t.name || ('#' + id))} · ${pts}${bonusTag}${outTag}</span>`;
             }).join('');
           }
           const clickable = (V.detail && !r.hidden) ? ' viz-click' : '';
