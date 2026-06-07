@@ -4,20 +4,25 @@ name: Sync World Cup Scores
 # World Cup 2026 window (11 Jun – 19 Jul 2026).
 #
 # How the start/stop works (GitHub cron has no start/end date):
-#  - the schedule only fires in June & July (cron months 6,7), and
+#  - the schedule only fires in June & July (cron months 6,7),
+#  - only during hours when matches are live (15:00–05:59 UTC — WC games
+#    are played in the Americas, roughly 16:00 UTC to ~04:00 UTC), and
 #  - the "Tournament window" step below skips the sync unless today's
 #    UTC date is within 2026-06-11 .. 2026-07-19.
-# So it effectively starts when the Cup begins, runs through the games,
-# and goes dormant (no-op) once it ends — including future years.
+# So it effectively starts when the Cup begins, syncs every 15 min while
+# games are on, and goes dormant (no-op) once it ends — including future
+# years. The ~09:00–14:00 UTC gap each day has no live matches.
 #
-# Manual runs are always allowed via the "Run workflow" button.
+# Manual runs are always allowed via the "Run workflow" button (and the
+# in-app Sync Scores button) for anything outside these hours.
 #
 # Requires an ADMIN_PASSWORD repo secret (same value as the Render env var):
 #   GitHub repo → Settings → Secrets and variables → Actions → New secret
 
 on:
   schedule:
-    - cron: '*/15 * * 6,7 *'   # every 15 min, June & July only (UTC)
+    # every 15 min, June & July, during live-match hours only (UTC)
+    - cron: '*/15 0-5,15-23 * 6,7 *'
   workflow_dispatch:
 
 jobs:
