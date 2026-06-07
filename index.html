@@ -261,6 +261,35 @@
     .grp-table tr.qual .g-pos { color: var(--teal); }
     .grp-table tr.qual .g-team { color: var(--teal); }
 
+    /* standings explainer (collapsible) */
+    .explain {
+      margin-top: 16px; background: var(--surface); border: 1px solid var(--line);
+      border-radius: 12px; overflow: hidden;
+    }
+    .explain > summary {
+      cursor: pointer; list-style: none; padding: 14px 16px;
+      font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
+      letter-spacing: .3px; color: var(--teal);
+    }
+    .explain > summary::-webkit-details-marker { display: none; }
+    .explain[open] > summary { border-bottom: 1px solid var(--line); }
+    .explain-body { padding: 16px; }
+    .explain-body p { color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 12px; }
+    .explain-body p strong { color: var(--text); }
+    .explain-key { width: 100%; border-collapse: collapse; margin: 4px 0 14px; }
+    .explain-key td { padding: 7px 10px; font-size: 13px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .explain-key tr:last-child td { border-bottom: none; }
+    .explain-key td:first-child {
+      font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--gold);
+      width: 44px; white-space: nowrap;
+    }
+    .explain-key td:last-child { color: var(--muted); }
+    .explain-tie { font-size: 13px !important; }
+    .explain-game {
+      background: rgba(31,227,170,.08); border: 1px solid rgba(31,227,170,.3);
+      border-radius: 10px; padding: 12px 14px; margin-bottom: 0 !important;
+    }
+
     /* ---------- teams & players ---------- */
     .team-picker { display: flex; flex-direction: column; gap: 8px; max-width: 360px; }
     #teamPick {
@@ -398,6 +427,34 @@
         results as they come in.
       </p>
       <div id="standings-board"><div style="padding:28px 8px;text-align:center;color:var(--muted)">Loading standings…</div></div>
+
+      <details class="explain">
+        <summary>New to football? How to read this table ▾</summary>
+        <div class="explain-body">
+          <p>Each group has 4 teams. Every team plays the other three once. Teams earn
+          <strong>points</strong> for each match: <strong>3</strong> for a win,
+          <strong>1</strong> for a draw (tie), <strong>0</strong> for a loss. The
+          table is sorted by points — the <strong style="color:var(--teal)">top two
+          (highlighted)</strong> go through to the knockout rounds.</p>
+          <table class="explain-key">
+            <tr><td>P</td><td>Played — matches played so far</td></tr>
+            <tr><td>W</td><td>Won</td></tr>
+            <tr><td>D</td><td>Drawn (tied)</td></tr>
+            <tr><td>L</td><td>Lost</td></tr>
+            <tr><td>GF</td><td>Goals For — goals the team scored</td></tr>
+            <tr><td>GA</td><td>Goals Against — goals it let in</td></tr>
+            <tr><td>GD</td><td>Goal Difference — GF minus GA (e.g. +3); breaks ties when teams are level on points</td></tr>
+            <tr><td>Pts</td><td>Points — the ranking number (3·wins + 1·draws)</td></tr>
+          </table>
+          <p class="explain-tie">If teams are level on <strong>Pts</strong>, the higher
+          <strong>GD</strong> ranks first, then most goals scored (GF).</p>
+          <p class="explain-game">💡 <strong>For the prediction game:</strong> you earn points
+          whenever <em>your</em> picked teams win (3) or draw (1) — across every match they
+          play. So teams that finish top of their group and go deep into the knockouts keep
+          earning for you. <a href="register.php" style="color:var(--teal)">Make your picks →</a></p>
+        </div>
+      </details>
+
       <p class="note" style="margin-top:12px">Standings via <a href="https://www.football-data.org" target="_blank" rel="noopener" style="color:var(--teal)">football-data.org</a>.</p>
     </section>
 
@@ -576,10 +633,11 @@
             var gd = t.gf - t.ga, cls = i < 2 ? ' class="qual"' : '';
             return '<tr' + cls + '><td class="g-pos">' + (i + 1) + '</td><td class="g-team">' + esc(t.name) + '</td>'
               + '<td>' + t.p + '</td><td>' + t.w + '</td><td>' + t.d + '</td><td>' + t.l + '</td>'
+              + '<td>' + t.gf + '</td><td>' + t.ga + '</td>'
               + '<td>' + (gd > 0 ? '+' + gd : gd) + '</td><td class="g-pts">' + t.pts + '</td></tr>';
           }).join('');
           return '<div class="grp-card"><div class="grp-title">Group ' + esc(L) + '</div>'
-            + '<table class="grp-table"><thead><tr><th></th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th></tr></thead>'
+            + '<table class="grp-table"><thead><tr><th></th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr></thead>'
             + '<tbody>' + body + '</tbody></table></div>';
         }).join('');
       });
