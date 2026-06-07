@@ -248,6 +248,7 @@
       <nav class="nav-links">
         <a href="#schedule">Schedule</a>
         <a href="#standings">Standings</a>
+        <a href="#teams">Teams</a>
         <a href="register.php">Play</a>
         <a href="leaderboard.php">Leaderboard</a>
       </nav>
@@ -298,13 +299,40 @@
         <h2>Standings</h2>
         <div class="rule"></div>
       </div>
+      <p class="sub" style="margin:0 0 18px;max-width:640px">
+        Group tables for all 12 groups. <strong>Tap any team</strong> to open its
+        profile below — venue, season statistics and full squad.
+      </p>
       <div class="widget-card">
-        <!-- Group standings. Knockout fixtures appear in the Schedule widget above. -->
+        <!-- Group standings. Clicking a team opens the Team widget in #team-detail
+             (configured via data-target-team on the config block below). -->
         <api-sports-widget
           data-type="standings"
           data-league="1"
-          data-season="2026">
+          data-season="2026"
+          data-target-team="#team-detail">
         </api-sports-widget>
+      </div>
+    </section>
+
+    <!-- TEAMS & PLAYERS -->
+    <section class="block wrap" id="teams">
+      <div class="section-head">
+        <span class="tag coral">03</span>
+        <h2>Teams &amp; Players</h2>
+        <div class="rule"></div>
+      </div>
+      <p class="sub" style="margin:0 0 18px;max-width:640px">
+        Pick a team from the <a href="#standings" style="color:var(--teal)">standings</a>
+        above to load its <strong>venue, statistics and squad</strong> here. From the
+        squad — or any match line-up in the schedule — <strong>tap a player</strong> to
+        open their profile (stats, trophies and injuries) in a pop-up.
+      </p>
+      <!-- The Team widget renders here when a team is tapped. Players open in a modal. -->
+      <div class="widget-card" id="team-detail">
+        <div style="padding:28px 8px;text-align:center;color:var(--muted)">
+          Tap a team in the standings to see its venue, statistics and squad.
+        </div>
       </div>
     </section>
   </main>
@@ -330,7 +358,9 @@
     data-show-errors="true"
     data-show-logos="true"
     data-refresh="60"
-    data-target-game="modal">
+    data-target-game="modal"
+    data-target-team="#team-detail"
+    data-target-player="modal">
   </api-sports-widget>
 
   <!-- API-SPORTS Widgets v3 loader -->

@@ -28,7 +28,7 @@ football-data.org key is used **server-side only** (in `cron.php`).
 
 | File | Purpose |
 |------|---------|
-| `index.html` | Public hub: schedule + standings widgets (API-SPORTS) |
+| `index.html` | Public hub: schedule, standings, and team/player widgets (API-SPORTS). Tap a team in the standings for its venue/stats/squad; tap a player for their profile |
 | `register.php` | Register (Access Code → nickname + 6-digit PIN + 3 picks), log in, edit picks |
 | `leaderboard.php` | Shared leaderboard with a **Sync Scores** button; scores computed in the browser from the cached fixtures |
 | `admin.php` | View all 32 slots + picks, Sync Scores, Export CSV, and a guarded reset (password-gated) |
