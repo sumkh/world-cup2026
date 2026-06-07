@@ -1,39 +1,46 @@
 # World Cup 2026 — Hub + Prediction Game
 
-A small site for the FIFA World Cup 2026: a public page with the live
-schedule and standings (via API-SPORTS widgets), plus an invite-only
-prediction game with a shared leaderboard.
+A small site for the FIFA World Cup 2026: a public hub with the live schedule,
+group standings, and team/player squads, plus an invite-only prediction game
+with a shared leaderboard.
 
 ## Stack
 
-- Static front page (`index.html`) using API-SPORTS **Widgets v3**
-- Prediction game on **PHP 8.2 / PostgreSQL**
+- Public hub (`index.html`) — **native** schedule, standings and squad browser,
+  built in the browser from our own data (no third-party widgets).
+- Prediction game on **PHP 8.2 / PostgreSQL**.
 - Match results are synced server-side by `cron.php` from the
-  **football-data.org** REST API (free plan covers World Cup 2026) into a
-  local fixture cache. Pages then read the cache, so visitors never call an
-  external API directly.
+  **football-data.org** REST API (free plan covers World Cup 2026) into a local
+  fixture cache. Every page (hub + game) reads that cache, so visitors never
+  call an external API directly.
+- Squad lists are shipped as static data (`squads.js`) with team images hosted
+  locally — no API calls needed.
 - Deployable to **Render** via Docker (see [Deployment](#deployment)).
 
-## API Resources
+> **Why not API-SPORTS widgets?** The site originally used API-SPORTS Widgets
+> v3 for the schedule/standings/teams. Their **free plan cannot access the 2026
+> season** (`"Free plans do not have access to this season, try from 2022 to
+> 2024."`), which blanks every World Cup widget. So the hub was rebuilt natively
+> on football-data.org (free, 2026-enabled) and the bundled squad data.
 
-- **API-SPORTS Widgets v3 docs:** https://api-sports.io/documentation/widgets/v3#section/Before-You-Begin/Predefined-themes
-- **World Cup 2026 blog post (API-Football):** https://www.api-football.com/news/post/fifa-world-cup-2026-using-api-sports-widgets
-- **football-data.org (score sync):** https://www.football-data.org
+## Sources & credit
 
-The API-SPORTS key is exposed client-side by design (same pattern as the
-widgets) — domain restriction in the dashboard protects your quota. The
-football-data.org key is used **server-side only** (in `cron.php`).
+- **Match data (schedule, results, standings):** [football-data.org](https://www.football-data.org) — used server-side by `cron.php`.
+- **Squad lists & team images:** API-SPORTS — [*FIFA World Cup 2026 Lineups: All Teams, Coaches and Players*](https://www.api-football.com/news/post/fifa-world-cup-2026-lineups-all-teams-coaches-and-players).
+- The football-data.org key is used **server-side only**. Team images are stored locally in `img/teams/`.
 
 ## Files
 
 | File | Purpose |
 |------|---------|
-| `index.html` | Public hub: schedule, standings, and team/player widgets (API-SPORTS). Tap a team in the standings for its venue/stats/squad; tap a player for their profile |
+| `index.html` | Public hub: native schedule (Singapore time), group standings, and a squad browser — all built from the cached fixtures + `squads.js` |
+| `squads.js` | Static data: all 48 squads (1,247 players) grouped by position, from the API-SPORTS lineups blog |
+| `img/teams/` | 48 team images (from API-SPORTS), hosted locally |
 | `register.php` | Register (Access Code → nickname + 6-digit PIN + 3 picks), log in, edit picks |
-| `leaderboard.php` | Shared leaderboard with a **Sync Scores** button; scores computed in the browser from the cached fixtures |
-| `admin.php` | View all 32 slots + picks, Sync Scores, Export CSV, and a guarded reset (password-gated) |
+| `leaderboard.php` | Shared leaderboard with a **Sync Scores** button; scores + bonuses computed in the browser; eliminated picks flagged |
+| `admin.php` | View all 32 slots + picks, Sync Scores, toggle visualisations, Export CSV, guarded reset (password-gated) |
 | `api.php` | Same-origin JSON API (register / login / picks / leaderboard / teams / fixtures) |
-| `cron.php` | Score sync — one football-data.org call updates the fixture cache; rate-limited |
+| `cron.php` | Score sync — one football-data.org call updates the fixture cache (status, score, stage, winner, date, group); rate-limited |
 | `export.php` | Admin-only CSV export of every slot, picks, and total points |
 | `db.php` | PDO/PostgreSQL connection; auto-creates tables, seeds 32 slots + 48 teams |
 | `common.js` | Browser helpers: load teams/fixtures from `api.php`, scoring + bonus logic |
@@ -42,7 +49,24 @@ football-data.org key is used **server-side only** (in `cron.php`).
 | `config.sample.php` | Copy to `config.local.php` and fill in for local development |
 | `Dockerfile` | PHP 8.2 + Apache image for Render (or any Docker host) |
 | `render.yaml` | Render service + PostgreSQL definition |
-| `.github/workflows/scores-sync.yml` | Scheduled score sync (every 15 min) |
+| `.github/workflows/scores-sync.yml` | Scheduled score sync — auto-runs only during the tournament (see [below](#automated-score-sync)) |
+
+## Public Hub (`index.html`)
+
+All three sections are native and work on the free tier — they read the same
+cached fixtures the game uses.
+
+- **Schedule** — every match grouped by date, in **Singapore time (SGT, UTC+8)**.
+  Tabs: **All** (default — finished games show their score inline, upcoming show
+  kickoff time, so results appear as games progress without switching tabs),
+  **Upcoming** (fixtures only), **Results** (finished only). The current day is
+  marked **"· Today"**.
+- **Standings** — group tables for all 12 groups, computed from results
+  (P/W/D/L/GD/Pts, sorted by points → GD → goals); the top two of each group are
+  highlighted as qualifying. Renders at 0 before kickoff, fills in as results sync.
+- **Teams & Players** — pick any of the 48 nations to see its team image and full
+  squad by position (GK/DEF/MID/FWD). Eliminated teams are flagged once the
+  knockouts begin.
 
 ## Registration Flow
 
@@ -171,20 +195,26 @@ Everything the organiser does happens on `admin.php` (log in with `ADMIN_PASSWOR
    the cached scores. Guardrails: you must be logged in, type `RESET` to enable
    the button, and confirm a final dialog. Use it only before the real launch.
 
-Automated syncing (optional) runs every 15 minutes via
+Automated syncing runs every 15 minutes **during the tournament only** via
 `.github/workflows/scores-sync.yml` once you add an `ADMIN_PASSWORD` GitHub
-Actions secret — see [Deployment](#automated-score-sync-optional).
+Actions secret — see [Automated score sync](#automated-score-sync).
 
 ## Behaviour Notes
 
 - **Visuals activate at kickoff.** Most visualisations need players' picks, which
   stay hidden until `PICK_LOCK` (first kickoff). Before then those cards show
   *"Available once picks lock at kickoff."* The match-day digest works earlier.
-- **Eliminations = knockout losses only.** "Teams still alive" and the per-player
-  *out / alive* labels mark a team eliminated when it **loses a knockout match**
-  (Round of 32 onward). Group-stage non-qualification is *not* detected, because
-  the app doesn't store group tables — a team simply stops earning once knocked
-  out. This is called out in the card's subtitle.
+- **Eliminations = knockout losses only.** Eliminated teams are flagged across
+  the site — greyed with an **OUT** tag on the leaderboard picks, **"— OUT"** in
+  the Teams & Players dropdown, and in the "Teams still alive" visual. A team is
+  marked out when it **loses a knockout match** (Round of 32 onward). Group-stage
+  exits aren't auto-detected for this flag (a non-qualifier simply stops earning),
+  though the group **standings** table does reflect group results fully.
+- **Picks lock before any elimination.** Picks are frozen at the first kickoff,
+  which is before any team is knocked out — so registration always offers the full
+  team list; the OUT flags only ever appear on already-locked picks.
+- **Times are in Singapore time.** The hub schedule shows kickoff times and date
+  grouping in SGT (UTC+8), regardless of the viewer's location.
 - **Bonuses appear only when earned.** Champion +20 / Runner-up +10 / Third +5
   are added the moment the Final and third-place play-off finish, and use the
   true result (incl. extra time / penalties). Match points always use the 90′
@@ -201,11 +231,10 @@ Actions secret — see [Deployment](#automated-score-sync-optional).
 ## Setup (Local Dev)
 
 1. Create a local PostgreSQL database.
-2. Copy `config.sample.php` → `config.local.php` and fill in the DB details, API keys, and admin password.
+2. Copy `config.sample.php` → `config.local.php` and fill in the DB details, your **football-data.org** key (`FD_API_KEY`), and an admin password.
 3. Ensure the host runs **PHP 8.2+** with the `pdo_pgsql` and `curl` extensions.
 4. The schema, 32 slots, and 48 teams are created automatically on first request.
-5. In the **API-SPORTS dashboard**, add your site's domain to the allowed domains for the widgets key.
-6. Open `admin.php`, log in, and distribute Access Codes `01`–`32` to participants. They register at `register.php`.
+5. Open `admin.php`, log in, and hit **Sync Scores** once to populate the fixture cache (schedule + standings). Then distribute Access Codes `01`–`32` to participants, who register at `register.php`.
 
 ### Validating changes without a PHP install
 
@@ -238,26 +267,42 @@ provisions a **free Render PostgreSQL** database automatically.
    |---|---|
    | `ADMIN_PASSWORD` | Any strong password — used for `admin.php` and to authorise `cron.php` |
    | `FD_API_KEY` | Your football-data.org API key (used server-side by `cron.php`) |
-   | `API_KEY` | API-SPORTS widgets key (already defaulted in code; override here if you rotate it) |
+   | `API_KEY` | *(optional, legacy)* API-SPORTS key — no longer used by the app |
 
    `DATABASE_URL` is **wired automatically** by Render from the linked PostgreSQL database — you do not fill it in manually.
 
 4. Deploy. On first request `db.php` creates the schema and seeds the 32 slots + 48 teams.
 
-### Automated score sync (optional)
+### Automated score sync
 
-`.github/workflows/scores-sync.yml` calls `cron.php` every 15 minutes. To
-enable it, add an `ADMIN_PASSWORD` **GitHub Actions secret** (repo → Settings →
-Secrets and variables → Actions) matching your Render value. Participants can
-also trigger a sync any time with the **Sync Scores** button — `cron.php` is
-rate-limited to one external call per 60 seconds.
+`.github/workflows/scores-sync.yml` calls `cron.php` every 15 minutes, but only
+when matches are actually being played. GitHub cron has no start/end date, so it
+is bounded three ways:
+
+- **Months:** the schedule only fires in June & July (`cron: '*/15 0-5,15-23 * 6,7 *'`).
+- **Hours:** only during live-match hours, **15:00–05:59 UTC** (World Cup 2026 is
+  in the Americas; games run ~16:00 UTC to ~04:00 UTC).
+- **Dates:** a guard step skips the sync unless today is within
+  **2026-06-11 … 2026-07-19**.
+
+Net effect: it starts when the Cup begins, syncs every 15 min while games are on,
+and goes dormant once it ends (and never fires in other months or future years).
+
+To enable it, add an `ADMIN_PASSWORD` **GitHub Actions secret** (repo → Settings →
+Secrets and variables → Actions) matching your Render value. You can also run it
+on demand from **Actions → Run workflow**, or via the **Sync Scores** button in
+the app — `cron.php` is rate-limited to one external call per 60 seconds.
+
+> GitHub disables scheduled workflows after ~60 days of repo inactivity, so make
+> sure there's a commit within ~60 days before 11 Jun 2026.
 
 ## Notes
 
 - football-data.org's **free plan is rate-limited** (≈10 requests/minute). The
-  sync is throttled to once per 60s and results are cached in the DB, so the
-  leaderboard reads are free and instant.
+  sync is throttled to once per 60s and results are cached in the DB, so all page
+  reads are free and instant.
 - Render's **free PostgreSQL expires after 90 days** — export your data (admin
   CSV or `pg_dump`) or upgrade before then if you need it long-term.
-- The API-SPORTS key is exposed client-side by design (same as the widgets) —
-  domain restriction in the dashboard is what protects it.
+- **`API_KEY` (API-SPORTS) is now legacy.** It remains a config/env default but is
+  unused since the hub dropped the API-SPORTS widgets; you can ignore it. All live
+  data comes from football-data.org via `FD_API_KEY`.
