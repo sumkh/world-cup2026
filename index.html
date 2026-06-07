@@ -202,6 +202,36 @@
     }
     api-sports-widget { display: block; max-width: 100%; }
 
+    /* ---------- teams & players ---------- */
+    .team-picker { display: flex; flex-direction: column; gap: 8px; max-width: 360px; }
+    #teamPick {
+      width: 100%; background: var(--surface); color: var(--text);
+      border: 1px solid var(--line); border-radius: 11px; padding: 12px 14px;
+      font: inherit; font-size: 15px; outline: none; cursor: pointer;
+    }
+    #teamPick:focus { border-color: var(--teal); }
+    .team-head { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 6px; }
+    .team-img {
+      width: 100%; max-width: 460px; height: auto; border-radius: 12px;
+      border: 1px solid var(--line); background: var(--surface);
+    }
+    .team-meta .team-name {
+      font-family: 'Anton', sans-serif; font-size: 30px; text-transform: uppercase; letter-spacing: -.5px;
+    }
+    .team-meta .team-sub { color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+    .squad-group { margin-top: 20px; }
+    .squad-group h4 {
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--teal); margin-bottom: 10px;
+    }
+    .squad-group h4 small { color: var(--muted); margin-left: 4px; }
+    .player-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .player-chip {
+      font-size: 13px; font-weight: 600; color: var(--text);
+      background: var(--surface); border: 1px solid var(--line);
+      border-radius: 999px; padding: 6px 13px;
+    }
+
     /* ---------- footer ---------- */
     footer {
       border-top: 1px solid var(--line); margin-top: 40px;
@@ -323,17 +353,19 @@
         <div class="rule"></div>
       </div>
       <p class="sub" style="margin:0 0 18px;max-width:640px">
-        Pick a team from the <a href="#standings" style="color:var(--teal)">standings</a>
-        above to load its <strong>venue, statistics and squad</strong> here. From the
-        squad — or any match line-up in the schedule — <strong>tap a player</strong> to
-        open their profile (stats, trophies and injuries) in a pop-up.
+        Choose any of the 48 nations to see its full squad — goalkeepers, defenders,
+        midfielders and forwards — and the stars to watch.
       </p>
-      <!-- The Team widget renders here when a team is tapped. Players open in a modal. -->
-      <div class="widget-card" id="team-detail">
-        <div style="padding:28px 8px;text-align:center;color:var(--muted)">
-          Tap a team in the standings to see its venue, statistics and squad.
-        </div>
+      <div class="team-picker">
+        <label for="teamPick" style="color:var(--muted);font-size:13px;font-weight:700;letter-spacing:.3px">Select a team</label>
+        <select id="teamPick"></select>
       </div>
+      <div class="widget-card" id="team-detail" style="margin-top:16px">
+        <div style="padding:28px 8px;text-align:center;color:var(--muted)">Choose a team above to see its squad.</div>
+      </div>
+      <p class="note" style="margin-top:14px">
+        Squad lists &amp; team images: <a href="https://www.api-football.com/news/post/fifa-world-cup-2026-lineups-all-teams-coaches-and-players" target="_blank" rel="noopener" style="color:var(--teal)">API-SPORTS — FIFA World Cup 2026 Lineups</a>.
+      </p>
     </section>
   </main>
 
@@ -355,24 +387,52 @@
     data-sport="football"
     data-lang="en"
     data-theme="dark"
-    data-show-errors="true"
+    data-show-errors="false"
     data-show-logos="true"
     data-refresh="60"
     data-league="1"
     data-season="2026"
-    data-game-tab="statistics"
-    data-team-statistics="true"
-    data-team-squad="true"
-    data-player-statistics="true"
-    data-player-injuries="true"
-    data-player-trophies="true"
-    data-target-game="modal"
-    data-target-team="#team-detail"
-    data-target-player="modal">
+    data-target-game="modal">
   </api-sports-widget>
 
   <!-- API-SPORTS Widgets v3 loader -->
   <script type="module" src="https://widgets.api-sports.io/3.1.0/widgets.js"></script>
+
+  <!-- Teams & Players: native squad browser (data from API-SPORTS lineups blog) -->
+  <script src="squads.js"></script>
+  <script>
+    (function () {
+      var teams = (window.WC_SQUADS || []).slice().sort(function (a, b) { return a.name.localeCompare(b.name); });
+      var sel = document.getElementById('teamPick');
+      var panel = document.getElementById('team-detail');
+      if (!sel || !panel) return;
+      var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); };
+
+      sel.innerHTML = '<option value="">— Choose a team —</option>' +
+        teams.map(function (t, i) { return '<option value="' + i + '">' + esc(t.name) + '</option>'; }).join('');
+
+      function group(title, list) {
+        if (!list || !list.length) return '';
+        var chips = list.map(function (p) { return '<span class="player-chip">' + esc(p) + '</span>'; }).join('');
+        return '<div class="squad-group"><h4>' + esc(title) + ' <small>' + list.length + '</small></h4>' +
+               '<div class="player-list">' + chips + '</div></div>';
+      }
+
+      sel.addEventListener('change', function () {
+        var t = teams[parseInt(sel.value, 10)];
+        if (!t) { panel.innerHTML = '<div style="padding:28px 8px;text-align:center;color:var(--muted)">Choose a team above to see its squad.</div>'; return; }
+        var count = t.gk.length + t.df.length + t.mf.length + t.fw.length;
+        panel.innerHTML =
+          '<div class="team-head">' +
+            '<img class="team-img" src="img/teams/' + t.slug + '.webp" alt="' + esc(t.name) + ' squad" loading="lazy" />' +
+            '<div class="team-meta"><div class="team-name">' + esc(t.name) + '</div>' +
+            '<div class="team-sub">' + count + ' players</div></div>' +
+          '</div>' +
+          group('Goalkeepers', t.gk) + group('Defenders', t.df) +
+          group('Midfielders', t.mf) + group('Forwards', t.fw);
+      });
+    })();
+  </script>
 
   <!-- Kickoff countdown (opening match: June 11, 2026) -->
   <script>
