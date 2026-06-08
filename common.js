@@ -51,8 +51,13 @@ const BONUS = { CHAMPION: 20, RUNNER_UP: 10, THIRD: 5 };
   Match points use score.fulltime (90'): a penalty shootout = draw for both.
   Bonuses use fixture.winner (true result incl. ET/penalties) on the
   FINAL and THIRD_PLACE matches.
+
+  sinceMs (optional): for late joiners — only count matches that kick off at
+  or after this epoch time. Matches completed before they joined don't score.
+  names is always built for every team, regardless of sinceMs.
 */
-function computeTeamPoints(fixtures) {
+function computeTeamPoints(fixtures, sinceMs) {
+  sinceMs = sinceMs || 0;
   const points = {}, bonus = {}, names = {};
   const add = (id, n) => { points[id] = (points[id] || 0) + n; };
   const addBonus = (id, n) => { bonus[id] = (bonus[id] || 0) + n; add(id, n); };
@@ -62,6 +67,8 @@ function computeTeamPoints(fixtures) {
     names[h.id] = { name: h.name, logo: h.logo };
     names[a.id] = { name: a.name, logo: a.logo };
     if (!FINISHED.has(f.fixture.status.short)) continue;
+    // Skip matches that kicked off before the join time (late joiners).
+    if (sinceMs && f.fixture.date && new Date(f.fixture.date).getTime() < sinceMs) continue;
 
     // ── Match points (90-minute result) ──
     let fh = f.score && f.score.fulltime ? f.score.fulltime.home : null;

@@ -202,7 +202,7 @@ try { $VIZ = viz_settings(); } catch (Throwable $e) { /* DB down — show leader
       const run = () => {
         const champ = parseInt(sel.value, 10);
         const rows = (LAST.people.participants || []).filter(p => p.picks).map(p => {
-          let total = p.picks.reduce((s, id) => s + (LAST.points[id] || 0), 0);
+          let total = LAST.totals[p.nickname] || 0;           // join-filtered base
           const boosted = p.picks.includes(champ);
           if (boosted) total += Math.max(0, 20 - (LAST.bonus[champ] || 0)); // don't double-count if already champion
           return { nick: p.nickname, total, boosted };
@@ -218,8 +218,8 @@ try { $VIZ = viz_settings(); } catch (Throwable $e) { /* DB down — show leader
       const finished = LAST.fixtures.filter(f => FINISHED.has(f.fixture.status.short));
       let leader = null, gap = null;
       if (revealed()) {
-        const rows = (LAST.people.participants || []).filter(p => p.picks)
-          .map(p => ({ nick: p.nickname, total: p.picks.reduce((s, id) => s + (LAST.points[id] || 0), 0) }))
+        const rows = Object.keys(LAST.totals)
+          .map(n => ({ nick: n, total: LAST.totals[n] }))
           .sort((a, b) => b.total - a.total);
         if (rows.length) { leader = rows[0]; if (rows[1]) gap = rows[0].total - rows[1].total; }
       }
@@ -266,13 +266,20 @@ try { $VIZ = viz_settings(); } catch (Throwable $e) { /* DB down — show leader
         return;
       }
 
+      // Aggregate (all-matches) team points — used by the visualisations + names.
       const { points, bonus, names } = computeTeamPoints(fixtures);
       const derived = deriveTournament(fixtures);
       const locked = people.locked;
+
+      // Per-participant scoring: late joiners only count matches after they joined.
+      const totalsByNick = {};
       const rows = (people.participants || []).map(p => {
         const picks = p.picks || [];
-        const total = picks.reduce((s, id) => s + (points[id] || 0), 0);
-        return { nick: p.nickname, picks, total, hidden: p.picks === null };
+        const since = p.joined ? new Date(p.joined).getTime() : 0;
+        const tp = since ? computeTeamPoints(fixtures, since) : { points, bonus };
+        const total = picks.reduce((s, id) => s + (tp.points[id] || 0), 0);
+        if (p.nickname != null) totalsByNick[p.nickname] = total;
+        return { nick: p.nickname, picks, total, hidden: p.picks === null, tp };
       });
 
       // rank: points desc, then name; ties share a rank
@@ -280,7 +287,7 @@ try { $VIZ = viz_settings(); } catch (Throwable $e) { /* DB down — show leader
       let lastPts = null, lastRank = 0;
       rows.forEach((r, i) => { r.rank = (r.total === lastPts) ? lastRank : (lastRank = i + 1); lastPts = r.total; });
 
-      LAST = { people, fixtures, points, bonus, names, locked, derived };
+      LAST = { people, fixtures, points, bonus, names, locked, derived, totals: totalsByNick };
 
       if (!rows.length) {
         $('board').innerHTML = '<div class="empty">No participants yet. Be the first to <a href="register.php" style="color:var(--teal)">join</a>.</div>';
@@ -293,8 +300,8 @@ try { $VIZ = viz_settings(); } catch (Throwable $e) { /* DB down — show leader
           } else {
             picksHtml = r.picks.map(id => {
               const t = names[id] || {};
-              const pts = points[id] || 0;
-              const bon = bonus[id] || 0;
+              const pts = r.tp.points[id] || 0;
+              const bon = r.tp.bonus[id] || 0;
               const out = derived.eliminated.has(id);
               const logo = t.logo ? `<img src="${esc(t.logo)}" alt="">` : '';
               const bonusTag = bon ? ` <span style="color:var(--gold)">★+${bon}</span>` : '';
@@ -319,7 +326,7 @@ try { $VIZ = viz_settings(); } catch (Throwable $e) { /* DB down — show leader
       const now = new Date();
       $('status').innerHTML = '<span class="updated">Updated ' + now.toLocaleTimeString() + '</span>';
       $('lockline').textContent = locked
-        ? 'Picks are locked. Scores update from live results.'
+        ? 'Picks are locked. Scores update from live results. Latecomers can still join — they score only from matches after they register.'
         : 'The tournament hasn\'t started — everyone sits on 0 and picks stay hidden until kickoff.';
 
       renderViz();

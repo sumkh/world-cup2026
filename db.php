@@ -36,9 +36,13 @@ function db() {
       team1      INT,
       team2      INT,
       team3      INT,
+      joined_at  TIMESTAMPTZ,
       created_at TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
       updated_at TIMESTAMPTZ   NOT NULL DEFAULT NOW()
     )");
+    // joined_at = when this slot was registered. For late joiners (after the
+    // first kickoff) only matches kicking off after this time score for them.
+    $pdo->exec("ALTER TABLE participants ADD COLUMN IF NOT EXISTS joined_at TIMESTAMPTZ");
 
     $pdo->exec("INSERT INTO participants (user_id) VALUES
       ('01'),('02'),('03'),('04'),('05'),('06'),('07'),('08'),

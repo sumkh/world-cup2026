@@ -75,6 +75,10 @@ cached fixtures the game uses.
 1. **Register:** participant enters their assigned Access Code (e.g. `07`), chooses a nickname and 6-digit personal PIN, then picks 3 teams.
 2. **Log in:** participant enters Access Code + personal PIN to return and edit picks.
 3. **Picks lock** at the first kickoff (`PICK_LOCK` in config) and stay hidden on the leaderboard until then.
+4. **Late join (after kickoff):** registration stays open. A latecomer's picks are
+   **final the moment they register**, and they **only earn points from matches that
+   kick off after they join** — already-completed matches don't count for them. This
+   keeps it fair even though they register after results are visible.
 
 ## Scoring
 
@@ -213,6 +217,11 @@ Actions secret — see [Automated score sync](#automated-score-sync).
 - **Picks lock before any elimination.** Picks are frozen at the first kickoff,
   which is before any team is knocked out — so registration always offers the full
   team list; the OUT flags only ever appear on already-locked picks.
+- **Late joiners score from join time only.** Registration stays open after kickoff;
+  a late joiner's `joined_at` is recorded and the leaderboard counts only matches
+  (by kickoff time) at/after it — implemented via `computeTeamPoints(fixtures, sinceMs)`.
+  Players who joined before kickoff are unaffected (all matches count). Each player's
+  total is therefore computed individually rather than from one shared per-team tally.
 - **Times are in Singapore time.** The hub schedule shows kickoff times and date
   grouping in SGT (UTC+8), regardless of the viewer's location.
 - **Bonuses appear only when earned.** Champion +20 / Runner-up +10 / Third +5

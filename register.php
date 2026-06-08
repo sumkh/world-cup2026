@@ -40,6 +40,7 @@
         <div id="view-register">
           <h2 style="font-family:'Anton',sans-serif;font-weight:400;font-size:26px;text-transform:uppercase">Register</h2>
           <p class="note">Enter the access code you were given, then choose a nickname and a 6-digit personal PIN to protect your picks.</p>
+          <p class="note" id="r_latenote" style="display:none;color:var(--gold);border:1px solid rgba(255,206,58,.4);border-radius:11px;padding:10px 12px">⚠ The tournament has already started. You can still join, but your picks are <strong>final once you register</strong>, and you'll only earn points from matches that kick off <strong>after</strong> you join — completed matches won't count.</p>
           <label>Access Code</label>
           <input id="r_uid" inputmode="numeric" maxlength="2" autocomplete="off" placeholder="" style="max-width:120px" />
           <label>Nickname</label>
@@ -111,7 +112,8 @@
     function padUID(v){ return v.length === 1 ? '0' + v : v; }
 
     if (window.PICK_LOCKED) {
-      $('lockpill').innerHTML = '<span class="pill lock">● Picks locked — tournament has started</span>';
+      $('lockpill').innerHTML = '<span class="pill lock">● Tournament started — late join open</span>';
+      $('r_latenote').style.display = 'block';
     } else {
       $('lockpill').innerHTML = '<span class="pill">Picks open until first kickoff</span>';
     }
@@ -149,7 +151,8 @@
         picks:    r.picks,
       });
       if (res.error) return flash($('r_msg'), res.error, false);
-      enterEdit({ nickname: res.nickname, picks: res.picks, locked: false });
+      // Late joiners (res.late) have final picks immediately; pre-kickoff joiners can still edit.
+      enterEdit({ nickname: res.nickname, picks: res.picks, locked: !!res.late });
     };
 
     $('btn-login').onclick = async () => {

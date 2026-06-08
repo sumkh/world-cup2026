@@ -43,7 +43,8 @@ $action = $_GET['action'] ?? '';
 switch ($action) {
 
   case 'claim': {
-    if (locked()) out(['error' => 'Registration is closed — the tournament has started.'], 403);
+    // Registration stays open after kickoff (late join). Late joiners' picks
+    // are final immediately and only score from matches after joined_at.
     $b      = body();
     $uid    = trim($b['user_id']  ?? '');
     $nick   = trim($b['nickname'] ?? '');
@@ -66,11 +67,11 @@ switch ($action) {
     $st->execute([$nick]);
     if ($st->fetch()) out(['error' => 'That nickname is already taken.'], 409);
 
-    $st = $pdo->prepare('UPDATE participants SET claimed=1, nickname=?, pin_hash=?, team1=?, team2=?, team3=? WHERE id=?');
+    $st = $pdo->prepare('UPDATE participants SET claimed=1, nickname=?, pin_hash=?, team1=?, team2=?, team3=?, joined_at=NOW() WHERE id=?');
     $st->execute([$nick, password_hash($pin, PASSWORD_DEFAULT), $picks[0], $picks[1], $picks[2], $row['id']]);
 
     $_SESSION['pid'] = (int)$row['id'];
-    out(['ok' => true, 'nickname' => $nick, 'picks' => $picks]);
+    out(['ok' => true, 'nickname' => $nick, 'picks' => $picks, 'late' => locked()]);
   }
 
   case 'login': {
@@ -113,13 +114,18 @@ switch ($action) {
 
   case 'participants': {
     // Leaderboard feed. Picks are hidden until kickoff.
+    // joined is sent as ISO-8601 UTC so the browser can score late joiners
+    // only from matches after they registered.
     $reveal = locked();
-    $st = $pdo->query('SELECT nickname, team1, team2, team3 FROM participants WHERE claimed = 1 ORDER BY created_at ASC');
+    $st = $pdo->query("SELECT nickname, team1, team2, team3,
+                              to_char(joined_at AT TIME ZONE 'UTC', 'YYYY-MM-DD\"T\"HH24:MI:SS\"Z\"') AS joined
+                       FROM participants WHERE claimed = 1 ORDER BY created_at ASC");
     $list = [];
     foreach ($st as $r) {
       $list[] = [
         'nickname' => $r['nickname'],
         'picks'    => $reveal ? [(int)$r['team1'], (int)$r['team2'], (int)$r['team3']] : null,
+        'joined'   => $r['joined'],
       ];
     }
     out(['locked' => $reveal, 'participants' => $list]);
