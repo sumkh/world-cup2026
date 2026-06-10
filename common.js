@@ -96,6 +96,53 @@ function computeTeamPoints(fixtures, sinceMs) {
   return { points, bonus, names };
 }
 
+/* Points (match + bonus) a single team earned in one finished fixture.
+   Returns 0 if the team isn't in this fixture or it isn't finished. */
+function fixtureTeamPoints(f, teamId) {
+  if (!FINISHED.has(f.fixture.status.short)) return 0;
+  const h = f.teams.home, a = f.teams.away;
+  if (teamId !== h.id && teamId !== a.id) return 0;
+
+  let fh = f.score && f.score.fulltime ? f.score.fulltime.home : null;
+  let fa = f.score && f.score.fulltime ? f.score.fulltime.away : null;
+  if (fh === null || fa === null) { fh = f.goals.home; fa = f.goals.away; }
+  if (fh === null || fa === null) return 0;
+
+  const isHome = teamId === h.id;
+  const my = isHome ? fh : fa, ot = isHome ? fa : fh;
+  let pts = (my > ot) ? 3 : (my === ot ? 1 : 0);
+
+  const stage = f.fixture.stage, w = f.fixture.winner;
+  if (stage === 'FINAL' && (w === 'H' || w === 'A')) {
+    const champ = w === 'H' ? h.id : a.id, runner = w === 'H' ? a.id : h.id;
+    if (teamId === champ) pts += BONUS.CHAMPION; else if (teamId === runner) pts += BONUS.RUNNER_UP;
+  } else if (stage === 'THIRD_PLACE' && (w === 'H' || w === 'A')) {
+    if (teamId === (w === 'H' ? h.id : a.id)) pts += BONUS.THIRD;
+  }
+  return pts;
+}
+
+/* Score one participant from their pick-segment history.
+   segments: [{slot, team, start, end}] — end null = still active.
+   A match scores for a slot only if its kickoff is within that segment's
+   window [start, end). Returns { total, slot:{1:pts,2:pts,3:pts} }. */
+function scoreParticipant(fixtures, segments) {
+  const slot = { 1: 0, 2: 0, 3: 0 };
+  let total = 0;
+  for (const seg of (segments || [])) {
+    const s = new Date(seg.start).getTime();
+    const e = seg.end ? new Date(seg.end).getTime() : Infinity;
+    for (const f of fixtures) {
+      if (!FINISHED.has(f.fixture.status.short)) continue;
+      const k = f.fixture.date ? new Date(f.fixture.date).getTime() : null;
+      if (k === null || k < s || k >= e) continue;
+      const p = fixtureTeamPoints(f, seg.team);
+      if (p) { slot[seg.slot] = (slot[seg.slot] || 0) + p; total += p; }
+    }
+  }
+  return { total, slot };
+}
+
 /* Same-origin call to api.php */
 async function api(action, data) {
   const r = await fetch('api.php?action=' + encodeURIComponent(action), {

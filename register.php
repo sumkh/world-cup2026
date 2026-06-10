@@ -72,13 +72,22 @@
         <div id="view-edit" style="display:none">
           <h2 style="font-family:'Anton',sans-serif;font-weight:400;font-size:26px;text-transform:uppercase">Your picks</h2>
           <p class="note">Signed in as <strong id="e_nick"></strong>.</p>
-          <label>Team 1</label><select id="e_t1" class="team"></select>
-          <label>Team 2</label><select id="e_t2" class="team"></select>
-          <label>Team 3</label><select id="e_t3" class="team"></select>
-          <div style="margin-top:20px" id="e_actions">
-            <button class="btn" id="btn-save">Save picks</button>
+
+          <!-- Pre-kickoff: free editing -->
+          <div id="e_edit_mode">
+            <label>Team 1</label><select id="e_t1" class="team"></select>
+            <label>Team 2</label><select id="e_t2" class="team"></select>
+            <label>Team 3</label><select id="e_t3" class="team"></select>
+            <div style="margin-top:20px"><button class="btn" id="btn-save">Save picks</button></div>
           </div>
-          <div class="linkrow"><a href="leaderboard.php">View leaderboard →</a> &nbsp;·&nbsp; <a id="btn-logout">Log out</a></div>
+
+          <!-- Post-kickoff: switch one team at a time -->
+          <div id="e_switch_mode" style="display:none">
+            <p class="note" style="color:var(--gold);border:1px solid rgba(255,206,58,.4);border-radius:11px;padding:10px 12px">⚠ The tournament has started. You can <strong>switch</strong> any team — your current team <strong>keeps the points it has earned</strong>, and the new team scores <strong>only from its next kickoff</strong> (it won't get points it already earned).</p>
+            <div id="e_switch"></div>
+          </div>
+
+          <div class="linkrow" style="margin-top:18px"><a href="leaderboard.php">View leaderboard →</a> &nbsp;·&nbsp; <a id="btn-logout">Log out</a></div>
           <div class="msg" id="e_msg"></div>
         </div>
 
@@ -129,14 +138,76 @@
       if (me.auth) enterEdit(me);
     })();
 
+    let FIXTURES = null, ELIM = new Set();
+    async function ensureFixtures(){
+      if (FIXTURES) return;
+      try {
+        FIXTURES = await loadFixtures();
+        ELIM = new Set();
+        FIXTURES.forEach(f => {
+          if (!FINISHED.has(f.fixture.status.short)) return;
+          const st = f.fixture.stage, w = f.fixture.winner;
+          if (!st || st === 'GROUP_STAGE' || (w !== 'H' && w !== 'A')) return;
+          ELIM.add((w === 'H' ? f.teams.away : f.teams.home).id);
+        });
+      } catch (e) { FIXTURES = []; }
+    }
+
     function enterEdit(me){
       show('edit');
       $('e_nick').textContent = me.nickname;
-      fillSelect($('e_t1'), me.picks[0]); fillSelect($('e_t2'), me.picks[1]); fillSelect($('e_t3'), me.picks[2]);
+      CURRENT = me.picks.slice();
+      SEGMENTS = me.segments || null;
       if (me.locked) {
-        $('e_actions').innerHTML = '<span class="pill lock">● Picks are locked</span>';
-        ['e_t1','e_t2','e_t3'].forEach(id => $(id).disabled = true);
+        $('e_edit_mode').style.display = 'none';
+        $('e_switch_mode').style.display = 'block';
+        renderSwitch();
+      } else {
+        $('e_edit_mode').style.display = 'block';
+        $('e_switch_mode').style.display = 'none';
+        fillSelect($('e_t1'), me.picks[0]); fillSelect($('e_t2'), me.picks[1]); fillSelect($('e_t3'), me.picks[2]);
       }
+    }
+
+    let CURRENT = [], SEGMENTS = null;
+    function teamName(id){ const t = TEAMS.find(x => x.id === id); return t ? t.name : ('#' + id); }
+
+    async function renderSwitch(){
+      await ensureFixtures();
+      const slotPts = (SEGMENTS && FIXTURES) ? scoreParticipant(FIXTURES, SEGMENTS).slot : {};
+      const box = $('e_switch');
+      box.innerHTML = CURRENT.map((id, idx) => {
+        const slot = idx + 1;
+        const out = ELIM.has(id);
+        const pts = slotPts[slot] || 0;
+        const others = CURRENT.filter((_, j) => j !== idx);
+        const opts = TEAMS
+          .filter(t => !ELIM.has(t.id) && !others.includes(t.id) && t.id !== id)
+          .map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+        return `<div class="switch-slot">
+          <div><strong>Slot ${slot}: ${teamName(id)}</strong> <span class="note" style="display:inline">· ${pts} pts so far${out ? ' · <span style="color:var(--coral)">OUT</span>' : ''}</span></div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <select id="sw_${slot}" class="team" style="flex:1"><option value="">— switch to —</option>${opts}</select>
+            <button class="btn" data-slot="${slot}" style="width:auto">Switch</button>
+          </div>
+        </div>`;
+      }).join('');
+      box.querySelectorAll('button[data-slot]').forEach(b => {
+        b.onclick = () => doSwitch(parseInt(b.dataset.slot, 10));
+      });
+    }
+
+    async function doSwitch(slot){
+      const sel = $('sw_' + slot);
+      const tid = parseInt(sel.value, 10);
+      if (!tid) return flash($('e_msg'), 'Choose a team to switch to.', false);
+      if (!confirm('Switch Slot ' + slot + ' to ' + teamName(tid) + '? Your current team keeps its points; the new team scores only from its next match.')) return;
+      const res = await api('switch_pick', { slot, team_id: tid });
+      if (res.error) return flash($('e_msg'), res.error, false);
+      CURRENT = res.picks.slice();
+      const me = await api('me'); SEGMENTS = me.segments || SEGMENTS;
+      await renderSwitch();
+      flash($('e_msg'), 'Switched! Slot ' + slot + ' is now ' + teamName(tid) + '.', true);
     }
 
     $('to-login').onclick    = () => show('login');

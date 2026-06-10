@@ -39,10 +39,10 @@ with a shared leaderboard.
 | `register.php` | Register (Access Code → nickname + 6-digit PIN + 3 picks), log in, edit picks |
 | `leaderboard.php` | Shared leaderboard with a **Sync Scores** button; scores + bonuses computed in the browser; eliminated picks flagged |
 | `admin.php` | View all 32 slots + picks, Sync Scores, toggle visualisations, Export CSV, guarded reset (password-gated) |
-| `api.php` | Same-origin JSON API (register / login / picks / leaderboard / teams / fixtures) |
+| `api.php` | Same-origin JSON API (register / login / save picks / **switch_pick** / leaderboard / teams / fixtures) |
 | `cron.php` | Score sync — one football-data.org call updates the fixture cache (status, score, stage, winner, date, group); rate-limited |
 | `export.php` | Admin-only CSV export of every slot, picks, and total points |
-| `db.php` | PDO/PostgreSQL connection; auto-creates tables, seeds 32 slots + 48 teams |
+| `db.php` | PDO/PostgreSQL connection; auto-creates tables (incl. `pick_segments`), seeds 32 slots + 48 teams, migrates existing picks into segments |
 | `common.js` | Browser helpers: load teams/fixtures from `api.php`, scoring + bonus logic |
 | `styles.css` | Shared theme (responsive) |
 | `config.php` | Reads environment variables (production), with `config.local.php` override for local dev |
@@ -75,10 +75,17 @@ cached fixtures the game uses.
 1. **Register:** participant enters their assigned Access Code (e.g. `07`), chooses a nickname and 6-digit personal PIN, then picks 3 teams.
 2. **Log in:** participant enters Access Code + personal PIN to return and edit picks.
 3. **Picks lock** at the first kickoff (`PICK_LOCK` in config) and stay hidden on the leaderboard until then.
-4. **Late join (after kickoff):** registration stays open. A latecomer's picks are
-   **final the moment they register**, and they **only earn points from matches that
-   kick off after they join** — already-completed matches don't count for them. This
-   keeps it fair even though they register after results are visible.
+4. **Late join (after kickoff):** registration stays open. A latecomer only earns
+   points from matches that kick off after they join — already-completed matches
+   don't count for them.
+5. **Switch teams (after kickoff):** log in any time to swap a team. The old team
+   keeps the points it earned up to the switch; the new team scores only from its
+   next kickoff. Unlimited switches; the switch list shows active teams only.
+
+Both rules use the same engine: each slot is a **timeline of segments**
+(`pick_segments`), and a match scores for a slot only if its kickoff falls inside
+the segment that held the team. Existing registrations are migrated into a
+starting segment automatically (idempotent).
 
 ## Scoring
 
@@ -95,8 +102,18 @@ in **every round** (all 104 games):
 - Decided on the true result (incl. extra time / penalties) of the Final and
   third-place play-off. Bonuses stay hidden until those matches complete.
 
-A participant's total is the sum across their three teams. The leaderboard
-recomputes from the full fixture cache each load, so it is always consistent.
+**Switching teams (after kickoff).** A participant can log in and change any of
+their 3 teams at any time during the tournament (unlimited). Scoring is **time-
+windowed**: a match counts for a slot only if that slot held the team at the
+match's **kickoff**. So the team you switch *away* from keeps every point it
+earned up to the switch, and the team you switch *to* scores only from its next
+kickoff onward (never its earlier matches). Bonuses go to whoever holds that
+team when the final / third-place match kicks off. The switch pool shows
+**active teams only** (eliminated teams and your other two are hidden).
+
+A participant's total is the sum across their three slots' segment history. The
+leaderboard recomputes from the fixture cache each load, so it is always
+consistent.
 
 ## How a Season Plays Out
 
@@ -217,11 +234,17 @@ Actions secret — see [Automated score sync](#automated-score-sync).
 - **Picks lock before any elimination.** Picks are frozen at the first kickoff,
   which is before any team is knocked out — so registration always offers the full
   team list; the OUT flags only ever appear on already-locked picks.
-- **Late joiners score from join time only.** Registration stays open after kickoff;
-  a late joiner's `joined_at` is recorded and the leaderboard counts only matches
-  (by kickoff time) at/after it — implemented via `computeTeamPoints(fixtures, sinceMs)`.
-  Players who joined before kickoff are unaffected (all matches count). Each player's
-  total is therefore computed individually rather than from one shared per-team tally.
+- **Time-windowed scoring (switches + late join).** Each slot is a timeline of
+  `pick_segments` (team, start, end). A match scores for a slot only if its kickoff
+  is inside the segment holding that team — this powers both **switching** (old team
+  keeps points to the switch, new team scores forward) and **late join** (first
+  segment just starts later). Scored in the browser via `scoreParticipant(fixtures,
+  segments)` and in SQL for the CSV export. Each player's total is computed
+  individually. Existing registrations are migrated into a starting segment on first
+  load (idempotent — verified against Postgres).
+- **Switching is unlimited and immediate.** A sharp player can move a slot onto
+  whichever team plays next and bank that match — that's by design (active
+  management). The switch list hides eliminated teams and your other two picks.
 - **Times are in Singapore time.** The hub schedule shows kickoff times and date
   grouping in SGT (UTC+8), regardless of the viewer's location.
 - **Bonuses appear only when earned.** Champion +20 / Runner-up +10 / Third +5

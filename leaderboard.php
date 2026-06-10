@@ -106,14 +106,23 @@ try { $VIZ = viz_settings(); } catch (Throwable $e) { /* DB down — show leader
 
     /* ── Per-player detail (expandable leaderboard rows) ── */
     function detailHtml(r) {
-      const { points, bonus, names, derived } = LAST;
-      const lines = r.picks.map(id => {
-        const t = names[id] || {}, pts = points[id] || 0, bon = bonus[id] || 0;
-        let note;
-        if (bon)                          note = `<span style="color:var(--gold)">★ +${bon} bonus</span>`;
-        else if (derived.eliminated.has(id)) note = '<span style="color:var(--coral)">out</span>';
-        else                              note = '<span style="color:var(--teal)">alive · up to +20 if champion</span>';
-        return `<div class="detail-line"><span>${esc(t.name || ('#'+id))}</span><span>${pts} pts · ${note}</span></div>`;
+      const { names, derived } = LAST;
+      const segBySlot = { 1: [], 2: [], 3: [] };
+      (r.segments || []).forEach(s => { (segBySlot[s.slot] = segBySlot[s.slot] || []).push(s); });
+      const lines = [1, 2, 3].map(sl => {
+        const id = r.current[sl - 1];
+        const t = names[id] || {};
+        const pts = (r.slotPts && r.slotPts[sl]) || 0;
+        const segs = segBySlot[sl] || [];
+        const note = derived.eliminated.has(id)
+          ? '<span style="color:var(--coral)">out</span>'
+          : '<span style="color:var(--teal)">alive</span>';
+        let hist = '';
+        if (segs.length > 1) {
+          const chain = segs.map(s => esc((names[s.team] || {}).name || ('#' + s.team))).join(' → ');
+          hist = `<div style="font-size:11px;color:var(--muted);margin-top:2px">switched: ${chain}</div>`;
+        }
+        return `<div class="detail-line"><span>Slot ${sl}: ${esc(t.name || ('#' + id))}${hist}</span><span>${pts} pts · ${note}</span></div>`;
       }).join('');
       return `<div class="detail-box">${lines}</div>`;
     }
@@ -130,7 +139,7 @@ try { $VIZ = viz_settings(); } catch (Throwable $e) { /* DB down — show leader
     function vizHeatmap() {
       if (!revealed()) return notYet('Pick Popularity', VIZ_DESC.heatmap);
       const tally = {};
-      (LAST.people.participants || []).forEach(p => (p.picks || []).forEach(id => tally[id] = (tally[id] || 0) + 1));
+      (LAST.people.participants || []).forEach(p => (p.current || []).forEach(id => tally[id] = (tally[id] || 0) + 1));
       const ids = Object.keys(tally).sort((a, b) => tally[b] - tally[a]);
       if (!ids.length) return vizCard('Pick Popularity', '<div class="empty">No picks yet.</div>');
       const max = tally[ids[0]];
@@ -147,11 +156,11 @@ try { $VIZ = viz_settings(); } catch (Throwable $e) { /* DB down — show leader
       if (!revealed()) return notYet('Teams Still Alive', VIZ_DESC.alive);
       const el = LAST.derived.eliminated;
       const inner = (LAST.people.participants || []).map(p => {
-        const chips = (p.picks || []).map(id => {
+        const chips = (p.current || []).map(id => {
           const t = LAST.names[id] || {}, out = el.has(id);
           return `<span class="chip ${out ? 'out' : 'alive'}">${esc(t.name || ('#'+id))}</span>`;
         }).join('');
-        const aliveN = (p.picks || []).filter(id => !el.has(id)).length;
+        const aliveN = (p.current || []).filter(id => !el.has(id)).length;
         return `<div class="alive-row"><span class="who">${esc(p.nickname)}</span><span class="chips">${chips}</span><span class="bar-num">${aliveN}/3</span></div>`;
       }).join('');
       return vizCard('Teams Still Alive', inner, VIZ_DESC.alive);
@@ -171,7 +180,7 @@ try { $VIZ = viz_settings(); } catch (Throwable $e) { /* DB down — show leader
     function vizBracket() {
       if (!revealed()) return notYet('Team Paths', VIZ_DESC.bracket);
       const picked = new Set();
-      (LAST.people.participants || []).forEach(p => (p.picks || []).forEach(id => picked.add(id)));
+      (LAST.people.participants || []).forEach(p => (p.current || []).forEach(id => picked.add(id)));
       if (!picked.size) return vizCard('Team Paths', '<div class="empty">No picks yet.</div>');
       const ids = [...picked].sort((a, b) => (LAST.points[b] || 0) - (LAST.points[a] || 0));
       const inner = ids.map(id => {
@@ -201,9 +210,9 @@ try { $VIZ = viz_settings(); } catch (Throwable $e) { /* DB down — show leader
       const sel = $('whatifSel'); if (!sel) return;
       const run = () => {
         const champ = parseInt(sel.value, 10);
-        const rows = (LAST.people.participants || []).filter(p => p.picks).map(p => {
+        const rows = (LAST.people.participants || []).filter(p => p.current).map(p => {
           let total = LAST.totals[p.nickname] || 0;           // join-filtered base
-          const boosted = p.picks.includes(champ);
+          const boosted = p.current.includes(champ);
           if (boosted) total += Math.max(0, 20 - (LAST.bonus[champ] || 0)); // don't double-count if already champion
           return { nick: p.nickname, total, boosted };
         });
@@ -266,20 +275,23 @@ try { $VIZ = viz_settings(); } catch (Throwable $e) { /* DB down — show leader
         return;
       }
 
-      // Aggregate (all-matches) team points — used by the visualisations + names.
+      // Aggregate team points/names — used for names + the what-if bonus check.
       const { points, bonus, names } = computeTeamPoints(fixtures);
       const derived = deriveTournament(fixtures);
       const locked = people.locked;
 
-      // Per-participant scoring: late joiners only count matches after they joined.
+      // Per-participant scoring from each player's pick-segment history:
+      // a match scores for a slot only if it kicked off while that team was held.
       const totalsByNick = {};
       const rows = (people.participants || []).map(p => {
-        const picks = p.picks || [];
-        const since = p.joined ? new Date(p.joined).getTime() : 0;
-        const tp = since ? computeTeamPoints(fixtures, since) : { points, bonus };
-        const total = picks.reduce((s, id) => s + (tp.points[id] || 0), 0);
-        if (p.nickname != null) totalsByNick[p.nickname] = total;
-        return { nick: p.nickname, picks, total, hidden: p.picks === null, tp };
+        const current = p.current || [];
+        const sc = p.segments ? scoreParticipant(fixtures, p.segments) : { total: 0, slot: {} };
+        if (p.nickname != null) totalsByNick[p.nickname] = sc.total;
+        // how many distinct teams have held each slot (to flag switches)
+        const segCount = {};
+        (p.segments || []).forEach(s => { segCount[s.slot] = (segCount[s.slot] || 0) + 1; });
+        return { nick: p.nickname, current, segments: p.segments, total: sc.total,
+                 slotPts: sc.slot, segCount, hidden: p.current === null };
       });
 
       // rank: points desc, then name; ties share a rank
@@ -298,15 +310,15 @@ try { $VIZ = viz_settings(); } catch (Throwable $e) { /* DB down — show leader
           if (r.hidden) {
             picksHtml = '<span style="color:var(--muted);font-size:12px">picks hidden until kickoff</span>';
           } else {
-            picksHtml = r.picks.map(id => {
+            picksHtml = r.current.map((id, idx) => {
+              const slot = idx + 1;
               const t = names[id] || {};
-              const pts = r.tp.points[id] || 0;
-              const bon = r.tp.bonus[id] || 0;
+              const pts = (r.slotPts && r.slotPts[slot]) || 0;
               const out = derived.eliminated.has(id);
               const logo = t.logo ? `<img src="${esc(t.logo)}" alt="">` : '';
-              const bonusTag = bon ? ` <span style="color:var(--gold)">★+${bon}</span>` : '';
+              const swap = (r.segCount[slot] || 1) > 1 ? ' <span style="color:var(--muted)" title="switched">⇄</span>' : '';
               const outTag = out ? ' <span style="color:var(--coral);font-weight:700">OUT</span>' : '';
-              return `<span${out ? ' style="opacity:.55"' : ''}>${logo}${esc(t.name || ('#' + id))} · ${pts}${bonusTag}${outTag}</span>`;
+              return `<span${out ? ' style="opacity:.55"' : ''}>${logo}${esc(t.name || ('#' + id))} · ${pts}${swap}${outTag}</span>`;
             }).join('');
           }
           const clickable = (V.detail && !r.hidden) ? ' viz-click' : '';
@@ -326,7 +338,7 @@ try { $VIZ = viz_settings(); } catch (Throwable $e) { /* DB down — show leader
       const now = new Date();
       $('status').innerHTML = '<span class="updated">Updated ' + now.toLocaleTimeString() + '</span>';
       $('lockline').textContent = locked
-        ? 'Picks are locked. Scores update from live results. Latecomers can still join — they score only from matches after they register.'
+        ? 'Scores update from live results. You can switch a team anytime (Log in to play) — your old team keeps the points it earned and the new team scores only from its next kickoff. Latecomers can still join too.'
         : 'The tournament hasn\'t started — everyone sits on 0 and picks stay hidden until kickoff.';
 
       renderViz();

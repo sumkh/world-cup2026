@@ -10,47 +10,40 @@ if (empty($_SESSION['admin'])) {
 
 $pdo = db();
 
-// Compute each team's current points from the fixture cache, then sum per participant.
+// Segment-aware scoring: a match scores for a slot only if its kickoff fell
+// inside that team's stint (start_at <= kickoff < end_at). Match points +
+// end-of-tournament bonuses, summed across every segment a participant held.
 $rows = $pdo->query("
-    WITH match_pts AS (
-        SELECT
-            t.id,
-            COALESCE(SUM(
-                CASE
-                    WHEN f.status = 'FT' AND f.home_id = t.id AND f.home_goals > f.away_goals THEN 3
-                    WHEN f.status = 'FT' AND f.away_id = t.id AND f.away_goals > f.home_goals THEN 3
-                    WHEN f.status = 'FT' AND f.home_goals = f.away_goals
-                         AND (f.home_id = t.id OR f.away_id = t.id)                           THEN 1
-                    ELSE 0
-                END
-            ), 0) AS pts
-        FROM wc_teams t
-        LEFT JOIN wc_fixtures f ON f.home_id = t.id OR f.away_id = t.id
-        GROUP BY t.id
+    WITH seg_pts AS (
+        SELECT ps.participant_id, COALESCE(SUM(
+            (CASE
+                WHEN (f.home_id = ps.team_id AND f.home_goals > f.away_goals)
+                  OR (f.away_id = ps.team_id AND f.away_goals > f.home_goals)         THEN 3
+                WHEN f.home_goals = f.away_goals
+                  AND (f.home_id = ps.team_id OR f.away_id = ps.team_id)              THEN 1
+                ELSE 0
+            END)
+            + (CASE
+                WHEN f.stage = 'FINAL'
+                     AND ((f.winner='H' AND f.home_id=ps.team_id) OR (f.winner='A' AND f.away_id=ps.team_id)) THEN 20
+                WHEN f.stage = 'FINAL'
+                     AND ((f.winner='H' AND f.away_id=ps.team_id) OR (f.winner='A' AND f.home_id=ps.team_id)) THEN 10
+                WHEN f.stage = 'THIRD_PLACE'
+                     AND ((f.winner='H' AND f.home_id=ps.team_id) OR (f.winner='A' AND f.away_id=ps.team_id)) THEN 5
+                ELSE 0
+            END)
+        ), 0) AS pts
+        FROM pick_segments ps
+        JOIN wc_fixtures f
+          ON (f.home_id = ps.team_id OR f.away_id = ps.team_id)
+         AND f.status = 'FT'
+         AND f.utc_date >= ps.start_at
+         AND (ps.end_at IS NULL OR f.utc_date < ps.end_at)
+        GROUP BY ps.participant_id
     ),
-    bonus_pts AS (
-        -- +20 champion / +10 runner-up (FINAL), +5 third place (THIRD_PLACE).
-        -- Uses the true winner (incl. ET/penalties); only counts finished games.
-        SELECT
-            t.id,
-            COALESCE(SUM(
-                CASE
-                    WHEN f.stage = 'FINAL' AND f.status = 'FT'
-                         AND ((f.winner = 'H' AND f.home_id = t.id) OR (f.winner = 'A' AND f.away_id = t.id)) THEN 20
-                    WHEN f.stage = 'FINAL' AND f.status = 'FT'
-                         AND ((f.winner = 'H' AND f.away_id = t.id) OR (f.winner = 'A' AND f.home_id = t.id)) THEN 10
-                    WHEN f.stage = 'THIRD_PLACE' AND f.status = 'FT'
-                         AND ((f.winner = 'H' AND f.home_id = t.id) OR (f.winner = 'A' AND f.away_id = t.id)) THEN 5
-                    ELSE 0
-                END
-            ), 0) AS pts
-        FROM wc_teams t
-        LEFT JOIN wc_fixtures f ON f.home_id = t.id OR f.away_id = t.id
-        GROUP BY t.id
-    ),
-    team_pts AS (
-        SELECT m.id, m.pts + b.pts AS pts
-        FROM match_pts m JOIN bonus_pts b ON b.id = m.id
+    sw AS (
+        SELECT participant_id, GREATEST(COUNT(*) - 3, 0) AS switches
+        FROM pick_segments GROUP BY participant_id
     )
     SELECT
         p.user_id,
@@ -59,15 +52,15 @@ $rows = $pdo->query("
         COALESCE(t1.name, '')             AS team1,
         COALESCE(t2.name, '')             AS team2,
         COALESCE(t3.name, '')             AS team3,
-        COALESCE(tp1.pts, 0) + COALESCE(tp2.pts, 0) + COALESCE(tp3.pts, 0) AS total_pts,
-        TO_CHAR(p.created_at AT TIME ZONE 'UTC', 'YYYY-MM-DD HH24:MI') AS registered_at
+        COALESCE(sp.pts, 0)               AS total_pts,
+        COALESCE(sw.switches, 0)          AS switches,
+        TO_CHAR(COALESCE(p.joined_at, p.created_at) AT TIME ZONE 'UTC', 'YYYY-MM-DD HH24:MI') AS registered_at
     FROM participants p
-    LEFT JOIN wc_teams  t1  ON t1.id  = p.team1
-    LEFT JOIN wc_teams  t2  ON t2.id  = p.team2
-    LEFT JOIN wc_teams  t3  ON t3.id  = p.team3
-    LEFT JOIN team_pts  tp1 ON tp1.id = p.team1
-    LEFT JOIN team_pts  tp2 ON tp2.id = p.team2
-    LEFT JOIN team_pts  tp3 ON tp3.id = p.team3
+    LEFT JOIN wc_teams t1 ON t1.id = p.team1
+    LEFT JOIN wc_teams t2 ON t2.id = p.team2
+    LEFT JOIN wc_teams t3 ON t3.id = p.team3
+    LEFT JOIN seg_pts  sp ON sp.participant_id = p.id
+    LEFT JOIN sw          ON sw.participant_id = p.id
     ORDER BY CAST(p.user_id AS INTEGER) ASC
 ")->fetchAll();
 
@@ -77,7 +70,7 @@ header('Content-Disposition: attachment; filename="' . $filename . '"');
 header('Cache-Control: no-cache');
 
 $out = fopen('php://output', 'w');
-fputcsv($out, ['Access Code', 'Nickname', 'Status', 'Team 1', 'Team 2', 'Team 3', 'Total Points', 'Registered At (UTC)']);
+fputcsv($out, ['Access Code', 'Nickname', 'Status', 'Current Team 1', 'Current Team 2', 'Current Team 3', 'Total Points', 'Switches', 'Registered At (UTC)']);
 foreach ($rows as $r) {
     fputcsv($out, [
         $r['user_id'],
@@ -87,6 +80,7 @@ foreach ($rows as $r) {
         $r['team2'],
         $r['team3'],
         $r['total_pts'],
+        $r['switches'],
         $r['registered_at'],
     ]);
 }

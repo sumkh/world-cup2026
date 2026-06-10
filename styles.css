@@ -120,6 +120,10 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:30px 0 56px}
    instead of breaking the page margins on small screens */
 .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 
+/* per-slot switch rows on the register page */
+.switch-slot{padding:14px 0;border-bottom:1px solid var(--line)}
+.switch-slot:last-child{border-bottom:none}
+
 /* ---------- leaderboard visualisations ---------- */
 #viz{display:grid;gap:18px;margin-top:18px}
 .viz-card{padding:20px}

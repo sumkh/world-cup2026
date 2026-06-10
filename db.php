@@ -51,6 +51,34 @@ function db() {
       ('25'),('26'),('27'),('28'),('29'),('30'),('31'),('32')
       ON CONFLICT (user_id) DO NOTHING");
 
+    // ── Pick history (time-windowed scoring) ─────────────────────────────────
+    // Each row = one team's stint in one slot. A match scores for a slot only
+    // if it kicked off while that team occupied the slot (start_at <= kickoff <
+    // end_at). Switching closes the open segment and opens a new one.
+    $pdo->exec("CREATE TABLE IF NOT EXISTS pick_segments (
+      id             SERIAL       PRIMARY KEY,
+      participant_id INT          NOT NULL,
+      slot           SMALLINT     NOT NULL,
+      team_id        INT          NOT NULL,
+      start_at       TIMESTAMPTZ  NOT NULL,
+      end_at         TIMESTAMPTZ
+    )");
+    $pdo->exec("CREATE INDEX IF NOT EXISTS idx_pick_seg_pid ON pick_segments(participant_id)");
+
+    // One-time, idempotent migration: seed a starting segment for every slot of
+    // participants who registered before this feature existed. start_at uses
+    // their join time (or row creation) — both precede the first kickoff for
+    // pre-tournament registrants, so all their matches count, exactly as before.
+    $pdo->exec("INSERT INTO pick_segments (participant_id, slot, team_id, start_at)
+      SELECT p.id, s.slot,
+             CASE s.slot WHEN 1 THEN p.team1 WHEN 2 THEN p.team2 ELSE p.team3 END,
+             COALESCE(p.joined_at, p.created_at)
+      FROM participants p
+      CROSS JOIN (VALUES (1),(2),(3)) AS s(slot)
+      WHERE p.claimed = 1
+        AND (CASE s.slot WHEN 1 THEN p.team1 WHEN 2 THEN p.team2 ELSE p.team3 END) IS NOT NULL
+        AND NOT EXISTS (SELECT 1 FROM pick_segments ps WHERE ps.participant_id = p.id)");
+
     // ── World Cup team cache ─────────────────────────────────────────────────
     // as_id = football-data.org team ID (pre-populated from real API data).
     $pdo->exec("CREATE TABLE IF NOT EXISTS wc_teams (

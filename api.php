@@ -32,6 +32,17 @@ function valid_user_id($uid) {
   return $n >= 1 && $n <= 32;
 }
 
+/* Team ids knocked out of the tournament (lost a finished knockout match). */
+function eliminated_ids($pdo) {
+  $sql = "SELECT DISTINCT CASE WHEN winner='H' THEN away_id ELSE home_id END AS out_id
+          FROM wc_fixtures
+          WHERE status='FT' AND stage IS NOT NULL AND stage <> 'GROUP_STAGE'
+            AND winner IN ('H','A')";
+  $ids = [];
+  foreach ($pdo->query($sql) as $r) $ids[(int)$r['out_id']] = true;
+  return $ids;
+}
+
 try {
   $pdo = db();
 } catch (Throwable $e) {
@@ -70,6 +81,10 @@ switch ($action) {
     $st = $pdo->prepare('UPDATE participants SET claimed=1, nickname=?, pin_hash=?, team1=?, team2=?, team3=?, joined_at=NOW() WHERE id=?');
     $st->execute([$nick, password_hash($pin, PASSWORD_DEFAULT), $picks[0], $picks[1], $picks[2], $row['id']]);
 
+    // Open a pick segment per slot (starts now; only future matches score).
+    $seg = $pdo->prepare('INSERT INTO pick_segments (participant_id, slot, team_id, start_at) VALUES (?, ?, ?, NOW())');
+    foreach ([1 => $picks[0], 2 => $picks[1], 3 => $picks[2]] as $slot => $tid) $seg->execute([$row['id'], $slot, $tid]);
+
     $_SESSION['pid'] = (int)$row['id'];
     out(['ok' => true, 'nickname' => $nick, 'picks' => $picks, 'late' => locked()]);
   }
@@ -93,18 +108,69 @@ switch ($action) {
     $st->execute([$_SESSION['pid']]);
     $row = $st->fetch();
     if (!$row) out(['auth' => false, 'locked' => locked()]);
+    // Segments let the Switch screen show points earned per slot so far.
+    $segSt = $pdo->prepare("SELECT slot, team_id,
+                to_char(start_at AT TIME ZONE 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS\"Z\"') AS s,
+                to_char(end_at   AT TIME ZONE 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS\"Z\"') AS e
+                FROM pick_segments WHERE participant_id = ? ORDER BY slot, start_at");
+    $segSt->execute([$_SESSION['pid']]);
+    $segs = [];
+    foreach ($segSt as $r) $segs[] = ['slot' => (int)$r['slot'], 'team' => (int)$r['team_id'], 'start' => $r['s'], 'end' => $r['e']];
     out(['auth' => true, 'nickname' => $row['nickname'],
-         'picks' => [(int)$row['team1'], (int)$row['team2'], (int)$row['team3']], 'locked' => locked()]);
+         'picks' => [(int)$row['team1'], (int)$row['team2'], (int)$row['team3']],
+         'locked' => locked(), 'segments' => $segs]);
   }
 
   case 'save_picks': {
+    // Pre-kickoff only: free editing. No matches have been played yet, so we
+    // just replace the team in each open segment (no history to preserve).
     if (empty($_SESSION['pid'])) out(['error' => 'You are not logged in.'], 403);
-    if (locked())                out(['error' => 'Picks are locked — the tournament has started.'], 403);
+    if (locked())                out(['error' => 'Picks are locked — use Switch to change a team now.'], 403);
     $picks = clean_picks(body()['picks'] ?? null);
     if (!$picks) out(['error' => 'Pick exactly 3 different teams.'], 400);
+    $pid = $_SESSION['pid'];
     $st = $pdo->prepare('UPDATE participants SET team1=?, team2=?, team3=? WHERE id=?');
-    $st->execute([$picks[0], $picks[1], $picks[2], $_SESSION['pid']]);
+    $st->execute([$picks[0], $picks[1], $picks[2], $pid]);
+    $up = $pdo->prepare('UPDATE pick_segments SET team_id=? WHERE participant_id=? AND slot=? AND end_at IS NULL');
+    foreach ([1 => $picks[0], 2 => $picks[1], 3 => $picks[2]] as $slot => $tid) $up->execute([$tid, $pid, $slot]);
     out(['ok' => true, 'picks' => $picks]);
+  }
+
+  case 'switch_pick': {
+    // Post-kickoff: change one slot's team. Old team keeps points up to now;
+    // new team scores only from its next kickoff. Unlimited switches.
+    if (empty($_SESSION['pid'])) out(['error' => 'You are not logged in.'], 403);
+    if (!locked())               out(['error' => 'Switching opens once the tournament starts. Edit your picks freely until then.'], 403);
+    $b    = body();
+    $slot = (int)($b['slot'] ?? 0);
+    $tid  = (int)($b['team_id'] ?? 0);
+    if (!in_array($slot, [1, 2, 3], true)) out(['error' => 'Invalid slot.'], 400);
+    if ($tid <= 0)                          out(['error' => 'Choose a team.'], 400);
+
+    $st = $pdo->prepare('SELECT team1, team2, team3 FROM participants WHERE id = ? LIMIT 1');
+    $st->execute([$_SESSION['pid']]);
+    $cur = $st->fetch();
+    if (!$cur) out(['error' => 'You are not logged in.'], 403);
+    $current = [1 => (int)$cur['team1'], 2 => (int)$cur['team2'], 3 => (int)$cur['team3']];
+
+    if ($current[$slot] === $tid) out(['error' => 'That team is already in this slot.'], 400);
+    foreach ($current as $sl => $t) if ($sl !== $slot && $t === $tid) out(['error' => 'You already hold that team in another slot.'], 409);
+
+    $st = $pdo->prepare('SELECT 1 FROM wc_teams WHERE id = ? LIMIT 1');
+    $st->execute([$tid]);
+    if (!$st->fetch()) out(['error' => 'Unknown team.'], 400);
+    if (isset(eliminated_ids($pdo)[$tid])) out(['error' => 'That team is already knocked out — pick one still in the tournament.'], 409);
+
+    // Close the open segment for this slot, open a new one, update current team.
+    $pdo->prepare('UPDATE pick_segments SET end_at = NOW() WHERE participant_id = ? AND slot = ? AND end_at IS NULL')
+        ->execute([$_SESSION['pid'], $slot]);
+    $pdo->prepare('INSERT INTO pick_segments (participant_id, slot, team_id, start_at) VALUES (?, ?, ?, NOW())')
+        ->execute([$_SESSION['pid'], $slot, $tid]);
+    $col = 'team' . $slot;
+    $pdo->prepare("UPDATE participants SET $col = ? WHERE id = ?")->execute([$tid, $_SESSION['pid']]);
+
+    $current[$slot] = $tid;
+    out(['ok' => true, 'picks' => [$current[1], $current[2], $current[3]]]);
   }
 
   case 'logout': {
@@ -113,19 +179,32 @@ switch ($action) {
   }
 
   case 'participants': {
-    // Leaderboard feed. Picks are hidden until kickoff.
-    // joined is sent as ISO-8601 UTC so the browser can score late joiners
-    // only from matches after they registered.
+    // Leaderboard feed. Picks are hidden until kickoff; after kickoff we send
+    // each player's CURRENT teams plus their full pick-segment history (with
+    // ISO-8601 UTC start/end) so the browser can score by kickoff window.
     $reveal = locked();
-    $st = $pdo->query("SELECT nickname, team1, team2, team3,
-                              to_char(joined_at AT TIME ZONE 'UTC', 'YYYY-MM-DD\"T\"HH24:MI:SS\"Z\"') AS joined
-                       FROM participants WHERE claimed = 1 ORDER BY created_at ASC");
+    $rows = $pdo->query('SELECT id, nickname, team1, team2, team3 FROM participants WHERE claimed = 1 ORDER BY created_at ASC')->fetchAll();
+
+    $segByPid = [];
+    if ($reveal) {
+      $segSt = $pdo->query("SELECT participant_id, slot, team_id,
+                 to_char(start_at AT TIME ZONE 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS\"Z\"') AS s,
+                 to_char(end_at   AT TIME ZONE 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS\"Z\"') AS e
+                 FROM pick_segments ORDER BY participant_id, slot, start_at");
+      foreach ($segSt as $r) {
+        $segByPid[(int)$r['participant_id']][] = [
+          'slot' => (int)$r['slot'], 'team' => (int)$r['team_id'], 'start' => $r['s'], 'end' => $r['e'],
+        ];
+      }
+    }
+
     $list = [];
-    foreach ($st as $r) {
+    foreach ($rows as $r) {
+      $pid = (int)$r['id'];
       $list[] = [
         'nickname' => $r['nickname'],
-        'picks'    => $reveal ? [(int)$r['team1'], (int)$r['team2'], (int)$r['team3']] : null,
-        'joined'   => $r['joined'],
+        'current'  => $reveal ? [(int)$r['team1'], (int)$r['team2'], (int)$r['team3']] : null,
+        'segments' => $reveal ? ($segByPid[$pid] ?? []) : null,
       ];
     }
     out(['locked' => $reveal, 'participants' => $list]);
