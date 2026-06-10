@@ -706,10 +706,12 @@
     })();
   </script>
 
-  <!-- Kickoff countdown (opening match: June 11, 2026) -->
+  <!-- Kickoff countdown — opening day, 11 June 2026, Singapore time (SGT, UTC+8) -->
   <script>
     (function () {
-      var target = new Date('2026-06-11T00:00:00').getTime();
+      // Pinned to Singapore time (+08:00) so the countdown is identical for every
+      // viewer, not based on their local clock.
+      var target = new Date('2026-06-11T00:00:00+08:00').getTime();
       var el = document.getElementById('countdown');
       function pad(n){ return n < 10 ? '0' + n : '' + n; }
       function tick() {
