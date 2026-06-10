@@ -33,7 +33,7 @@ define('ADMIN_PASSWORD', 'choose-a-strong-password');
 define('LEAGUE_ID', 1);                       // FIFA World Cup
 define('SEASON',    2026);
 define('NUM_PICKS', 3);
-define('PICK_LOCK', '2026-06-11 00:00:00+08:00');   // picks lock at first kickoff — midnight 11 Jun 2026, Singapore time (SGT)
+define('PICK_LOCK', '2026-06-12 03:00:00+08:00');   // picks lock at first kickoff — 12 Jun 2026 03:00 SGT (11 Jun 19:00 UTC)
 define('WIN_PTS', 3);
 define('DRAW_PTS', 1);
 define('LOSS_PTS', 0);

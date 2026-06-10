@@ -26,7 +26,7 @@ defined('ADMIN_PASSWORD') || define('ADMIN_PASSWORD', getenv('ADMIN_PASSWORD') ?
 defined('LEAGUE_ID') || define('LEAGUE_ID', 1);       // FIFA World Cup
 defined('SEASON')    || define('SEASON',    2026);
 defined('NUM_PICKS') || define('NUM_PICKS', 3);
-defined('PICK_LOCK') || define('PICK_LOCK', '2026-06-11 00:00:00+08:00');  // midnight 11 Jun 2026, Singapore time (SGT) — matches the hero countdown
+defined('PICK_LOCK') || define('PICK_LOCK', '2026-06-12 03:00:00+08:00');  // first kickoff: 12 Jun 2026 03:00 SGT (11 Jun 19:00 UTC) — matches the hero countdown
 defined('WIN_PTS')   || define('WIN_PTS',   3);
 defined('DRAW_PTS')  || define('DRAW_PTS',  1);
 defined('LOSS_PTS')  || define('LOSS_PTS',  0);
