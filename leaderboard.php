@@ -105,26 +105,57 @@ try { $VIZ = viz_settings(); } catch (Throwable $e) { /* DB down — show leader
     const notYet = (title, sub) => vizCard(title, '<div class="empty">Available once picks lock at kickoff.</div>', sub);
 
     /* ── Per-player detail (expandable leaderboard rows) ── */
+    const fmtSGT = iso => iso ? new Date(iso).toLocaleString('en-GB',
+      { timeZone: 'Asia/Singapore', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
     function detailHtml(r) {
       const { names, derived } = LAST;
+      const nm = id => esc((names[id] || {}).name || ('#' + id));
       const segBySlot = { 1: [], 2: [], 3: [] };
       (r.segments || []).forEach(s => { (segBySlot[s.slot] = segBySlot[s.slot] || []).push(s); });
+      [1, 2, 3].forEach(sl => (segBySlot[sl] || []).sort((a, b) => (a.start < b.start ? -1 : 1)));
+
+      // Current-team summary per slot, incl. matches not counted because they
+      // were played before the participant held that team (join/switch time).
       const lines = [1, 2, 3].map(sl => {
         const id = r.current[sl - 1];
-        const t = names[id] || {};
         const pts = (r.slotPts && r.slotPts[sl]) || 0;
-        const segs = segBySlot[sl] || [];
+        const arr = segBySlot[sl] || [];
+        const active = arr.length ? arr[arr.length - 1] : null;
+        const startMs = active ? new Date(active.start).getTime() : 0;
+        let excluded = 0;
+        (LAST.fixtures || []).forEach(f => {
+          if (!FINISHED.has(f.fixture.status.short)) return;
+          if (f.teams.home.id !== id && f.teams.away.id !== id) return;
+          const k = f.fixture.date ? new Date(f.fixture.date).getTime() : null;
+          if (k !== null && k < startMs) excluded++;
+        });
         const note = derived.eliminated.has(id)
           ? '<span style="color:var(--coral)">out</span>'
           : '<span style="color:var(--teal)">alive</span>';
-        let hist = '';
-        if (segs.length > 1) {
-          const chain = segs.map(s => esc((names[s.team] || {}).name || ('#' + s.team))).join(' → ');
-          hist = `<div style="font-size:11px;color:var(--muted);margin-top:2px">switched: ${chain}</div>`;
-        }
-        return `<div class="detail-line"><span>Slot ${sl}: ${esc(t.name || ('#' + id))}${hist}</span><span>${pts} pts · ${note}</span></div>`;
+        const exNote = excluded
+          ? `<div class="ex-note">↳ ${excluded} earlier match${excluded > 1 ? 'es' : ''} not counted — played before you held this team</div>`
+          : '';
+        return `<div class="detail-line"><span>Slot ${sl}: ${nm(id)}${exNote}</span><span>${pts} pts · ${note}</span></div>`;
       }).join('');
-      return `<div class="detail-box">${lines}</div>`;
+
+      // Activity log: registration + every switch, chronological, in Singapore time
+      const events = [];
+      const segs = r.segments || [];
+      if (segs.length) {
+        const reg = segs.reduce((m, s) => (s.start < m ? s.start : m), segs[0].start);
+        events.push({ t: reg, txt: 'Registered &amp; picked 3 teams' });
+      }
+      [1, 2, 3].forEach(sl => {
+        const arr = segBySlot[sl] || [];
+        for (let i = 1; i < arr.length; i++)
+          events.push({ t: arr[i].start, txt: `Slot ${sl}: switched ${nm(arr[i - 1].team)} → ${nm(arr[i].team)}` });
+      });
+      events.sort((a, b) => (a.t < b.t ? -1 : 1));
+      const log = events.length
+        ? events.map(e => `<div class="log-line"><span class="log-time">${fmtSGT(e.t)}</span><span>${e.txt}</span></div>`).join('')
+        : '<div class="log-line"><span class="log-time"></span><span>No activity yet.</span></div>';
+
+      return `<div class="detail-box">${lines}<div class="log-head">Activity log (SGT)</div>${log}</div>`;
     }
     function wireDetail() {
       document.querySelectorAll('tr.viz-click').forEach(tr => {
