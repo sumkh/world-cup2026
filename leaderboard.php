@@ -95,7 +95,7 @@ try { $VIZ = viz_settings(); } catch (Throwable $e) { /* DB down — show leader
       heatmap: 'See where the crowd went. Teams at the top are the popular, safe bets — if you backed someone far down this list, you\'re the contrarian who\'ll rocket up the table if they deliver.',
       alive:   'Your lifelines at a glance — green teams are still playing and can keep banking points for you; struck-through teams are knocked out and frozen. The more green you see, the more upside you have left. (Tracks knockout exits; group-stage eliminations aren\'t shown.)',
       bracket: 'Follow each picked team\'s journey, round by round. Every green W banked you 3 points, a gold D 1 point, and a red L nothing — a fast way to spot which of your teams is actually carrying your score.',
-      whatif:  'Play out the ending. Crown any team champion and watch the table rebound with the +20 bonus — see exactly who you need to lift the trophy for you to climb (or hold on to) the top spots.',
+      whatif:  'Play out the finish. Pick the Champion (+20), Runner-up (+10) and Third place (+5) and watch the table re-rank with those bonuses applied to whoever holds those teams — see exactly how the podium decides the final standings.',
       digest:  'The story so far in one glance — who\'s leading, by how much, how many teams are still standing, and the latest results. Hit copy to drop the update straight into your group chat and stir up some banter.',
     };
 
@@ -228,30 +228,54 @@ try { $VIZ = viz_settings(); } catch (Throwable $e) { /* DB down — show leader
     function vizWhatif() {
       if (!revealed()) return notYet('Projected Finish', VIZ_DESC.whatif);
       const el = LAST.derived.eliminated;
-      const ids = Object.keys(LAST.names).filter(id => !el.has(+id))
-        .sort((a, b) => (LAST.names[a].name || '').localeCompare(LAST.names[b].name || ''));
-      if (!ids.length) return vizCard('Projected Finish', '<div class="empty">No teams left to project.</div>');
-      const opts = ids.map(id => `<option value="${id}">${esc(LAST.names[id].name)}</option>`).join('');
+      const ids = Object.keys(LAST.names).map(Number).filter(id => !el.has(id));
+      if (!ids.length) return vizCard('Projected Finish', '<div class="empty">No teams left to project.</div>', VIZ_DESC.whatif);
+      const mk = (id, label, bonus) =>
+        `<div class="wif-pick"><label style="margin:0">${label} <span style="color:var(--gold)">+${bonus}</span></label>` +
+        `<select id="${id}" class="wif-sel"><option value="">— none —</option></select></div>`;
       return vizCard('Projected Finish',
-        `<label style="margin-top:0">If this team wins the cup…</label>`
-        + `<select id="whatifSel" style="max-width:280px">${opts}</select><div id="whatifOut" style="margin-top:14px"></div>`,
+        `<div class="wif-grid">${mk('wifChamp', 'Champion', 20)}${mk('wifRunner', 'Runner-up', 10)}${mk('wifThird', 'Third place', 5)}</div>` +
+        `<div id="whatifOut" style="margin-top:14px"></div>`,
         VIZ_DESC.whatif);
     }
     function wireWhatif() {
-      const sel = $('whatifSel'); if (!sel) return;
-      const run = () => {
-        const champ = parseInt(sel.value, 10);
+      const sels = [$('wifChamp'), $('wifRunner'), $('wifThird')];
+      if (!sels[0]) return;
+      const el = LAST.derived.eliminated;
+      const alive = Object.keys(LAST.names).map(Number).filter(id => !el.has(id))
+        .sort((a, b) => (LAST.names[a].name || '').localeCompare(LAST.names[b].name || ''));
+
+      function repopulate() {
+        const chosen = sels.map(s => parseInt(s.value, 10)).filter(Boolean);
+        sels.forEach(s => {
+          const cur = parseInt(s.value, 10) || 0;
+          const taken = chosen.filter(id => id !== cur);
+          s.innerHTML = '<option value="">— none —</option>' +
+            alive.filter(id => !taken.includes(id))
+                 .map(id => `<option value="${id}"${id === cur ? ' selected' : ''}>${esc(LAST.names[id].name)}</option>`).join('');
+        });
+      }
+      function run() {
+        const podium = { [parseInt(sels[0].value, 10) || 0]: 20, [parseInt(sels[1].value, 10) || 0]: 10, [parseInt(sels[2].value, 10) || 0]: 5 };
+        delete podium[0];
+        const any = Object.keys(podium).length;
+        if (!any) { $('whatifOut').innerHTML = '<div class="note">Choose a champion, runner-up and/or third place to project the finish.</div>'; return; }
         const rows = (LAST.people.participants || []).filter(p => p.current).map(p => {
-          let total = LAST.totals[p.nickname] || 0;           // join-filtered base
-          const boosted = p.current.includes(champ);
-          if (boosted) total += Math.max(0, 20 - (LAST.bonus[champ] || 0)); // don't double-count if already champion
-          return { nick: p.nickname, total, boosted };
+          let add = 0; const tags = [];
+          p.current.forEach(id => {
+            const b = podium[id] ? Math.max(0, podium[id] - (LAST.bonus[id] || 0)) : 0;  // don't double-count if already awarded
+            if (b) { add += b; tags.push('+' + b); }
+          });
+          const base = LAST.totals[p.nickname] || 0;
+          return { nick: p.nickname, total: base + add, add, tags };
         });
         rows.sort((a, b) => b.total - a.total || a.nick.localeCompare(b.nick));
         $('whatifOut').innerHTML = rows.map((r, i) =>
-          `<div class="proj-row${r.boosted ? ' boosted' : ''}"><span>${i + 1}. ${esc(r.nick)}</span><span>${r.total}${r.boosted ? ' ▲' : ''}</span></div>`).join('');
-      };
-      sel.onchange = run; run();
+          `<div class="proj-row${r.add ? ' boosted' : ''}"><span>${i + 1}. ${esc(r.nick)}</span>` +
+          `<span>${r.total}${r.add ? ` <span style="color:var(--gold)">(${r.tags.join(' ')})</span>` : ''}</span></div>`).join('');
+      }
+      sels.forEach(s => s.onchange = () => { repopulate(); run(); });
+      repopulate(); run();
     }
 
     function vizDigest() {
