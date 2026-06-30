@@ -99,6 +99,9 @@ in **every round** (all 104 games):
   (`cron.php` reads `score.regularTime`, since football-data.org's `fullTime`
   includes ET + penalty kicks.) The Champion/Runner-up/Third **bonuses** still
   use the true winner, including penalty-shootout results.
+- **Display vs scoring.** The schedule shows the 90′ score with the shootout in
+  brackets (e.g. `0–0 (pens 3–0)`) or `(a.e.t.)`, and highlights the team that
+  advanced — but only the 90′ result feeds the points.
 
 **End-of-tournament bonuses** (added to a team's total once that match finishes):
 

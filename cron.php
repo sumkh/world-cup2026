@@ -93,8 +93,8 @@ $status_map = [
 $winner_map = ['HOME_TEAM' => 'H', 'AWAY_TEAM' => 'A', 'DRAW' => 'D'];
 
 $upsert = $pdo->prepare('
-  INSERT INTO wc_fixtures (id, home_id, away_id, home_goals, away_goals, status, stage, winner, utc_date, grp)
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  INSERT INTO wc_fixtures (id, home_id, away_id, home_goals, away_goals, status, stage, winner, utc_date, grp, duration, pen_home, pen_away)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   ON CONFLICT (id) DO UPDATE SET
     home_goals = EXCLUDED.home_goals,
     away_goals = EXCLUDED.away_goals,
@@ -102,7 +102,10 @@ $upsert = $pdo->prepare('
     stage      = EXCLUDED.stage,
     winner     = EXCLUDED.winner,
     utc_date   = EXCLUDED.utc_date,
-    grp        = EXCLUDED.grp
+    grp        = EXCLUDED.grp,
+    duration   = EXCLUDED.duration,
+    pen_home   = EXCLUDED.pen_home,
+    pen_away   = EXCLUDED.pen_away
 ');
 
 foreach ($matches as $m) {
@@ -129,7 +132,13 @@ foreach ($matches as $m) {
   $hg  = $src['home'] ?? null;
   $ag  = $src['away'] ?? null;
 
-  $upsert->execute([$m['id'], $map[$fd_home], $map[$fd_away], $hg, $ag, $status, $stage, $winner, $utc, $grp]);
+  // duration + penalty shootout score — for DISPLAY only (points use 90' above).
+  $duration = $sc['duration'] ?? null;
+  $pens     = $sc['penalties'] ?? null;
+  $ph = is_array($pens) ? ($pens['home'] ?? null) : null;
+  $pa = is_array($pens) ? ($pens['away'] ?? null) : null;
+
+  $upsert->execute([$m['id'], $map[$fd_home], $map[$fd_away], $hg, $ag, $status, $stage, $winner, $utc, $grp, $duration, $ph, $pa]);
   $stats['fixtures_upserted']++;
 }
 

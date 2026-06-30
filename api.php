@@ -225,6 +225,7 @@ switch ($action) {
     // but using our internal wc_teams IDs so picks match correctly.
     $st = $pdo->query('
       SELECT f.id, f.home_goals, f.away_goals, f.status, f.stage, f.winner, f.utc_date, f.grp,
+             f.duration, f.pen_home, f.pen_away,
              ht.id AS h_id, ht.name AS h_name, ht.logo AS h_logo,
              awt.id AS a_id, awt.name AS a_name, awt.logo AS a_logo
       FROM wc_fixtures f
@@ -235,14 +236,17 @@ switch ($action) {
     foreach ($st as $r) {
       $hg = $r['home_goals'] !== null ? (int)$r['home_goals'] : null;
       $ag = $r['away_goals'] !== null ? (int)$r['away_goals'] : null;
+      $pens = ($r['pen_home'] !== null && $r['pen_away'] !== null)
+        ? ['home' => (int)$r['pen_home'], 'away' => (int)$r['pen_away']] : null;
       $fixtures[] = [
         'teams'   => [
           'home' => ['id' => (int)$r['h_id'], 'name' => $r['h_name'], 'logo' => $r['h_logo']],
           'away' => ['id' => (int)$r['a_id'], 'name' => $r['a_name'], 'logo' => $r['a_logo']],
         ],
         'fixture' => ['status' => ['short' => $r['status']], 'stage' => $r['stage'],
-                      'winner' => $r['winner'], 'date' => $r['utc_date'], 'group' => $r['grp']],
-        'score'   => ['fulltime' => ['home' => $hg, 'away' => $ag]],
+                      'winner' => $r['winner'], 'date' => $r['utc_date'], 'group' => $r['grp'],
+                      'duration' => $r['duration']],
+        'score'   => ['fulltime' => ['home' => $hg, 'away' => $ag], 'penalties' => $pens],
         'goals'   => ['home' => $hg, 'away' => $ag],
       ];
     }

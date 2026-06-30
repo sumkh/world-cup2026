@@ -236,6 +236,8 @@
     .m-score { font-family: 'Anton', sans-serif; font-size: 20px; min-width: 58px; text-align: center;
       font-variant-numeric: tabular-nums; }
     .m-score.live { color: var(--coral); }
+    .m-extra { display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px;
+      color: var(--gold); text-align: center; margin-top: 2px; font-variant-numeric: tabular-nums; }
 
     /* ---------- standings (group tables) ---------- */
     #standings-board { display: grid; gap: 16px; }
@@ -542,8 +544,15 @@
         var hg = f.score.fulltime.home, ag = f.score.fulltime.away;
         var mid, cls = '';
         if (FIN[s]) {
-          var hw = hg > ag ? ' won' : '', aw = ag > hg ? ' won' : '';
-          mid = '<span class="m-score">' + hg + '–' + ag + '</span>';
+          // Highlight the advancer using the true winner (covers ET/penalty wins
+          // where the 90' score was level). Points still use the 90' score.
+          var w = f.fixture.winner;
+          var hw = (w ? w === 'H' : hg > ag) ? ' won' : '';
+          var aw = (w ? w === 'A' : ag > hg) ? ' won' : '';
+          var p = f.score.penalties, extra = '';
+          if (p && p.home != null && p.away != null) extra = '<span class="m-extra">(pens ' + p.home + '–' + p.away + ')</span>';
+          else if (f.fixture.duration === 'EXTRA_TIME') extra = '<span class="m-extra">(a.e.t.)</span>';
+          mid = '<span class="m-score">' + hg + '–' + ag + '</span>' + extra;
           cls = ' done';
           return '<div class="match' + cls + '"><span class="m-home' + hw + '">' + esc(h.name) + '</span>' + mid + '<span class="m-away' + aw + '">' + esc(a.name) + '</span></div>';
         } else if (LIVE[s]) {
