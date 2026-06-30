@@ -116,11 +116,18 @@ foreach ($matches as $m) {
   $utc    = $m['utcDate'] ?? null;
   $grp    = $m['group'] ?? null;
 
-  // score.fullTime is the 90-minute result.
-  // For matches that go to extra time or penalties, fullTime still holds
-  // the regulation score — which is exactly what our match-point rules need.
-  $hg = $m['score']['fullTime']['home'] ?? null;
-  $ag = $m['score']['fullTime']['away'] ?? null;
+  // 90-minute (regulation) result. IMPORTANT: football-data.org's
+  // score.fullTime is the FULL result, INCLUDING extra-time goals AND penalty
+  // shootout kicks (e.g. a 0-0 won on pens is reported as 3-0 in fullTime).
+  // The 90' score lives in score.regularTime, present only for ET/penalty
+  // games. We score on 90' only (ET & penalties count as a draw), so prefer
+  // regularTime and fall back to fullTime for normal matches.
+  $sc  = $m['score'] ?? [];
+  $reg = $sc['regularTime'] ?? null;
+  $ful = $sc['fullTime'] ?? null;
+  $src = is_array($reg) ? $reg : (is_array($ful) ? $ful : []);
+  $hg  = $src['home'] ?? null;
+  $ag  = $src['away'] ?? null;
 
   $upsert->execute([$m['id'], $map[$fd_home], $map[$fd_away], $hg, $ag, $status, $stage, $winner, $utc, $grp]);
   $stats['fixtures_upserted']++;

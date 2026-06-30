@@ -93,8 +93,12 @@ Each participant picks **3 teams**. Across **every match** those teams play,
 in **every round** (all 104 games):
 
 - **Win → 3 points**, **Draw → 1**, **Loss → 0**
-- Judged on the **90-minute (regulation) score**. A knockout match level
-  after 90 minutes and decided on penalties counts as a **draw** for both teams.
+- Judged on the **90-minute (regulation) score only** — **extra-time goals and
+  penalty shootouts do not count**. Any knockout level after 90 minutes is a
+  **draw** (1 pt each), even if it's then decided in extra time or on penalties.
+  (`cron.php` reads `score.regularTime`, since football-data.org's `fullTime`
+  includes ET + penalty kicks.) The Champion/Runner-up/Third **bonuses** still
+  use the true winner, including penalty-shootout results.
 
 **End-of-tournament bonuses** (added to a team's total once that match finishes):
 
