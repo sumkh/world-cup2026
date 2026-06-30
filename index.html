@@ -233,10 +233,13 @@
     .match.done .m-home:not(.won), .match.done .m-away:not(.won) { color: var(--muted); }
     .m-time { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--muted);
       min-width: 58px; text-align: center; }
+    /* middle cell: keeps the score (and optional penalty line) in ONE grid
+       column so the team names stay right next to the score */
+    .m-mid { display: flex; flex-direction: column; align-items: center; min-width: 58px; }
     .m-score { font-family: 'Anton', sans-serif; font-size: 20px; min-width: 58px; text-align: center;
       font-variant-numeric: tabular-nums; }
     .m-score.live { color: var(--coral); }
-    .m-extra { display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    .m-extra { font-family: 'JetBrains Mono', monospace; font-size: 10px; white-space: nowrap;
       color: var(--gold); text-align: center; margin-top: 2px; font-variant-numeric: tabular-nums; }
 
     /* ---------- standings (group tables) ---------- */
@@ -552,7 +555,7 @@
           var p = f.score.penalties, extra = '';
           if (p && p.home != null && p.away != null) extra = '<span class="m-extra">(pens ' + p.home + '–' + p.away + ')</span>';
           else if (f.fixture.duration === 'EXTRA_TIME') extra = '<span class="m-extra">(a.e.t.)</span>';
-          mid = '<span class="m-score">' + hg + '–' + ag + '</span>' + extra;
+          mid = '<span class="m-mid"><span class="m-score">' + hg + '–' + ag + '</span>' + extra + '</span>';
           cls = ' done';
           return '<div class="match' + cls + '"><span class="m-home' + hw + '">' + esc(h.name) + '</span>' + mid + '<span class="m-away' + aw + '">' + esc(a.name) + '</span></div>';
         } else if (LIVE[s]) {
