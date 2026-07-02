@@ -552,10 +552,12 @@
           var w = f.fixture.winner;
           var hw = (w ? w === 'H' : hg > ag) ? ' won' : '';
           var aw = (w ? w === 'A' : ag > hg) ? ' won' : '';
+          // Detect extra time from the scores, not the unreliable duration field:
+          // if the after-ET score differs from the 90' score, ET goals were scored.
           var p = f.score.penalties, aet = f.score.aet, extra = '';
+          var etPlayed = aet && aet.home != null && (aet.home !== hg || aet.away !== ag);
           if (p && p.home != null && p.away != null) extra = '<span class="m-extra">(pens ' + p.home + '–' + p.away + ')</span>';
-          else if (f.fixture.duration === 'EXTRA_TIME' && aet && aet.home != null) extra = '<span class="m-extra">(a.e.t. ' + aet.home + '–' + aet.away + ')</span>';
-          else if (f.fixture.duration === 'EXTRA_TIME') extra = '<span class="m-extra">(a.e.t.)</span>';
+          else if (etPlayed) extra = '<span class="m-extra">(a.e.t. ' + aet.home + '–' + aet.away + ')</span>';
           mid = '<span class="m-mid"><span class="m-score">' + hg + '–' + ag + '</span>' + extra + '</span>';
           cls = ' done';
           return '<div class="match' + cls + '"><span class="m-home' + hw + '">' + esc(h.name) + '</span>' + mid + '<span class="m-away' + aw + '">' + esc(a.name) + '</span></div>';
