@@ -93,8 +93,8 @@ $status_map = [
 $winner_map = ['HOME_TEAM' => 'H', 'AWAY_TEAM' => 'A', 'DRAW' => 'D'];
 
 $upsert = $pdo->prepare('
-  INSERT INTO wc_fixtures (id, home_id, away_id, home_goals, away_goals, status, stage, winner, utc_date, grp, duration, pen_home, pen_away)
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  INSERT INTO wc_fixtures (id, home_id, away_id, home_goals, away_goals, status, stage, winner, utc_date, grp, duration, pen_home, pen_away, ft_home, ft_away)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   ON CONFLICT (id) DO UPDATE SET
     home_goals = EXCLUDED.home_goals,
     away_goals = EXCLUDED.away_goals,
@@ -105,7 +105,9 @@ $upsert = $pdo->prepare('
     grp        = EXCLUDED.grp,
     duration   = EXCLUDED.duration,
     pen_home   = EXCLUDED.pen_home,
-    pen_away   = EXCLUDED.pen_away
+    pen_away   = EXCLUDED.pen_away,
+    ft_home    = EXCLUDED.ft_home,
+    ft_away    = EXCLUDED.ft_away
 ');
 
 foreach ($matches as $m) {
@@ -119,26 +121,30 @@ foreach ($matches as $m) {
   $utc    = $m['utcDate'] ?? null;
   $grp    = $m['group'] ?? null;
 
-  // 90-minute (regulation) result. IMPORTANT: football-data.org's
-  // score.fullTime is the FULL result, INCLUDING extra-time goals AND penalty
-  // shootout kicks (e.g. a 0-0 won on pens is reported as 3-0 in fullTime).
-  // The 90' score lives in score.regularTime, present only for ET/penalty
-  // games. We score on 90' only (ET & penalties count as a draw), so prefer
-  // regularTime and fall back to fullTime for normal matches.
-  $sc  = $m['score'] ?? [];
-  $reg = $sc['regularTime'] ?? null;
-  $ful = $sc['fullTime'] ?? null;
-  $src = is_array($reg) ? $reg : (is_array($ful) ? $ful : []);
-  $hg  = $src['home'] ?? null;
-  $ag  = $src['away'] ?? null;
-
-  // duration + penalty shootout score — for DISPLAY only (points use 90' above).
+  // 90-minute (regulation) score — what participants score on.
+  // football-data.org's score.fullTime is the ALL-IN total (incl. extra-time
+  // goals AND penalty kicks), and score.regularTime is unreliable (often null
+  // even for ET games). So derive 90' robustly:  90' = fullTime - extraTime - penalties.
+  $sc   = $m['score'] ?? [];
+  $ft   = is_array($sc['fullTime']  ?? null) ? $sc['fullTime']  : [];
+  $et   = is_array($sc['extraTime'] ?? null) ? $sc['extraTime'] : [];
+  $pens = is_array($sc['penalties'] ?? null) ? $sc['penalties'] : [];
   $duration = $sc['duration'] ?? null;
-  $pens     = $sc['penalties'] ?? null;
-  $ph = is_array($pens) ? ($pens['home'] ?? null) : null;
-  $pa = is_array($pens) ? ($pens['away'] ?? null) : null;
 
-  $upsert->execute([$m['id'], $map[$fd_home], $map[$fd_away], $hg, $ag, $status, $stage, $winner, $utc, $grp, $duration, $ph, $pa]);
+  $fth = $ft['home'] ?? null;
+  $fta = $ft['away'] ?? null;
+  if ($fth === null || $fta === null) {
+    $hg = $ag = $fhome = $faway = null;                 // no final score yet
+  } else {
+    $hg    = (int)$fth - (int)($et['home'] ?? 0) - (int)($pens['home'] ?? 0);
+    $ag    = (int)$fta - (int)($et['away'] ?? 0) - (int)($pens['away'] ?? 0);
+    $fhome = (int)$fth;                                  // raw full-time (for a.e.t. display)
+    $faway = (int)$fta;
+  }
+  $ph = $pens['home'] ?? null;
+  $pa = $pens['away'] ?? null;
+
+  $upsert->execute([$m['id'], $map[$fd_home], $map[$fd_away], $hg, $ag, $status, $stage, $winner, $utc, $grp, $duration, $ph, $pa, $fhome, $faway]);
   $stats['fixtures_upserted']++;
 }
 

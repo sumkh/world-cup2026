@@ -162,7 +162,9 @@ function db() {
       grp        VARCHAR(20),
       duration   VARCHAR(20),
       pen_home   INT,
-      pen_away   INT
+      pen_away   INT,
+      ft_home    INT,
+      ft_away    INT
     )");
     // Add the columns to pre-existing tables (no-op if they already exist).
     $pdo->exec("ALTER TABLE wc_fixtures ADD COLUMN IF NOT EXISTS stage VARCHAR(20)");
@@ -172,6 +174,8 @@ function db() {
     $pdo->exec("ALTER TABLE wc_fixtures ADD COLUMN IF NOT EXISTS duration VARCHAR(20)");
     $pdo->exec("ALTER TABLE wc_fixtures ADD COLUMN IF NOT EXISTS pen_home INT");
     $pdo->exec("ALTER TABLE wc_fixtures ADD COLUMN IF NOT EXISTS pen_away INT");
+    $pdo->exec("ALTER TABLE wc_fixtures ADD COLUMN IF NOT EXISTS ft_home INT");
+    $pdo->exec("ALTER TABLE wc_fixtures ADD COLUMN IF NOT EXISTS ft_away INT");
 
     // ── App-level key/value store (used for rate-limiting cron runs) ─────────
     $pdo->exec("CREATE TABLE IF NOT EXISTS wc_meta (

@@ -225,7 +225,7 @@ switch ($action) {
     // but using our internal wc_teams IDs so picks match correctly.
     $st = $pdo->query('
       SELECT f.id, f.home_goals, f.away_goals, f.status, f.stage, f.winner, f.utc_date, f.grp,
-             f.duration, f.pen_home, f.pen_away,
+             f.duration, f.pen_home, f.pen_away, f.ft_home, f.ft_away,
              ht.id AS h_id, ht.name AS h_name, ht.logo AS h_logo,
              awt.id AS a_id, awt.name AS a_name, awt.logo AS a_logo
       FROM wc_fixtures f
@@ -238,6 +238,12 @@ switch ($action) {
       $ag = $r['away_goals'] !== null ? (int)$r['away_goals'] : null;
       $pens = ($r['pen_home'] !== null && $r['pen_away'] !== null)
         ? ['home' => (int)$r['pen_home'], 'away' => (int)$r['pen_away']] : null;
+      // After-extra-time score (before any shootout) = raw fullTime minus penalties.
+      $aet = null;
+      if ($r['ft_home'] !== null && $r['ft_away'] !== null) {
+        $aet = ['home' => (int)$r['ft_home'] - (int)($r['pen_home'] ?? 0),
+                'away' => (int)$r['ft_away'] - (int)($r['pen_away'] ?? 0)];
+      }
       $fixtures[] = [
         'teams'   => [
           'home' => ['id' => (int)$r['h_id'], 'name' => $r['h_name'], 'logo' => $r['h_logo']],
@@ -246,7 +252,7 @@ switch ($action) {
         'fixture' => ['status' => ['short' => $r['status']], 'stage' => $r['stage'],
                       'winner' => $r['winner'], 'date' => $r['utc_date'], 'group' => $r['grp'],
                       'duration' => $r['duration']],
-        'score'   => ['fulltime' => ['home' => $hg, 'away' => $ag], 'penalties' => $pens],
+        'score'   => ['fulltime' => ['home' => $hg, 'away' => $ag], 'penalties' => $pens, 'aet' => $aet],
         'goals'   => ['home' => $hg, 'away' => $ag],
       ];
     }
