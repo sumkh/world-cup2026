@@ -222,7 +222,12 @@ Everything the organiser does happens on `admin.php` (log in with `ADMIN_PASSWOR
    aren't overwhelmed. Changes appear on the public leaderboard on its next load.
 5. **Export data.** Click **⬇ Export CSV** for a timestamped file of every slot,
    its picks, and current totals (including bonuses).
-6. **Reset for testing.** The red **Danger Zone** clears all registrations *and*
+6. **Reset a forgotten PIN.** Each registered slot has a **Reset PIN** button.
+   Clicking it generates a new random 6-digit PIN, stores it (hashed), and shows
+   it once for you to pass to the participant — their picks, points and switch
+   history are untouched. (PINs are one-way hashed, so they can't be looked up;
+   this is the only way to recover access.)
+7. **Reset for testing.** The red **Danger Zone** clears all registrations *and*
    the cached scores. Guardrails: you must be logged in, type `RESET` to enable
    the button, and confirm a final dialog. Use it only before the real launch.
 

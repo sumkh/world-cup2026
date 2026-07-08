@@ -46,6 +46,29 @@ if ($is_admin && isset($_POST['reset'])) {
   }
 }
 
+// ── Reset one participant's PIN (keeps their picks/points/history) ──
+$pin_reset = null;      // ['uid'=>, 'nick'=>, 'pin'=>] on success
+$pin_reset_err = null;
+if ($is_admin && isset($_POST['reset_pin'])) {
+  $uid = trim((string)$_POST['reset_pin']);
+  if (!preg_match('/^\d{2}$/', $uid)) {
+    $pin_reset_err = 'Invalid slot.';
+  } else {
+    $pdo = db();
+    $st = $pdo->prepare('SELECT id, nickname, claimed FROM participants WHERE user_id = ? LIMIT 1');
+    $st->execute([$uid]);
+    $row = $st->fetch();
+    if (!$row || !$row['claimed']) {
+      $pin_reset_err = "Slot $uid is not registered yet — nothing to reset.";
+    } else {
+      $newpin = str_pad((string)random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+      $pdo->prepare('UPDATE participants SET pin_hash = ? WHERE id = ?')
+          ->execute([password_hash($newpin, PASSWORD_DEFAULT), $row['id']]);
+      $pin_reset = ['uid' => $uid, 'nick' => $row['nickname'], 'pin' => $newpin];
+    }
+  }
+}
+
 $rows = [];
 if ($is_admin) {
   $rows = db()->query(
@@ -112,6 +135,16 @@ $claimed = count(array_filter($rows, fn($r) => $r['claimed']));
         <span class="note" id="syncStatus" style="width:100%"></span>
       </div>
 
+      <?php if ($pin_reset): ?>
+        <div class="card" style="margin-bottom:18px;border-color:rgba(31,227,170,.5)">
+          <strong>New PIN for slot <?= htmlspecialchars($pin_reset['uid']) ?><?= $pin_reset['nick'] ? ' (' . htmlspecialchars($pin_reset['nick']) . ')' : '' ?>:</strong>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:24px;color:var(--teal);letter-spacing:3px;margin-left:8px"><?= htmlspecialchars($pin_reset['pin']) ?></span>
+          <p class="note" style="margin-top:8px">Give this to the participant — they log in with their Access Code + this new PIN (their picks and points are unchanged). Shown once, so copy it now.</p>
+        </div>
+      <?php elseif ($pin_reset_err): ?>
+        <div class="msg show err" style="margin-bottom:18px"><?= htmlspecialchars($pin_reset_err) ?></div>
+      <?php endif; ?>
+
       <!-- Participants table -->
       <div class="card" style="padding:14px 10px">
         <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px;padding:0 6px">
@@ -128,6 +161,7 @@ $claimed = count(array_filter($rows, fn($r) => $r['claimed']));
               <th>Team 1</th>
               <th>Team 2</th>
               <th>Team 3</th>
+              <th>PIN</th>
             </tr>
           </thead>
           <tbody>
@@ -146,6 +180,13 @@ $claimed = count(array_filter($rows, fn($r) => $r['claimed']));
               </td>
               <td class="team-cell" data-id="<?= (int)$r['team3'] ?>">
                 <?= $r['claimed'] ? '<span class="spin-sm"></span>' : '—' ?>
+              </td>
+              <td>
+                <?php if ($r['claimed']): ?>
+                  <form method="post" style="margin:0" onsubmit="return confirm('Reset PIN for slot <?= htmlspecialchars($r['user_id']) ?>? A new temporary PIN will be shown to give the participant.');">
+                    <button class="btn ghost" name="reset_pin" value="<?= htmlspecialchars($r['user_id']) ?>" style="width:auto;padding:6px 12px;font-size:12px">Reset PIN</button>
+                  </form>
+                <?php else: ?>—<?php endif; ?>
               </td>
             </tr>
           <?php endforeach; ?>
