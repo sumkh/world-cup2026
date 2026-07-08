@@ -154,8 +154,24 @@ foreach ($matches as $m) {
   } else {
     $aeth = $aeta = null;
   }
-  $ph = $pens['home'] ?? null;
-  $pa = $pens['away'] ?? null;
+
+  // Penalty shootout score: derive from fullTime minus the after-ET score, NOT
+  // from score.penalties, which football-data.org sometimes leaves stale (it
+  // reported 3-3 when the shootout actually finished 4-3, while fullTime showed
+  // the correct 4-3). fullTime carries the completed total, so pens = fullTime
+  // - aet whenever they differ.
+  $ph = $pa = null;
+  if ($fth !== null && $fta !== null && $aeth !== null && ((int)$fth !== $aeth || (int)$fta !== $aeta)) {
+    $ph = (int)$fth - $aeth;
+    $pa = (int)$fta - $aeta;
+  }
+
+  // Advancing team: football-data can leave winner null right after a shootout,
+  // so derive it from the full result when missing. (Match points still use the
+  // 90' score above; this only drives the highlight + end-of-tournament bonuses.)
+  if ($winner === null && $fth !== null && $fta !== null && (int)$fth !== (int)$fta) {
+    $winner = (int)$fth > (int)$fta ? 'H' : 'A';
+  }
 
   $upsert->execute([$m['id'], $map[$fd_home], $map[$fd_away], $hg, $ag, $status, $stage, $winner, $utc, $grp, $duration, $ph, $pa, $aeth, $aeta]);
   $stats['fixtures_upserted']++;
