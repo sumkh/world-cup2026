@@ -238,12 +238,9 @@ switch ($action) {
       $ag = $r['away_goals'] !== null ? (int)$r['away_goals'] : null;
       $pens = ($r['pen_home'] !== null && $r['pen_away'] !== null)
         ? ['home' => (int)$r['pen_home'], 'away' => (int)$r['pen_away']] : null;
-      // After-extra-time score (before any shootout) = raw fullTime minus penalties.
-      $aet = null;
-      if ($r['ft_home'] !== null && $r['ft_away'] !== null) {
-        $aet = ['home' => (int)$r['ft_home'] - (int)($r['pen_home'] ?? 0),
-                'away' => (int)$r['ft_away'] - (int)($r['pen_away'] ?? 0)];
-      }
+      // After-extra-time score (before any shootout); stored directly in ft_*.
+      $aet = ($r['ft_home'] !== null && $r['ft_away'] !== null)
+        ? ['home' => (int)$r['ft_home'], 'away' => (int)$r['ft_away']] : null;
       $fixtures[] = [
         'teams'   => [
           'home' => ['id' => (int)$r['h_id'], 'name' => $r['h_name'], 'logo' => $r['h_logo']],

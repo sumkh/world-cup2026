@@ -121,30 +121,43 @@ foreach ($matches as $m) {
   $utc    = $m['utcDate'] ?? null;
   $grp    = $m['group'] ?? null;
 
-  // 90-minute (regulation) score — what participants score on.
-  // football-data.org's score.fullTime is the ALL-IN total (incl. extra-time
-  // goals AND penalty kicks), and score.regularTime is unreliable (often null
-  // even for ET games). So derive 90' robustly:  90' = fullTime - extraTime - penalties.
+  // 90-minute (regulation) score — what participants score on. ET & penalties
+  // never count for points.
+  //   1. Prefer score.regularTime when populated: it's the authoritative 90'
+  //      score and avoids football-data's occasionally-inconsistent fullTime
+  //      during shootout updates (e.g. a 0-0 shows fullTime 4-3 mid-shootout).
+  //   2. If regularTime is null (it sometimes is, even for ET games), derive
+  //      90' = fullTime - extraTime - penalties.
   $sc   = $m['score'] ?? [];
-  $ft   = is_array($sc['fullTime']  ?? null) ? $sc['fullTime']  : [];
-  $et   = is_array($sc['extraTime'] ?? null) ? $sc['extraTime'] : [];
-  $pens = is_array($sc['penalties'] ?? null) ? $sc['penalties'] : [];
+  $reg  = is_array($sc['regularTime'] ?? null) ? $sc['regularTime'] : [];
+  $ft   = is_array($sc['fullTime']    ?? null) ? $sc['fullTime']    : [];
+  $et   = is_array($sc['extraTime']   ?? null) ? $sc['extraTime']   : [];
+  $pens = is_array($sc['penalties']   ?? null) ? $sc['penalties']   : [];
   $duration = $sc['duration'] ?? null;
 
-  $fth = $ft['home'] ?? null;
-  $fta = $ft['away'] ?? null;
-  if ($fth === null || $fta === null) {
-    $hg = $ag = $fhome = $faway = null;                 // no final score yet
+  $rh = $reg['home'] ?? null; $ra = $reg['away'] ?? null;
+  $fth = $ft['home'] ?? null;  $fta = $ft['away'] ?? null;
+  if ($rh !== null && $ra !== null) {
+    $hg = (int)$rh; $ag = (int)$ra;
+  } elseif ($fth !== null && $fta !== null) {
+    $hg = (int)$fth - (int)($et['home'] ?? 0) - (int)($pens['home'] ?? 0);
+    $ag = (int)$fta - (int)($et['away'] ?? 0) - (int)($pens['away'] ?? 0);
   } else {
-    $hg    = (int)$fth - (int)($et['home'] ?? 0) - (int)($pens['home'] ?? 0);
-    $ag    = (int)$fta - (int)($et['away'] ?? 0) - (int)($pens['away'] ?? 0);
-    $fhome = (int)$fth;                                  // raw full-time (for a.e.t. display)
-    $faway = (int)$fta;
+    $hg = $ag = null;
+  }
+
+  // After-extra-time score (before any shootout) = 90' + extra-time goals,
+  // used only for the "(a.e.t. X-Y)" schedule display. Stored in ft_home/ft_away.
+  if ($hg !== null) {
+    $aeth = $hg + (int)($et['home'] ?? 0);
+    $aeta = $ag + (int)($et['away'] ?? 0);
+  } else {
+    $aeth = $aeta = null;
   }
   $ph = $pens['home'] ?? null;
   $pa = $pens['away'] ?? null;
 
-  $upsert->execute([$m['id'], $map[$fd_home], $map[$fd_away], $hg, $ag, $status, $stage, $winner, $utc, $grp, $duration, $ph, $pa, $fhome, $faway]);
+  $upsert->execute([$m['id'], $map[$fd_home], $map[$fd_away], $hg, $ag, $status, $stage, $winner, $utc, $grp, $duration, $ph, $pa, $aeth, $aeta]);
   $stats['fixtures_upserted']++;
 }
 
