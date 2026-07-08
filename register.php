@@ -87,6 +87,20 @@
             <div id="e_switch"></div>
           </div>
 
+          <!-- Change PIN (e.g. replace a temporary PIN from the organiser) -->
+          <div style="margin-top:22px;padding-top:18px;border-top:1px solid var(--line)">
+            <h3 style="font-family:'Anton',sans-serif;font-weight:400;font-size:18px;text-transform:uppercase;margin-bottom:4px">Change PIN</h3>
+            <p class="note">Set a new personal PIN — for example, to replace a temporary one from the organiser.</p>
+            <label>Current PIN</label>
+            <input id="cp_cur" inputmode="numeric" maxlength="6" autocomplete="off" />
+            <label>New PIN (6 digits)</label>
+            <input id="cp_new" inputmode="numeric" maxlength="6" autocomplete="off" />
+            <label>Confirm new PIN</label>
+            <input id="cp_new2" inputmode="numeric" maxlength="6" autocomplete="off" />
+            <div style="margin-top:14px"><button class="btn ghost" id="btn-changepin" style="width:auto">Change PIN</button></div>
+            <div class="msg" id="cp_msg"></div>
+          </div>
+
           <div class="linkrow" style="margin-top:18px"><a href="leaderboard.php">View leaderboard →</a> &nbsp;·&nbsp; <a id="btn-logout">Log out</a></div>
           <div class="msg" id="e_msg"></div>
         </div>
@@ -240,6 +254,16 @@
       const res = await api('save_picks', { picks: r.picks });
       if (res.error) return flash($('e_msg'), res.error, false);
       flash($('e_msg'), 'Saved!', true);
+    };
+
+    $('btn-changepin').onclick = async () => {
+      const cur = $('cp_cur').value.trim(), nw = $('cp_new').value.trim(), nw2 = $('cp_new2').value.trim();
+      if (!/^\d{6}$/.test(nw)) return flash($('cp_msg'), 'New PIN must be exactly 6 digits.', false);
+      if (nw !== nw2)          return flash($('cp_msg'), 'The two new PINs do not match.', false);
+      const res = await api('change_pin', { current: cur, new: nw });
+      if (res.error) return flash($('cp_msg'), res.error, false);
+      $('cp_cur').value = $('cp_new').value = $('cp_new2').value = '';
+      flash($('cp_msg'), 'PIN changed — use your new PIN next time you log in.', true);
     };
 
     $('btn-logout').onclick = async () => { await api('logout'); location.reload(); };

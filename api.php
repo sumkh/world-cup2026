@@ -173,6 +173,24 @@ switch ($action) {
     out(['ok' => true, 'picks' => [$current[1], $current[2], $current[3]]]);
   }
 
+  case 'change_pin': {
+    // Logged-in participant sets a new PIN (e.g. replacing an admin-issued
+    // temporary one). Requires the current PIN.
+    if (empty($_SESSION['pid'])) out(['error' => 'You are not logged in.'], 403);
+    $b   = body();
+    $cur = trim($b['current'] ?? '');
+    $new = trim($b['new'] ?? '');
+    if (!preg_match('/^\d{6}$/', $new)) out(['error' => 'New PIN must be exactly 6 digits.'], 400);
+    $st = $pdo->prepare('SELECT pin_hash FROM participants WHERE id = ? LIMIT 1');
+    $st->execute([$_SESSION['pid']]);
+    $row = $st->fetch();
+    if (!$row) out(['error' => 'You are not logged in.'], 403);
+    if (!password_verify($cur, $row['pin_hash'])) out(['error' => 'Your current PIN is incorrect.'], 403);
+    $pdo->prepare('UPDATE participants SET pin_hash = ? WHERE id = ?')
+        ->execute([password_hash($new, PASSWORD_DEFAULT), $_SESSION['pid']]);
+    out(['ok' => true]);
+  }
+
   case 'logout': {
     session_destroy();
     out(['ok' => true]);

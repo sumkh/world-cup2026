@@ -226,7 +226,9 @@ Everything the organiser does happens on `admin.php` (log in with `ADMIN_PASSWOR
    Clicking it generates a new random 6-digit PIN, stores it (hashed), and shows
    it once for you to pass to the participant — their picks, points and switch
    history are untouched. (PINs are one-way hashed, so they can't be looked up;
-   this is the only way to recover access.)
+   this is the only way to recover access.) The participant can then set a PIN
+   only they know via **Change PIN** on the Play page (Log in → *Change PIN*,
+   which asks for the current PIN + a new one).
 7. **Reset for testing.** The red **Danger Zone** clears all registrations *and*
    the cached scores. Guardrails: you must be logged in, type `RESET` to enable
    the button, and confirm a final dialog. Use it only before the real launch.
