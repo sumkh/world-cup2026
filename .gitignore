@@ -6,3 +6,6 @@ config.local.php
 Thumbs.db
 *.log
 *.swp
+
+# Render credentials pasted in for the teardown backup — never commit
+render_connection.txt

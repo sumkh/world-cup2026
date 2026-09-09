@@ -143,12 +143,56 @@ function scoreParticipant(fixtures, segments) {
   return { total, slot };
 }
 
-/* Same-origin call to api.php */
+/* ── Archive mode ────────────────────────────────────────────────────────────
+   The live Render deployment (PHP + PostgreSQL) was decommissioned after the
+   tournament. When api.php is unreachable — e.g. this repo served straight
+   from GitHub Pages, or opened as local files — the three read-only actions
+   fall back to the final data snapshot in backup/api/, so the hub still
+   renders the complete 2026 schedule, standings, squads and leaderboard.
+   Write actions (register / login / save picks) need the backend and report
+   that plainly. See backup/README.md. */
+const ARCHIVE_ACTIONS = { teams: 1, fixtures: 1, participants: 1 };
+const ARCHIVE_DIR     = 'backup/api/';
+let _archiveMode = false;
+
+function archiveNotice() {
+  if (document.getElementById('archiveNotice')) return;
+  const d = document.createElement('div');
+  d.id = 'archiveNotice';
+  d.textContent = 'Archived snapshot — the live backend is retired; showing final results as of 8 Jul 2026.';
+  d.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9999;padding:8px 14px;'
+    + 'font:500 13px/1.4 system-ui,sans-serif;text-align:center;color:#0b1220;'
+    + 'background:#facc15;box-shadow:0 -2px 12px rgba(0,0,0,.25)';
+  (document.body || document.documentElement).appendChild(d);
+}
+
+/* Same-origin call to api.php, with a static-snapshot fallback (see above). */
 async function api(action, data) {
-  const r = await fetch('api.php?action=' + encodeURIComponent(action), {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data || {}),
-  });
-  return r.json();
+  if (!_archiveMode) {
+    try {
+      const r = await fetch('api.php?action=' + encodeURIComponent(action), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data || {}),
+      });
+      // A static host serves api.php as text (or 404s) rather than running it,
+      // so demand a real JSON response before trusting it.
+      if (r.ok && (r.headers.get('content-type') || '').includes('json')) {
+        return await r.json();
+      }
+    } catch (e) { /* network/CORS failure — fall through to the snapshot */ }
+    _archiveMode = true;
+    try { archiveNotice(); } catch (e) {}
+  }
+
+  if (!ARCHIVE_ACTIONS[action]) {
+    return { error: 'This archived copy is read-only — the prediction game backend has been retired.' };
+  }
+  try {
+    const r = await fetch(ARCHIVE_DIR + action + '.json');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return await r.json();
+  } catch (e) {
+    return { error: 'Archived snapshot missing: ' + ARCHIVE_DIR + action + '.json' };
+  }
 }

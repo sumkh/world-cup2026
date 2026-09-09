@@ -1,0 +1,244 @@
+{
+  "teams": [
+    {
+      "id": 1,
+      "name": "Algeria",
+      "logo": null
+    },
+    {
+      "id": 2,
+      "name": "Argentina",
+      "logo": null
+    },
+    {
+      "id": 3,
+      "name": "Australia",
+      "logo": null
+    },
+    {
+      "id": 4,
+      "name": "Austria",
+      "logo": null
+    },
+    {
+      "id": 5,
+      "name": "Belgium",
+      "logo": null
+    },
+    {
+      "id": 6,
+      "name": "Bosnia-Herzegovina",
+      "logo": null
+    },
+    {
+      "id": 7,
+      "name": "Brazil",
+      "logo": null
+    },
+    {
+      "id": 8,
+      "name": "Canada",
+      "logo": null
+    },
+    {
+      "id": 9,
+      "name": "Cape Verde Islands",
+      "logo": null
+    },
+    {
+      "id": 10,
+      "name": "Czechia",
+      "logo": null
+    },
+    {
+      "id": 11,
+      "name": "Colombia",
+      "logo": null
+    },
+    {
+      "id": 12,
+      "name": "Congo DR",
+      "logo": null
+    },
+    {
+      "id": 13,
+      "name": "Croatia",
+      "logo": null
+    },
+    {
+      "id": 14,
+      "name": "Curaçao",
+      "logo": null
+    },
+    {
+      "id": 15,
+      "name": "Ecuador",
+      "logo": null
+    },
+    {
+      "id": 16,
+      "name": "Egypt",
+      "logo": null
+    },
+    {
+      "id": 17,
+      "name": "England",
+      "logo": null
+    },
+    {
+      "id": 18,
+      "name": "France",
+      "logo": null
+    },
+    {
+      "id": 19,
+      "name": "Germany",
+      "logo": null
+    },
+    {
+      "id": 20,
+      "name": "Ghana",
+      "logo": null
+    },
+    {
+      "id": 21,
+      "name": "Haiti",
+      "logo": null
+    },
+    {
+      "id": 22,
+      "name": "Iran",
+      "logo": null
+    },
+    {
+      "id": 23,
+      "name": "Iraq",
+      "logo": null
+    },
+    {
+      "id": 24,
+      "name": "Ivory Coast",
+      "logo": null
+    },
+    {
+      "id": 25,
+      "name": "Japan",
+      "logo": null
+    },
+    {
+      "id": 26,
+      "name": "Jordan",
+      "logo": null
+    },
+    {
+      "id": 27,
+      "name": "Mexico",
+      "logo": null
+    },
+    {
+      "id": 28,
+      "name": "Morocco",
+      "logo": null
+    },
+    {
+      "id": 29,
+      "name": "Netherlands",
+      "logo": null
+    },
+    {
+      "id": 30,
+      "name": "New Zealand",
+      "logo": null
+    },
+    {
+      "id": 31,
+      "name": "Norway",
+      "logo": null
+    },
+    {
+      "id": 32,
+      "name": "Panama",
+      "logo": null
+    },
+    {
+      "id": 33,
+      "name": "Paraguay",
+      "logo": null
+    },
+    {
+      "id": 34,
+      "name": "Portugal",
+      "logo": null
+    },
+    {
+      "id": 35,
+      "name": "Qatar",
+      "logo": null
+    },
+    {
+      "id": 36,
+      "name": "Saudi Arabia",
+      "logo": null
+    },
+    {
+      "id": 37,
+      "name": "Scotland",
+      "logo": null
+    },
+    {
+      "id": 38,
+      "name": "Senegal",
+      "logo": null
+    },
+    {
+      "id": 39,
+      "name": "South Africa",
+      "logo": null
+    },
+    {
+      "id": 40,
+      "name": "South Korea",
+      "logo": null
+    },
+    {
+      "id": 41,
+      "name": "Spain",
+      "logo": null
+    },
+    {
+      "id": 42,
+      "name": "Sweden",
+      "logo": null
+    },
+    {
+      "id": 43,
+      "name": "Switzerland",
+      "logo": null
+    },
+    {
+      "id": 44,
+      "name": "Tunisia",
+      "logo": null
+    },
+    {
+      "id": 45,
+      "name": "Turkey",
+      "logo": null
+    },
+    {
+      "id": 46,
+      "name": "United States",
+      "logo": null
+    },
+    {
+      "id": 47,
+      "name": "Uruguay",
+      "logo": null
+    },
+    {
+      "id": 48,
+      "name": "Uzbekistan",
+      "logo": null
+    }
+  ]
+}

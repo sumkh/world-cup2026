@@ -1,0 +1,4072 @@
+{
+  "fixtures": [
+    {
+      "teams": {
+        "home": {
+          "id": 21,
+          "name": "Haiti",
+          "logo": null
+        },
+        "away": {
+          "id": 37,
+          "name": "Scotland",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "A",
+        "date": "2026-06-14 01:00:00+00",
+        "group": "GROUP_C",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 0,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 0,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 3,
+          "name": "Australia",
+          "logo": null
+        },
+        "away": {
+          "id": 45,
+          "name": "Turkey",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-14 04:00:00+00",
+        "group": "GROUP_D",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 2,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 2,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 19,
+          "name": "Germany",
+          "logo": null
+        },
+        "away": {
+          "id": 14,
+          "name": "Curaçao",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-14 17:00:00+00",
+        "group": "GROUP_E",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 7,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 7,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 7,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 29,
+          "name": "Netherlands",
+          "logo": null
+        },
+        "away": {
+          "id": 25,
+          "name": "Japan",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "D",
+        "date": "2026-06-14 20:00:00+00",
+        "group": "GROUP_F",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 2,
+          "away": 2
+        },
+        "penalties": null,
+        "aet": {
+          "home": 2,
+          "away": 2
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 2
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 24,
+          "name": "Ivory Coast",
+          "logo": null
+        },
+        "away": {
+          "id": 15,
+          "name": "Ecuador",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-14 23:00:00+00",
+        "group": "GROUP_E",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 5,
+          "name": "Belgium",
+          "logo": null
+        },
+        "away": {
+          "id": 16,
+          "name": "Egypt",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "D",
+        "date": "2026-06-15 19:00:00+00",
+        "group": "GROUP_G",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 22,
+          "name": "Iran",
+          "logo": null
+        },
+        "away": {
+          "id": 30,
+          "name": "New Zealand",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "D",
+        "date": "2026-06-16 01:00:00+00",
+        "group": "GROUP_G",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 2,
+          "away": 2
+        },
+        "penalties": null,
+        "aet": {
+          "home": 2,
+          "away": 2
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 2
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 18,
+          "name": "France",
+          "logo": null
+        },
+        "away": {
+          "id": 38,
+          "name": "Senegal",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-16 19:00:00+00",
+        "group": "GROUP_I",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 3,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 3,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 3,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 23,
+          "name": "Iraq",
+          "logo": null
+        },
+        "away": {
+          "id": 31,
+          "name": "Norway",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "A",
+        "date": "2026-06-16 22:00:00+00",
+        "group": "GROUP_I",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 4
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 4
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 4
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 43,
+          "name": "Switzerland",
+          "logo": null
+        },
+        "away": {
+          "id": 6,
+          "name": "Bosnia-Herzegovina",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-18 19:00:00+00",
+        "group": "GROUP_B",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 4,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 4,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 4,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 8,
+          "name": "Canada",
+          "logo": null
+        },
+        "away": {
+          "id": 35,
+          "name": "Qatar",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-18 22:00:00+00",
+        "group": "GROUP_B",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 6,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 6,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 6,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 37,
+          "name": "Scotland",
+          "logo": null
+        },
+        "away": {
+          "id": 28,
+          "name": "Morocco",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "A",
+        "date": "2026-06-19 22:00:00+00",
+        "group": "GROUP_C",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 0,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 0,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 7,
+          "name": "Brazil",
+          "logo": null
+        },
+        "away": {
+          "id": 21,
+          "name": "Haiti",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-20 00:30:00+00",
+        "group": "GROUP_C",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 3,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 3,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 3,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 45,
+          "name": "Turkey",
+          "logo": null
+        },
+        "away": {
+          "id": 33,
+          "name": "Paraguay",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "A",
+        "date": "2026-06-20 03:00:00+00",
+        "group": "GROUP_D",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 0,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 0,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 29,
+          "name": "Netherlands",
+          "logo": null
+        },
+        "away": {
+          "id": 42,
+          "name": "Sweden",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-20 17:00:00+00",
+        "group": "GROUP_F",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 5,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 5,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 5,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 44,
+          "name": "Tunisia",
+          "logo": null
+        },
+        "away": {
+          "id": 25,
+          "name": "Japan",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "A",
+        "date": "2026-06-21 04:00:00+00",
+        "group": "GROUP_F",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 0,
+          "away": 4
+        },
+        "penalties": null,
+        "aet": {
+          "home": 0,
+          "away": 4
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 4
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 41,
+          "name": "Spain",
+          "logo": null
+        },
+        "away": {
+          "id": 36,
+          "name": "Saudi Arabia",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-21 16:00:00+00",
+        "group": "GROUP_H",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 4,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 4,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 4,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 5,
+          "name": "Belgium",
+          "logo": null
+        },
+        "away": {
+          "id": 22,
+          "name": "Iran",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "D",
+        "date": "2026-06-21 19:00:00+00",
+        "group": "GROUP_G",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 0,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 0,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 2,
+          "name": "Argentina",
+          "logo": null
+        },
+        "away": {
+          "id": 1,
+          "name": "Algeria",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-17 01:00:00+00",
+        "group": "GROUP_J",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 3,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 3,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 3,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 4,
+          "name": "Austria",
+          "logo": null
+        },
+        "away": {
+          "id": 26,
+          "name": "Jordan",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-17 04:00:00+00",
+        "group": "GROUP_J",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 3,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 3,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 3,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 34,
+          "name": "Portugal",
+          "logo": null
+        },
+        "away": {
+          "id": 12,
+          "name": "Congo DR",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "D",
+        "date": "2026-06-17 17:00:00+00",
+        "group": "GROUP_K",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 43,
+          "name": "Switzerland",
+          "logo": null
+        },
+        "away": {
+          "id": 8,
+          "name": "Canada",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-24 19:00:00+00",
+        "group": "GROUP_B",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 2,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 2,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 37,
+          "name": "Scotland",
+          "logo": null
+        },
+        "away": {
+          "id": 7,
+          "name": "Brazil",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "A",
+        "date": "2026-06-24 22:00:00+00",
+        "group": "GROUP_C",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 0,
+          "away": 3
+        },
+        "penalties": null,
+        "aet": {
+          "home": 0,
+          "away": 3
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 3
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 39,
+          "name": "South Africa",
+          "logo": null
+        },
+        "away": {
+          "id": 40,
+          "name": "South Korea",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-25 01:00:00+00",
+        "group": "GROUP_A",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 15,
+          "name": "Ecuador",
+          "logo": null
+        },
+        "away": {
+          "id": 19,
+          "name": "Germany",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-25 20:00:00+00",
+        "group": "GROUP_E",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 2,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 2,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 31,
+          "name": "Norway",
+          "logo": null
+        },
+        "away": {
+          "id": 18,
+          "name": "France",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "A",
+        "date": "2026-06-26 19:00:00+00",
+        "group": "GROUP_I",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 4
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 4
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 4
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 38,
+          "name": "Senegal",
+          "logo": null
+        },
+        "away": {
+          "id": 23,
+          "name": "Iraq",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-26 19:00:00+00",
+        "group": "GROUP_I",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 5,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 5,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 5,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 47,
+          "name": "Uruguay",
+          "logo": null
+        },
+        "away": {
+          "id": 41,
+          "name": "Spain",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "A",
+        "date": "2026-06-27 00:00:00+00",
+        "group": "GROUP_H",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 0,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 0,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 9,
+          "name": "Cape Verde Islands",
+          "logo": null
+        },
+        "away": {
+          "id": 36,
+          "name": "Saudi Arabia",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "D",
+        "date": "2026-06-27 00:00:00+00",
+        "group": "GROUP_H",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 0,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 0,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 16,
+          "name": "Egypt",
+          "logo": null
+        },
+        "away": {
+          "id": 22,
+          "name": "Iran",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "D",
+        "date": "2026-06-27 03:00:00+00",
+        "group": "GROUP_G",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 32,
+          "name": "Panama",
+          "logo": null
+        },
+        "away": {
+          "id": 17,
+          "name": "England",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "A",
+        "date": "2026-06-27 21:00:00+00",
+        "group": "GROUP_L",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 0,
+          "away": 2
+        },
+        "penalties": null,
+        "aet": {
+          "home": 0,
+          "away": 2
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 2
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 12,
+          "name": "Congo DR",
+          "logo": null
+        },
+        "away": {
+          "id": 48,
+          "name": "Uzbekistan",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-27 23:30:00+00",
+        "group": "GROUP_K",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 3,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 3,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 3,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 1,
+          "name": "Algeria",
+          "logo": null
+        },
+        "away": {
+          "id": 4,
+          "name": "Austria",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "D",
+        "date": "2026-06-28 02:00:00+00",
+        "group": "GROUP_J",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 3,
+          "away": 3
+        },
+        "penalties": null,
+        "aet": {
+          "home": 3,
+          "away": 3
+        }
+      },
+      "goals": {
+        "home": 3,
+        "away": 3
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 39,
+          "name": "South Africa",
+          "logo": null
+        },
+        "away": {
+          "id": 8,
+          "name": "Canada",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "LAST_32",
+        "winner": "A",
+        "date": "2026-06-28 19:00:00+00",
+        "group": null,
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 0,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 0,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 7,
+          "name": "Brazil",
+          "logo": null
+        },
+        "away": {
+          "id": 25,
+          "name": "Japan",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "LAST_32",
+        "winner": "H",
+        "date": "2026-06-29 17:00:00+00",
+        "group": null,
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 2,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 2,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 24,
+          "name": "Ivory Coast",
+          "logo": null
+        },
+        "away": {
+          "id": 31,
+          "name": "Norway",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "LAST_32",
+        "winner": "A",
+        "date": "2026-06-30 17:00:00+00",
+        "group": null,
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 2
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 2
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 2
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 27,
+          "name": "Mexico",
+          "logo": null
+        },
+        "away": {
+          "id": 15,
+          "name": "Ecuador",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "LAST_32",
+        "winner": "H",
+        "date": "2026-07-01 02:00:00+00",
+        "group": null,
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 2,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 2,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 17,
+          "name": "England",
+          "logo": null
+        },
+        "away": {
+          "id": 12,
+          "name": "Congo DR",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "LAST_32",
+        "winner": "H",
+        "date": "2026-07-01 16:00:00+00",
+        "group": null,
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 2,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 2,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 5,
+          "name": "Belgium",
+          "logo": null
+        },
+        "away": {
+          "id": 38,
+          "name": "Senegal",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "LAST_32",
+        "winner": "H",
+        "date": "2026-07-01 20:00:00+00",
+        "group": null,
+        "duration": "EXTRA_TIME"
+      },
+      "score": {
+        "fulltime": {
+          "home": 2,
+          "away": 2
+        },
+        "penalties": null,
+        "aet": {
+          "home": 3,
+          "away": 2
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 2
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 46,
+          "name": "United States",
+          "logo": null
+        },
+        "away": {
+          "id": 6,
+          "name": "Bosnia-Herzegovina",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "LAST_32",
+        "winner": "H",
+        "date": "2026-07-02 00:00:00+00",
+        "group": null,
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 2,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 2,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 34,
+          "name": "Portugal",
+          "logo": null
+        },
+        "away": {
+          "id": 13,
+          "name": "Croatia",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "LAST_32",
+        "winner": "H",
+        "date": "2026-07-02 23:00:00+00",
+        "group": null,
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 2,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 2,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 43,
+          "name": "Switzerland",
+          "logo": null
+        },
+        "away": {
+          "id": 1,
+          "name": "Algeria",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "LAST_32",
+        "winner": "H",
+        "date": "2026-07-03 03:00:00+00",
+        "group": null,
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 2,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 2,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 11,
+          "name": "Colombia",
+          "logo": null
+        },
+        "away": {
+          "id": 20,
+          "name": "Ghana",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "LAST_32",
+        "winner": "H",
+        "date": "2026-07-04 01:30:00+00",
+        "group": null,
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 8,
+          "name": "Canada",
+          "logo": null
+        },
+        "away": {
+          "id": 28,
+          "name": "Morocco",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "LAST_16",
+        "winner": "A",
+        "date": "2026-07-04 17:00:00+00",
+        "group": null,
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 0,
+          "away": 3
+        },
+        "penalties": null,
+        "aet": {
+          "home": 0,
+          "away": 3
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 3
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 46,
+          "name": "United States",
+          "logo": null
+        },
+        "away": {
+          "id": 33,
+          "name": "Paraguay",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-13 01:00:00+00",
+        "group": "GROUP_D",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 4,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 4,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 4,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 35,
+          "name": "Qatar",
+          "logo": null
+        },
+        "away": {
+          "id": 43,
+          "name": "Switzerland",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "D",
+        "date": "2026-06-13 19:00:00+00",
+        "group": "GROUP_B",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 7,
+          "name": "Brazil",
+          "logo": null
+        },
+        "away": {
+          "id": 28,
+          "name": "Morocco",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "D",
+        "date": "2026-06-13 22:00:00+00",
+        "group": "GROUP_C",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 17,
+          "name": "England",
+          "logo": null
+        },
+        "away": {
+          "id": 13,
+          "name": "Croatia",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-17 20:00:00+00",
+        "group": "GROUP_L",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 4,
+          "away": 2
+        },
+        "penalties": null,
+        "aet": {
+          "home": 4,
+          "away": 2
+        }
+      },
+      "goals": {
+        "home": 4,
+        "away": 2
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 20,
+          "name": "Ghana",
+          "logo": null
+        },
+        "away": {
+          "id": 32,
+          "name": "Panama",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-17 23:00:00+00",
+        "group": "GROUP_L",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 48,
+          "name": "Uzbekistan",
+          "logo": null
+        },
+        "away": {
+          "id": 11,
+          "name": "Colombia",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "A",
+        "date": "2026-06-18 02:00:00+00",
+        "group": "GROUP_K",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 3
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 3
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 3
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 10,
+          "name": "Czechia",
+          "logo": null
+        },
+        "away": {
+          "id": 39,
+          "name": "South Africa",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "D",
+        "date": "2026-06-18 16:00:00+00",
+        "group": "GROUP_A",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 19,
+          "name": "Germany",
+          "logo": null
+        },
+        "away": {
+          "id": 24,
+          "name": "Ivory Coast",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-20 20:00:00+00",
+        "group": "GROUP_E",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 2,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 2,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 47,
+          "name": "Uruguay",
+          "logo": null
+        },
+        "away": {
+          "id": 9,
+          "name": "Cape Verde Islands",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "D",
+        "date": "2026-06-21 22:00:00+00",
+        "group": "GROUP_H",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 2,
+          "away": 2
+        },
+        "penalties": null,
+        "aet": {
+          "home": 2,
+          "away": 2
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 2
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 30,
+          "name": "New Zealand",
+          "logo": null
+        },
+        "away": {
+          "id": 16,
+          "name": "Egypt",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "A",
+        "date": "2026-06-22 01:00:00+00",
+        "group": "GROUP_G",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 3
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 3
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 3
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 18,
+          "name": "France",
+          "logo": null
+        },
+        "away": {
+          "id": 23,
+          "name": "Iraq",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-22 21:00:00+00",
+        "group": "GROUP_I",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 3,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 3,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 3,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 31,
+          "name": "Norway",
+          "logo": null
+        },
+        "away": {
+          "id": 38,
+          "name": "Senegal",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-23 00:00:00+00",
+        "group": "GROUP_I",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 3,
+          "away": 2
+        },
+        "penalties": null,
+        "aet": {
+          "home": 3,
+          "away": 2
+        }
+      },
+      "goals": {
+        "home": 3,
+        "away": 2
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 34,
+          "name": "Portugal",
+          "logo": null
+        },
+        "away": {
+          "id": 48,
+          "name": "Uzbekistan",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-23 17:00:00+00",
+        "group": "GROUP_K",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 5,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 5,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 5,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 17,
+          "name": "England",
+          "logo": null
+        },
+        "away": {
+          "id": 20,
+          "name": "Ghana",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "D",
+        "date": "2026-06-23 20:00:00+00",
+        "group": "GROUP_L",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 0,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 0,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 11,
+          "name": "Colombia",
+          "logo": null
+        },
+        "away": {
+          "id": 12,
+          "name": "Congo DR",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-24 02:00:00+00",
+        "group": "GROUP_K",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 6,
+          "name": "Bosnia-Herzegovina",
+          "logo": null
+        },
+        "away": {
+          "id": 35,
+          "name": "Qatar",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-24 19:00:00+00",
+        "group": "GROUP_B",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 3,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 3,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 3,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 28,
+          "name": "Morocco",
+          "logo": null
+        },
+        "away": {
+          "id": 21,
+          "name": "Haiti",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-24 22:00:00+00",
+        "group": "GROUP_C",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 4,
+          "away": 2
+        },
+        "penalties": null,
+        "aet": {
+          "home": 4,
+          "away": 2
+        }
+      },
+      "goals": {
+        "home": 4,
+        "away": 2
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 14,
+          "name": "Curaçao",
+          "logo": null
+        },
+        "away": {
+          "id": 24,
+          "name": "Ivory Coast",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "A",
+        "date": "2026-06-25 20:00:00+00",
+        "group": "GROUP_E",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 0,
+          "away": 2
+        },
+        "penalties": null,
+        "aet": {
+          "home": 0,
+          "away": 2
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 2
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 44,
+          "name": "Tunisia",
+          "logo": null
+        },
+        "away": {
+          "id": 29,
+          "name": "Netherlands",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "A",
+        "date": "2026-06-25 23:00:00+00",
+        "group": "GROUP_F",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 3
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 3
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 3
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 25,
+          "name": "Japan",
+          "logo": null
+        },
+        "away": {
+          "id": 42,
+          "name": "Sweden",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "D",
+        "date": "2026-06-25 23:00:00+00",
+        "group": "GROUP_F",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 13,
+          "name": "Croatia",
+          "logo": null
+        },
+        "away": {
+          "id": 20,
+          "name": "Ghana",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-27 21:00:00+00",
+        "group": "GROUP_L",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 2,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 2,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 11,
+          "name": "Colombia",
+          "logo": null
+        },
+        "away": {
+          "id": 34,
+          "name": "Portugal",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "D",
+        "date": "2026-06-27 23:30:00+00",
+        "group": "GROUP_K",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 0,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 0,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 41,
+          "name": "Spain",
+          "logo": null
+        },
+        "away": {
+          "id": 4,
+          "name": "Austria",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "LAST_32",
+        "winner": "H",
+        "date": "2026-07-02 19:00:00+00",
+        "group": null,
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 3,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 3,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 3,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 3,
+          "name": "Australia",
+          "logo": null
+        },
+        "away": {
+          "id": 16,
+          "name": "Egypt",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "LAST_32",
+        "winner": "A",
+        "date": "2026-07-03 18:00:00+00",
+        "group": null,
+        "duration": "PENALTY_SHOOTOUT"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 1
+        },
+        "penalties": {
+          "home": 2,
+          "away": 4
+        },
+        "aet": {
+          "home": 1,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 2,
+          "name": "Argentina",
+          "logo": null
+        },
+        "away": {
+          "id": 9,
+          "name": "Cape Verde Islands",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "LAST_32",
+        "winner": "H",
+        "date": "2026-07-03 22:00:00+00",
+        "group": null,
+        "duration": "EXTRA_TIME"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 3,
+          "away": 2
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 7,
+          "name": "Brazil",
+          "logo": null
+        },
+        "away": {
+          "id": 31,
+          "name": "Norway",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "LAST_16",
+        "winner": "A",
+        "date": "2026-07-05 20:00:00+00",
+        "group": null,
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 2
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 2
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 2
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 27,
+          "name": "Mexico",
+          "logo": null
+        },
+        "away": {
+          "id": 17,
+          "name": "England",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "LAST_16",
+        "winner": "A",
+        "date": "2026-07-06 01:00:00+00",
+        "group": null,
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 2,
+          "away": 3
+        },
+        "penalties": null,
+        "aet": {
+          "home": 2,
+          "away": 3
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 3
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 34,
+          "name": "Portugal",
+          "logo": null
+        },
+        "away": {
+          "id": 41,
+          "name": "Spain",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "LAST_16",
+        "winner": "A",
+        "date": "2026-07-06 19:00:00+00",
+        "group": null,
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 0,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 0,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 46,
+          "name": "United States",
+          "logo": null
+        },
+        "away": {
+          "id": 5,
+          "name": "Belgium",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "LAST_16",
+        "winner": "A",
+        "date": "2026-07-07 00:00:00+00",
+        "group": null,
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 4
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 4
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 4
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 2,
+          "name": "Argentina",
+          "logo": null
+        },
+        "away": {
+          "id": 16,
+          "name": "Egypt",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "LAST_16",
+        "winner": "H",
+        "date": "2026-07-07 16:00:00+00",
+        "group": null,
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 3,
+          "away": 2
+        },
+        "penalties": null,
+        "aet": {
+          "home": 3,
+          "away": 2
+        }
+      },
+      "goals": {
+        "home": 3,
+        "away": 2
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 43,
+          "name": "Switzerland",
+          "logo": null
+        },
+        "away": {
+          "id": 11,
+          "name": "Colombia",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "LAST_16",
+        "winner": "H",
+        "date": "2026-07-07 20:00:00+00",
+        "group": null,
+        "duration": "PENALTY_SHOOTOUT"
+      },
+      "score": {
+        "fulltime": {
+          "home": 0,
+          "away": 0
+        },
+        "penalties": {
+          "home": 4,
+          "away": 3
+        },
+        "aet": {
+          "home": 0,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 18,
+          "name": "France",
+          "logo": null
+        },
+        "away": {
+          "id": 28,
+          "name": "Morocco",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "QUARTER_FINALS",
+        "winner": "H",
+        "date": "2026-07-09 20:00:00+00",
+        "group": null,
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 2,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 2,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 41,
+          "name": "Spain",
+          "logo": null
+        },
+        "away": {
+          "id": 5,
+          "name": "Belgium",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "QUARTER_FINALS",
+        "winner": "H",
+        "date": "2026-07-10 19:00:00+00",
+        "group": null,
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 2,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 2,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 31,
+          "name": "Norway",
+          "logo": null
+        },
+        "away": {
+          "id": 17,
+          "name": "England",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "QUARTER_FINALS",
+        "winner": "A",
+        "date": "2026-07-11 21:00:00+00",
+        "group": null,
+        "duration": "EXTRA_TIME"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 2
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 2,
+          "name": "Argentina",
+          "logo": null
+        },
+        "away": {
+          "id": 43,
+          "name": "Switzerland",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "QUARTER_FINALS",
+        "winner": "H",
+        "date": "2026-07-12 01:00:00+00",
+        "group": null,
+        "duration": "EXTRA_TIME"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 3,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 18,
+          "name": "France",
+          "logo": null
+        },
+        "away": {
+          "id": 41,
+          "name": "Spain",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "SEMI_FINALS",
+        "winner": "A",
+        "date": "2026-07-14 19:00:00+00",
+        "group": null,
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 0,
+          "away": 2
+        },
+        "penalties": null,
+        "aet": {
+          "home": 0,
+          "away": 2
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 2
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 17,
+          "name": "England",
+          "logo": null
+        },
+        "away": {
+          "id": 2,
+          "name": "Argentina",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "SEMI_FINALS",
+        "winner": "A",
+        "date": "2026-07-15 19:00:00+00",
+        "group": null,
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 2
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 2
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 2
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 18,
+          "name": "France",
+          "logo": null
+        },
+        "away": {
+          "id": 17,
+          "name": "England",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "THIRD_PLACE",
+        "winner": "A",
+        "date": "2026-07-18 21:00:00+00",
+        "group": null,
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 4,
+          "away": 6
+        },
+        "penalties": null,
+        "aet": {
+          "home": 4,
+          "away": 6
+        }
+      },
+      "goals": {
+        "home": 4,
+        "away": 6
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 27,
+          "name": "Mexico",
+          "logo": null
+        },
+        "away": {
+          "id": 39,
+          "name": "South Africa",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-11 19:00:00+00",
+        "group": "GROUP_A",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 2,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 2,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 41,
+          "name": "Spain",
+          "logo": null
+        },
+        "away": {
+          "id": 2,
+          "name": "Argentina",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "FINAL",
+        "winner": "H",
+        "date": "2026-07-19 19:00:00+00",
+        "group": null,
+        "duration": "EXTRA_TIME"
+      },
+      "score": {
+        "fulltime": {
+          "home": 0,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 40,
+          "name": "South Korea",
+          "logo": null
+        },
+        "away": {
+          "id": 10,
+          "name": "Czechia",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-12 02:00:00+00",
+        "group": "GROUP_A",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 2,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 2,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 8,
+          "name": "Canada",
+          "logo": null
+        },
+        "away": {
+          "id": 6,
+          "name": "Bosnia-Herzegovina",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "D",
+        "date": "2026-06-12 19:00:00+00",
+        "group": "GROUP_B",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 42,
+          "name": "Sweden",
+          "logo": null
+        },
+        "away": {
+          "id": 44,
+          "name": "Tunisia",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-15 02:00:00+00",
+        "group": "GROUP_F",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 5,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 5,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 5,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 41,
+          "name": "Spain",
+          "logo": null
+        },
+        "away": {
+          "id": 9,
+          "name": "Cape Verde Islands",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "D",
+        "date": "2026-06-15 16:00:00+00",
+        "group": "GROUP_H",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 0,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 0,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 36,
+          "name": "Saudi Arabia",
+          "logo": null
+        },
+        "away": {
+          "id": 47,
+          "name": "Uruguay",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "D",
+        "date": "2026-06-15 22:00:00+00",
+        "group": "GROUP_H",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 27,
+          "name": "Mexico",
+          "logo": null
+        },
+        "away": {
+          "id": 40,
+          "name": "South Korea",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-19 01:00:00+00",
+        "group": "GROUP_A",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 46,
+          "name": "United States",
+          "logo": null
+        },
+        "away": {
+          "id": 3,
+          "name": "Australia",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-19 19:00:00+00",
+        "group": "GROUP_D",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 2,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 2,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 15,
+          "name": "Ecuador",
+          "logo": null
+        },
+        "away": {
+          "id": 14,
+          "name": "Curaçao",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "D",
+        "date": "2026-06-21 00:00:00+00",
+        "group": "GROUP_E",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 0,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 0,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 2,
+          "name": "Argentina",
+          "logo": null
+        },
+        "away": {
+          "id": 4,
+          "name": "Austria",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-22 17:00:00+00",
+        "group": "GROUP_J",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 2,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 2,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 2,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 26,
+          "name": "Jordan",
+          "logo": null
+        },
+        "away": {
+          "id": 1,
+          "name": "Algeria",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "A",
+        "date": "2026-06-23 03:00:00+00",
+        "group": "GROUP_J",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 2
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 2
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 2
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 32,
+          "name": "Panama",
+          "logo": null
+        },
+        "away": {
+          "id": 13,
+          "name": "Croatia",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "A",
+        "date": "2026-06-23 23:00:00+00",
+        "group": "GROUP_L",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 0,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 0,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 10,
+          "name": "Czechia",
+          "logo": null
+        },
+        "away": {
+          "id": 27,
+          "name": "Mexico",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "A",
+        "date": "2026-06-25 01:00:00+00",
+        "group": "GROUP_A",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 0,
+          "away": 3
+        },
+        "penalties": null,
+        "aet": {
+          "home": 0,
+          "away": 3
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 3
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 45,
+          "name": "Turkey",
+          "logo": null
+        },
+        "away": {
+          "id": 46,
+          "name": "United States",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "H",
+        "date": "2026-06-26 02:00:00+00",
+        "group": "GROUP_D",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 3,
+          "away": 2
+        },
+        "penalties": null,
+        "aet": {
+          "home": 3,
+          "away": 2
+        }
+      },
+      "goals": {
+        "home": 3,
+        "away": 2
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 33,
+          "name": "Paraguay",
+          "logo": null
+        },
+        "away": {
+          "id": 3,
+          "name": "Australia",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "D",
+        "date": "2026-06-26 02:00:00+00",
+        "group": "GROUP_D",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 0,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 0,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 30,
+          "name": "New Zealand",
+          "logo": null
+        },
+        "away": {
+          "id": 5,
+          "name": "Belgium",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "A",
+        "date": "2026-06-27 03:00:00+00",
+        "group": "GROUP_G",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 5
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 5
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 5
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 26,
+          "name": "Jordan",
+          "logo": null
+        },
+        "away": {
+          "id": 2,
+          "name": "Argentina",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "GROUP_STAGE",
+        "winner": "A",
+        "date": "2026-06-28 02:00:00+00",
+        "group": "GROUP_J",
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 3
+        },
+        "penalties": null,
+        "aet": {
+          "home": 1,
+          "away": 3
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 3
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 19,
+          "name": "Germany",
+          "logo": null
+        },
+        "away": {
+          "id": 33,
+          "name": "Paraguay",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "LAST_32",
+        "winner": "A",
+        "date": "2026-06-29 20:30:00+00",
+        "group": null,
+        "duration": "PENALTY_SHOOTOUT"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 1
+        },
+        "penalties": {
+          "home": 3,
+          "away": 4
+        },
+        "aet": {
+          "home": 1,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 29,
+          "name": "Netherlands",
+          "logo": null
+        },
+        "away": {
+          "id": 28,
+          "name": "Morocco",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "LAST_32",
+        "winner": "A",
+        "date": "2026-06-30 01:00:00+00",
+        "group": null,
+        "duration": "PENALTY_SHOOTOUT"
+      },
+      "score": {
+        "fulltime": {
+          "home": 1,
+          "away": 1
+        },
+        "penalties": {
+          "home": 2,
+          "away": 3
+        },
+        "aet": {
+          "home": 1,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 1,
+        "away": 1
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 18,
+          "name": "France",
+          "logo": null
+        },
+        "away": {
+          "id": 42,
+          "name": "Sweden",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "LAST_32",
+        "winner": "H",
+        "date": "2026-06-30 21:00:00+00",
+        "group": null,
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 3,
+          "away": 0
+        },
+        "penalties": null,
+        "aet": {
+          "home": 3,
+          "away": 0
+        }
+      },
+      "goals": {
+        "home": 3,
+        "away": 0
+      }
+    },
+    {
+      "teams": {
+        "home": {
+          "id": 33,
+          "name": "Paraguay",
+          "logo": null
+        },
+        "away": {
+          "id": 18,
+          "name": "France",
+          "logo": null
+        }
+      },
+      "fixture": {
+        "status": {
+          "short": "FT"
+        },
+        "stage": "LAST_16",
+        "winner": "A",
+        "date": "2026-07-04 21:00:00+00",
+        "group": null,
+        "duration": "REGULAR"
+      },
+      "score": {
+        "fulltime": {
+          "home": 0,
+          "away": 1
+        },
+        "penalties": null,
+        "aet": {
+          "home": 0,
+          "away": 1
+        }
+      },
+      "goals": {
+        "home": 0,
+        "away": 1
+      }
+    }
+  ]
+}

@@ -4,6 +4,31 @@ A small site for the FIFA World Cup 2026: a public hub with the live schedule,
 group standings, and team/player squads, plus an invite-only prediction game
 with a shared leaderboard.
 
+---
+
+> ## 📦 Archived — September 2026
+>
+> The tournament is over and this project is no longer running. The database was
+> captured on **10 September 2026** straight from production, immediately before
+> the Render web service and its PostgreSQL database were decommissioned. The
+> scheduled score-sync workflow is retired as of this commit, and the API keys
+> it used are rotated as part of the same teardown.
+>
+> **The data survived.** The final database — every participant, pick, mid-tournament
+> switch and all 104 match results — is committed in [`backup/`](backup/), with a
+> verified restore path. Final standings: **Set Piece FC, 94 pts**.
+>
+> **The site still runs with no backend.** `common.js` falls back to the JSON
+> snapshot in `backup/api/`, so the public hub renders the complete schedule,
+> standings and squad browser from static files alone — GitHub Pages, or even
+> `file://`. Registration and login refuse, as they should.
+>
+> This repo is kept as a **reference implementation** for similar builds. See
+> [`backup/README.md`](backup/README.md) for the archive, the restore commands,
+> and what was verified before teardown. `v1.0-final` tags the last deployed state.
+
+---
+
 ## Stack
 
 - Public hub (`index.html`) — **native** schedule, standings and squad browser,

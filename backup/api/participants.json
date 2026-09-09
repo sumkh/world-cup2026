@@ -1,0 +1,927 @@
+{
+  "locked": true,
+  "participants": [
+    {
+      "nickname": "Noel",
+      "current": [
+        2,
+        41,
+        18
+      ],
+      "segments": [
+        {
+          "slot": 1,
+          "team": 2,
+          "start": "2026-06-08T09:09:45Z",
+          "end": null
+        },
+        {
+          "slot": 2,
+          "team": 19,
+          "start": "2026-06-08T09:09:45Z",
+          "end": "2026-07-03T06:50:41Z"
+        },
+        {
+          "slot": 2,
+          "team": 27,
+          "start": "2026-07-03T06:50:41Z",
+          "end": "2026-07-08T04:18:36Z"
+        },
+        {
+          "slot": 2,
+          "team": 41,
+          "start": "2026-07-08T04:18:36Z",
+          "end": null
+        },
+        {
+          "slot": 3,
+          "team": 7,
+          "start": "2026-06-08T09:09:45Z",
+          "end": "2026-07-08T04:18:47Z"
+        },
+        {
+          "slot": 3,
+          "team": 18,
+          "start": "2026-07-08T04:18:47Z",
+          "end": null
+        }
+      ]
+    },
+    {
+      "nickname": "Catlover1234",
+      "current": [
+        18,
+        19,
+        39
+      ],
+      "segments": [
+        {
+          "slot": 1,
+          "team": 18,
+          "start": "2026-06-15T03:24:12Z",
+          "end": null
+        },
+        {
+          "slot": 2,
+          "team": 19,
+          "start": "2026-06-15T03:24:12Z",
+          "end": null
+        },
+        {
+          "slot": 3,
+          "team": 39,
+          "start": "2026-06-15T03:24:12Z",
+          "end": null
+        }
+      ]
+    },
+    {
+      "nickname": "Cavern Club",
+      "current": [
+        2,
+        18,
+        41
+      ],
+      "segments": [
+        {
+          "slot": 1,
+          "team": 7,
+          "start": "2026-06-08T09:58:18Z",
+          "end": "2026-07-08T06:19:01Z"
+        },
+        {
+          "slot": 1,
+          "team": 2,
+          "start": "2026-07-08T06:19:01Z",
+          "end": null
+        },
+        {
+          "slot": 2,
+          "team": 18,
+          "start": "2026-06-08T09:58:18Z",
+          "end": null
+        },
+        {
+          "slot": 3,
+          "team": 41,
+          "start": "2026-06-08T09:58:18Z",
+          "end": null
+        }
+      ]
+    },
+    {
+      "nickname": "GGMU",
+      "current": [
+        41,
+        17,
+        2
+      ],
+      "segments": [
+        {
+          "slot": 1,
+          "team": 41,
+          "start": "2026-06-08T08:55:15Z",
+          "end": null
+        },
+        {
+          "slot": 2,
+          "team": 17,
+          "start": "2026-06-08T08:55:15Z",
+          "end": null
+        },
+        {
+          "slot": 3,
+          "team": 7,
+          "start": "2026-06-08T08:55:15Z",
+          "end": "2026-07-08T07:20:30Z"
+        },
+        {
+          "slot": 3,
+          "team": 2,
+          "start": "2026-07-08T07:20:30Z",
+          "end": null
+        }
+      ]
+    },
+    {
+      "nickname": "NoVAR",
+      "current": [
+        41,
+        18,
+        2
+      ],
+      "segments": [
+        {
+          "slot": 1,
+          "team": 41,
+          "start": "2026-06-10T07:27:37Z",
+          "end": null
+        },
+        {
+          "slot": 2,
+          "team": 18,
+          "start": "2026-06-10T07:27:37Z",
+          "end": null
+        },
+        {
+          "slot": 3,
+          "team": 7,
+          "start": "2026-06-10T07:27:37Z",
+          "end": "2026-07-08T07:24:52Z"
+        },
+        {
+          "slot": 3,
+          "team": 2,
+          "start": "2026-07-08T07:24:52Z",
+          "end": null
+        }
+      ]
+    },
+    {
+      "nickname": "JL",
+      "current": [
+        2,
+        41,
+        18
+      ],
+      "segments": [
+        {
+          "slot": 1,
+          "team": 7,
+          "start": "2026-06-12T08:22:45Z",
+          "end": "2026-07-08T07:38:10Z"
+        },
+        {
+          "slot": 1,
+          "team": 2,
+          "start": "2026-07-08T07:38:10Z",
+          "end": "2026-07-08T07:38:54Z"
+        },
+        {
+          "slot": 1,
+          "team": 17,
+          "start": "2026-07-08T07:38:54Z",
+          "end": "2026-07-08T07:38:59Z"
+        },
+        {
+          "slot": 1,
+          "team": 2,
+          "start": "2026-07-08T07:38:59Z",
+          "end": null
+        },
+        {
+          "slot": 2,
+          "team": 41,
+          "start": "2026-06-12T08:22:45Z",
+          "end": null
+        },
+        {
+          "slot": 3,
+          "team": 18,
+          "start": "2026-06-12T08:22:45Z",
+          "end": null
+        }
+      ]
+    },
+    {
+      "nickname": "WinnerZ",
+      "current": [
+        41,
+        18,
+        17
+      ],
+      "segments": [
+        {
+          "slot": 1,
+          "team": 41,
+          "start": "2026-06-12T06:16:37Z",
+          "end": null
+        },
+        {
+          "slot": 2,
+          "team": 18,
+          "start": "2026-06-12T06:16:37Z",
+          "end": null
+        },
+        {
+          "slot": 3,
+          "team": 34,
+          "start": "2026-06-12T06:16:37Z",
+          "end": "2026-07-08T08:27:30Z"
+        },
+        {
+          "slot": 3,
+          "team": 17,
+          "start": "2026-07-08T08:27:30Z",
+          "end": null
+        }
+      ]
+    },
+    {
+      "nickname": "HQ",
+      "current": [
+        41,
+        47,
+        17
+      ],
+      "segments": [
+        {
+          "slot": 1,
+          "team": 41,
+          "start": "2026-06-09T07:40:50Z",
+          "end": null
+        },
+        {
+          "slot": 2,
+          "team": 13,
+          "start": "2026-06-09T07:40:50Z",
+          "end": "2026-07-08T10:53:48Z"
+        },
+        {
+          "slot": 2,
+          "team": 47,
+          "start": "2026-07-08T10:53:48Z",
+          "end": null
+        },
+        {
+          "slot": 3,
+          "team": 17,
+          "start": "2026-06-09T07:40:50Z",
+          "end": null
+        }
+      ]
+    },
+    {
+      "nickname": "Sir Alex Ferguson",
+      "current": [
+        18,
+        2,
+        31
+      ],
+      "segments": [
+        {
+          "slot": 1,
+          "team": 18,
+          "start": "2026-06-10T09:43:16Z",
+          "end": null
+        },
+        {
+          "slot": 2,
+          "team": 41,
+          "start": "2026-06-10T09:43:16Z",
+          "end": "2026-07-06T05:43:28Z"
+        },
+        {
+          "slot": 2,
+          "team": 2,
+          "start": "2026-07-06T05:43:28Z",
+          "end": "2026-07-06T05:44:41Z"
+        },
+        {
+          "slot": 2,
+          "team": 41,
+          "start": "2026-07-06T05:44:41Z",
+          "end": "2026-07-06T05:45:36Z"
+        },
+        {
+          "slot": 2,
+          "team": 2,
+          "start": "2026-07-06T05:45:36Z",
+          "end": null
+        },
+        {
+          "slot": 3,
+          "team": 7,
+          "start": "2026-06-10T09:43:16Z",
+          "end": "2026-07-06T01:04:52Z"
+        },
+        {
+          "slot": 3,
+          "team": 31,
+          "start": "2026-07-06T01:04:52Z",
+          "end": null
+        }
+      ]
+    },
+    {
+      "nickname": "Condo",
+      "current": [
+        18,
+        41,
+        34
+      ],
+      "segments": [
+        {
+          "slot": 1,
+          "team": 18,
+          "start": "2026-06-09T11:51:41Z",
+          "end": null
+        },
+        {
+          "slot": 2,
+          "team": 41,
+          "start": "2026-06-09T11:51:41Z",
+          "end": null
+        },
+        {
+          "slot": 3,
+          "team": 34,
+          "start": "2026-06-09T11:51:41Z",
+          "end": null
+        }
+      ]
+    },
+    {
+      "nickname": "TB",
+      "current": [
+        41,
+        18,
+        17
+      ],
+      "segments": [
+        {
+          "slot": 1,
+          "team": 41,
+          "start": "2026-06-09T01:04:28Z",
+          "end": null
+        },
+        {
+          "slot": 2,
+          "team": 18,
+          "start": "2026-06-09T01:04:28Z",
+          "end": null
+        },
+        {
+          "slot": 3,
+          "team": 7,
+          "start": "2026-06-09T01:04:28Z",
+          "end": "2026-07-09T15:14:32Z"
+        },
+        {
+          "slot": 3,
+          "team": 17,
+          "start": "2026-07-09T15:14:32Z",
+          "end": null
+        }
+      ]
+    },
+    {
+      "nickname": "CR7",
+      "current": [
+        2,
+        18,
+        41
+      ],
+      "segments": [
+        {
+          "slot": 1,
+          "team": 34,
+          "start": "2026-06-10T10:41:19Z",
+          "end": "2026-07-07T05:27:19Z"
+        },
+        {
+          "slot": 1,
+          "team": 11,
+          "start": "2026-07-07T05:27:19Z",
+          "end": "2026-07-08T00:18:47Z"
+        },
+        {
+          "slot": 1,
+          "team": 31,
+          "start": "2026-07-08T00:18:47Z",
+          "end": "2026-07-13T00:22:59Z"
+        },
+        {
+          "slot": 1,
+          "team": 2,
+          "start": "2026-07-13T00:22:59Z",
+          "end": null
+        },
+        {
+          "slot": 2,
+          "team": 18,
+          "start": "2026-06-10T10:41:19Z",
+          "end": null
+        },
+        {
+          "slot": 3,
+          "team": 41,
+          "start": "2026-06-10T10:41:19Z",
+          "end": null
+        }
+      ]
+    },
+    {
+      "nickname": "CHL",
+      "current": [
+        17,
+        18,
+        2
+      ],
+      "segments": [
+        {
+          "slot": 1,
+          "team": 17,
+          "start": "2026-06-08T09:46:37Z",
+          "end": null
+        },
+        {
+          "slot": 2,
+          "team": 18,
+          "start": "2026-06-08T09:46:37Z",
+          "end": null
+        },
+        {
+          "slot": 3,
+          "team": 2,
+          "start": "2026-06-08T09:46:37Z",
+          "end": null
+        }
+      ]
+    },
+    {
+      "nickname": "Jane",
+      "current": [
+        18,
+        2,
+        41
+      ],
+      "segments": [
+        {
+          "slot": 1,
+          "team": 18,
+          "start": "2026-06-09T10:35:24Z",
+          "end": null
+        },
+        {
+          "slot": 2,
+          "team": 7,
+          "start": "2026-06-09T10:35:24Z",
+          "end": "2026-07-06T10:32:36Z"
+        },
+        {
+          "slot": 2,
+          "team": 2,
+          "start": "2026-07-06T10:32:36Z",
+          "end": null
+        },
+        {
+          "slot": 3,
+          "team": 17,
+          "start": "2026-06-09T10:35:24Z",
+          "end": "2026-06-15T01:08:27Z"
+        },
+        {
+          "slot": 3,
+          "team": 41,
+          "start": "2026-06-15T01:08:27Z",
+          "end": null
+        }
+      ]
+    },
+    {
+      "nickname": "Eunice",
+      "current": [
+        2,
+        18,
+        41
+      ],
+      "segments": [
+        {
+          "slot": 1,
+          "team": 2,
+          "start": "2026-06-10T07:00:10Z",
+          "end": null
+        },
+        {
+          "slot": 2,
+          "team": 18,
+          "start": "2026-06-10T07:00:10Z",
+          "end": null
+        },
+        {
+          "slot": 3,
+          "team": 41,
+          "start": "2026-06-10T07:00:10Z",
+          "end": null
+        }
+      ]
+    },
+    {
+      "nickname": "PredictablyLate",
+      "current": [
+        2,
+        18,
+        17
+      ],
+      "segments": [
+        {
+          "slot": 1,
+          "team": 2,
+          "start": "2026-07-13T06:24:37Z",
+          "end": null
+        },
+        {
+          "slot": 2,
+          "team": 18,
+          "start": "2026-07-13T06:24:37Z",
+          "end": null
+        },
+        {
+          "slot": 3,
+          "team": 17,
+          "start": "2026-07-13T06:24:37Z",
+          "end": null
+        }
+      ]
+    },
+    {
+      "nickname": "Hello World",
+      "current": [
+        41,
+        2,
+        18
+      ],
+      "segments": [
+        {
+          "slot": 1,
+          "team": 41,
+          "start": "2026-06-02T18:14:18Z",
+          "end": "2026-06-12T00:35:51Z"
+        },
+        {
+          "slot": 1,
+          "team": 40,
+          "start": "2026-06-12T00:35:51Z",
+          "end": "2026-06-29T02:03:02Z"
+        },
+        {
+          "slot": 1,
+          "team": 41,
+          "start": "2026-06-29T02:03:02Z",
+          "end": null
+        },
+        {
+          "slot": 2,
+          "team": 2,
+          "start": "2026-06-02T18:14:18Z",
+          "end": "2026-06-12T00:36:34Z"
+        },
+        {
+          "slot": 2,
+          "team": 46,
+          "start": "2026-06-12T00:36:34Z",
+          "end": "2026-06-29T02:03:12Z"
+        },
+        {
+          "slot": 2,
+          "team": 2,
+          "start": "2026-06-29T02:03:12Z",
+          "end": null
+        },
+        {
+          "slot": 3,
+          "team": 7,
+          "start": "2026-06-02T18:14:18Z",
+          "end": "2026-07-06T02:36:48Z"
+        },
+        {
+          "slot": 3,
+          "team": 27,
+          "start": "2026-07-06T02:36:48Z",
+          "end": "2026-07-06T12:20:55Z"
+        },
+        {
+          "slot": 3,
+          "team": 18,
+          "start": "2026-07-06T12:20:55Z",
+          "end": null
+        }
+      ]
+    },
+    {
+      "nickname": "huat ah",
+      "current": [
+        18,
+        34,
+        2
+      ],
+      "segments": [
+        {
+          "slot": 1,
+          "team": 18,
+          "start": "2026-06-10T08:35:26Z",
+          "end": null
+        },
+        {
+          "slot": 2,
+          "team": 34,
+          "start": "2026-06-10T08:35:26Z",
+          "end": null
+        },
+        {
+          "slot": 3,
+          "team": 2,
+          "start": "2026-06-10T08:35:26Z",
+          "end": null
+        }
+      ]
+    },
+    {
+      "nickname": "Fat and Furious",
+      "current": [
+        41,
+        18,
+        17
+      ],
+      "segments": [
+        {
+          "slot": 1,
+          "team": 41,
+          "start": "2026-06-10T10:06:13Z",
+          "end": null
+        },
+        {
+          "slot": 2,
+          "team": 18,
+          "start": "2026-06-10T10:06:13Z",
+          "end": null
+        },
+        {
+          "slot": 3,
+          "team": 17,
+          "start": "2026-06-10T10:06:13Z",
+          "end": null
+        }
+      ]
+    },
+    {
+      "nickname": "Winner",
+      "current": [
+        18,
+        17,
+        41
+      ],
+      "segments": [
+        {
+          "slot": 1,
+          "team": 18,
+          "start": "2026-06-11T01:35:15Z",
+          "end": null
+        },
+        {
+          "slot": 2,
+          "team": 17,
+          "start": "2026-06-11T01:35:15Z",
+          "end": null
+        },
+        {
+          "slot": 3,
+          "team": 41,
+          "start": "2026-06-11T01:35:15Z",
+          "end": null
+        }
+      ]
+    },
+    {
+      "nickname": "Stanley",
+      "current": [
+        18,
+        2,
+        41
+      ],
+      "segments": [
+        {
+          "slot": 1,
+          "team": 25,
+          "start": "2026-06-10T07:26:15Z",
+          "end": "2026-06-30T01:22:26Z"
+        },
+        {
+          "slot": 1,
+          "team": 18,
+          "start": "2026-06-30T01:22:26Z",
+          "end": null
+        },
+        {
+          "slot": 2,
+          "team": 27,
+          "start": "2026-06-10T07:26:15Z",
+          "end": "2026-07-07T01:13:37Z"
+        },
+        {
+          "slot": 2,
+          "team": 2,
+          "start": "2026-07-07T01:13:37Z",
+          "end": null
+        },
+        {
+          "slot": 3,
+          "team": 34,
+          "start": "2026-06-10T07:26:15Z",
+          "end": "2026-07-07T01:13:47Z"
+        },
+        {
+          "slot": 3,
+          "team": 41,
+          "start": "2026-07-07T01:13:48Z",
+          "end": null
+        }
+      ]
+    },
+    {
+      "nickname": "shl",
+      "current": [
+        41,
+        18,
+        17
+      ],
+      "segments": [
+        {
+          "slot": 1,
+          "team": 41,
+          "start": "2026-06-12T05:19:53Z",
+          "end": null
+        },
+        {
+          "slot": 2,
+          "team": 18,
+          "start": "2026-06-12T05:19:53Z",
+          "end": null
+        },
+        {
+          "slot": 3,
+          "team": 17,
+          "start": "2026-06-12T05:19:53Z",
+          "end": null
+        }
+      ]
+    },
+    {
+      "nickname": "Candy",
+      "current": [
+        2,
+        41,
+        18
+      ],
+      "segments": [
+        {
+          "slot": 1,
+          "team": 2,
+          "start": "2026-06-24T01:52:38Z",
+          "end": null
+        },
+        {
+          "slot": 2,
+          "team": 34,
+          "start": "2026-06-24T01:52:38Z",
+          "end": "2026-07-07T01:14:24Z"
+        },
+        {
+          "slot": 2,
+          "team": 17,
+          "start": "2026-07-07T01:14:24Z",
+          "end": "2026-07-13T08:37:33Z"
+        },
+        {
+          "slot": 2,
+          "team": 41,
+          "start": "2026-07-13T08:37:33Z",
+          "end": null
+        },
+        {
+          "slot": 3,
+          "team": 29,
+          "start": "2026-06-24T01:52:38Z",
+          "end": "2026-07-01T06:03:43Z"
+        },
+        {
+          "slot": 3,
+          "team": 31,
+          "start": "2026-07-01T06:03:43Z",
+          "end": "2026-07-13T07:45:02Z"
+        },
+        {
+          "slot": 3,
+          "team": 18,
+          "start": "2026-07-13T07:45:02Z",
+          "end": null
+        }
+      ]
+    },
+    {
+      "nickname": "Jun",
+      "current": [
+        41,
+        17,
+        2
+      ],
+      "segments": [
+        {
+          "slot": 1,
+          "team": 41,
+          "start": "2026-06-09T01:43:44Z",
+          "end": null
+        },
+        {
+          "slot": 2,
+          "team": 17,
+          "start": "2026-06-09T01:43:44Z",
+          "end": null
+        },
+        {
+          "slot": 3,
+          "team": 34,
+          "start": "2026-06-09T01:43:44Z",
+          "end": "2026-07-07T06:41:15Z"
+        },
+        {
+          "slot": 3,
+          "team": 2,
+          "start": "2026-07-07T06:41:15Z",
+          "end": null
+        }
+      ]
+    },
+    {
+      "nickname": "Set Piece FC",
+      "current": [
+        17,
+        2,
+        41
+      ],
+      "segments": [
+        {
+          "slot": 1,
+          "team": 18,
+          "start": "2026-06-10T06:07:19Z",
+          "end": "2026-07-15T03:29:50Z"
+        },
+        {
+          "slot": 1,
+          "team": 17,
+          "start": "2026-07-15T03:29:50Z",
+          "end": null
+        },
+        {
+          "slot": 2,
+          "team": 7,
+          "start": "2026-06-10T06:07:19Z",
+          "end": "2026-07-07T01:22:07Z"
+        },
+        {
+          "slot": 2,
+          "team": 2,
+          "start": "2026-07-07T01:22:07Z",
+          "end": null
+        },
+        {
+          "slot": 3,
+          "team": 41,
+          "start": "2026-06-10T06:07:19Z",
+          "end": null
+        }
+      ]
+    }
+  ]
+}
