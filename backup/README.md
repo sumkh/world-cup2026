@@ -1,7 +1,7 @@
 # Data Archive — World Cup 2026 Prediction Game
 
 Final snapshot of the live deployment, taken **10 September 2026**, immediately
-before the Render service and its PostgreSQL database were decommissioned.
+ahead of the Render service and its PostgreSQL database being decommissioned.
 
 The tournament ran **11 Jun – 19 Jul 2026**. All 104 matches finished, 25 of the
 32 slots were claimed. Nothing here is derived or reconstructed — it is the

@@ -5,7 +5,7 @@ name: Sync World Cup Scores
 #
 # The World Cup 2026 tournament finished on 2026-07-19 and the Render
 # deployment it called (https://world-cup2026.onrender.com/cron.php) was
-# decommissioned in September 2026. The `schedule:` trigger has therefore been
+# retired in September 2026. The `schedule:` trigger has therefore been
 # removed: with the backend gone it would have woken every 15 minutes each
 # June and July from 2027 onward to curl a dead host.
 #
@@ -40,7 +40,7 @@ jobs:
     steps:
       - name: Retired
         run: |
-          echo "This workflow is retired — the Render backend was decommissioned in Sept 2026."
+          echo "This workflow is retired — the Render backend was shut down in Sept 2026."
           echo "See backup/README.md for the archived data and how to stand the app back up."
           exit 1
 

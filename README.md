@@ -10,7 +10,7 @@ with a shared leaderboard.
 >
 > The tournament is over and this project is no longer running. The database was
 > captured on **10 September 2026** straight from production, immediately before
-> the Render web service and its PostgreSQL database were decommissioned. The
+> the Render web service and its PostgreSQL database are decommissioned. The
 > scheduled score-sync workflow is retired as of this commit, and the API keys
 > it used are rotated as part of the same teardown.
 >

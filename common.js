@@ -144,7 +144,7 @@ function scoreParticipant(fixtures, segments) {
 }
 
 /* ── Archive mode ────────────────────────────────────────────────────────────
-   The live Render deployment (PHP + PostgreSQL) was decommissioned after the
+   The live Render deployment (PHP + PostgreSQL) was retired after the
    tournament. When api.php is unreachable — e.g. this repo served straight
    from GitHub Pages, or opened as local files — the three read-only actions
    fall back to the final data snapshot in backup/api/, so the hub still
